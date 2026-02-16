@@ -20,7 +20,7 @@ from typing import Dict, Any, List, Tuple, Optional
 from ANFISDQN import ANFISDQN
 
 try:
-    from comet_ml import Experiment, ExistingExperiment
+    import comet_ml
     COMET_AVAILABLE = True
 except ImportError:
     COMET_AVAILABLE = False
@@ -63,7 +63,7 @@ COMET_KEY_PATH = os.path.join(current_dir, "comet_key.txt")
 FRAME_SKIP = 4      # Podejmuj decyzję co 4 klatki (ok. 15 razy na sekundę przy 60 FPS)
 
 # Konfiguracja Comet ML
-API_KEY = "L2PzW7c3YM3WqM5hNfCsloeLZ"
+API_KEY = "L2PzW7c3YM3WqM5hNfCsloeLZ" 
 PROJECT_NAME = "msi-projekt"
 WORKSPACE = "kluski777"
 
@@ -133,8 +133,8 @@ class DQNAgent:
         self.input_dim = 12
         
         # generalnie bym rozdzielil akcje na te ktore sa od siebie niezalezne
-        self.policy_net = ANFISDQN(self.input_dim, NUM_ACTIONS).to(self.device)
-        self.target_net = ANFISDQN(self.input_dim, NUM_ACTIONS).to(self.device)
+        self.policy_net = ANFISDQN(n_inputs=self.input_dim, n_rules=50, n_outputs=NUM_ACTIONS).to(self.device)
+        self.target_net = ANFISDQN(n_inputs=self.input_dim, n_rules=50, n_outputs=NUM_ACTIONS).to(self.device)
         self.target_net.load_state_dict(self.policy_net.state_dict())
         self.target_net.eval()
         
@@ -174,157 +174,127 @@ class DQNAgent:
                 print(f"[{self.name}] Błąd ładowania modelu: {e}")
 
     def init_comet(self):
-        """Bezpieczna inicjalizacja Comet ML."""
+        """Inicjalizacja Comet ML - każdy run train_runner.py tworzy nowy eksperyment."""
         if COMET_AVAILABLE:
             try:
-                # Sprawdź, czy istnieje klucz poprzedniego eksperymentu
+                from datetime import datetime
+                
+                # Sprawdź czy istnieje zapisany klucz eksperymentu z tego samego uruchomienia
+                experiment_key = None
                 if os.path.exists(COMET_KEY_PATH):
                     with open(COMET_KEY_PATH, 'r') as f:
                         previous_key = f.read().strip()
                     
-                    self.experiment = ExistingExperiment(
-                        api_key=API_KEY,
-                        previous_experiment=previous_key,
-                        auto_output_logging="simple"
-                    )
-                    print(f"[{self.name}] Comet ML resumed (Key: {previous_key}).")
-                else:
-                    # Tworzymy nowy eksperyment i zapisujemy jego klucz
-                    self.experiment = Experiment(
+                    # Wznów istniejący eksperyment (dla innych agentów w tym samym run)
+                    from comet_ml import ExistingExperiment
+                    try:
+                        self.experiment = ExistingExperiment(
+                            api_key=API_KEY,
+                            previous_experiment=previous_key
+                        )
+                        print(f"[{self.name}] Comet ML resumed experiment: {previous_key}")
+                        experiment_key = previous_key
+                    except:
+                        # Jeśli nie udało się wznowić, utwórz nowy
+                        pass
+                
+                if not experiment_key:
+                    # Utwórz nowy eksperyment z timestamp
+                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    self.experiment = comet_ml.start(
                         api_key=API_KEY,
                         project_name=PROJECT_NAME,
-                        workspace=WORKSPACE,
-                        auto_output_logging="simple"
+                        workspace=WORKSPACE
                     )
-                    self.experiment.set_name(self.name)
+                    self.experiment.set_name(f"ANFIS_Training_{timestamp}")
+                    
+                    # Zapisz klucz eksperymentu dla innych agentów w tym samym run
                     with open(COMET_KEY_PATH, 'w') as f:
                         f.write(self.experiment.get_key())
-                    print(f"[{self.name}] Comet ML initialized (New Experiment).")
+                    
+                    # Loguj kod i parametry tylko raz (przy tworzeniu nowego eksperymentu)
+                    self.experiment.log_code(folder=current_dir)
+                    self.experiment.log_parameters({
+                        "batch_size": BATCH_SIZE,
+                        "gamma": GAMMA,
+                        "lr": LR,
+                        "eps_start": EPS_START,
+                        "eps_end": EPS_END,
+                        "eps_decay": EPS_DECAY,
+                        "memory_size": MEMORY_SIZE,
+                        "target_update": TARGET_UPDATE,
+                        "frame_skip": FRAME_SKIP,
+                        "input_dim": self.input_dim,
+                        "num_actions": NUM_ACTIONS,
+                        "anfis_rules": 50
+                    })
+                    print(f"[{self.name}] Comet ML initialized (New Experiment: {timestamp}).")
+                
+                print(f"[{self.name}] Comet ML Experiment URL: {self.experiment.url}")
             except Exception as e:
                 print(f"[{self.name}] Comet ML init failed (logging disabled): {e}")
+                import traceback
+                traceback.print_exc()
 
     def normalize_angle(self, angle):
         """Sprowadza kąt do zakresu [-180, 180]."""
         return ((angle + 180) % 360) - 180
     
-    def get_state_vector(self, my_status, sensor_data, enemies_remaining): # chyba wszystko jest normalizowane
-        """Przetwarza surowe dane JSON na wektor wejściowy sieci."""
-        my_pos = my_status.get('position', {'x': 0, 'y': 0})
-        my_heading = my_status.get('heading', 0)
-        my_barrel = my_status.get('barrel_angle', 0)
-        my_team = my_status.get('_team')
-        
-        # 1. Najbliższy wróg
-        seen_tanks = sensor_data.get('seen_tanks', [])
-        enemies = [t for t in seen_tanks if t.get('team') != my_team]
-        
-        enemy_dist = 1.0 # Znormalizowane (1.0 = max range lub brak)
-        enemy_angle = 0.0
-        enemy_hp = 0.0
-        
-        nearest_enemy = None
-        if enemies:
-            nearest_enemy = min(enemies, key=lambda t: math.hypot(t['position']['x'] - my_pos['x'], t['position']['y'] - my_pos['y']))
-            dx = nearest_enemy['position']['x'] - my_pos['x']
-            dy = nearest_enemy['position']['y'] - my_pos['y']
-            dist = math.hypot(dx, dy)
-            abs_angle = math.degrees(math.atan2(dy, dx))
-            
-            # Kąt relatywny do lufy
-            current_barrel_abs = my_heading + my_barrel
-            rel_angle = self.normalize_angle(abs_angle - current_barrel_abs)
-            
-            enemy_dist = min(dist / 500.0, 1.0)
-            enemy_angle = rel_angle / 180.0
-            enemy_hp = nearest_enemy.get('hp', 0) / 100.0 # Przybliżenie max HP
+    def get_state_vector(self, my_status, sensor_data, enemies_remaining):
+        pos = my_status['position']
+        heading = my_status['heading']
+        barrel_abs = heading + my_status['barrel_angle']
+        my_team = my_status['_team']
 
-        # 2. Najbliższy PowerUp
-        powerups = sensor_data.get('seen_powerups', [])
-        pup_dist = 1.0
-        pup_angle = 0.0
-        
-        # imo w powerupach logika jest bledna, jak nie istieje jeszcze zaden powerup (mozna by zalozyc ze jednak istnieje)
-        if powerups:
-            nearest_pup = min(powerups, key=lambda p: math.hypot(p.get('position', {}).get('x', 0) - my_pos['x'], p.get('position', {}).get('y', 0) - my_pos['y']))
-            dx = nearest_pup.get('position', {}).get('x', 0) - my_pos['x']
-            dy = nearest_pup.get('position', {}).get('y', 0) - my_pos['y']
-            dist = math.hypot(dx, dy)
-            abs_angle = math.degrees(math.atan2(dy, dx))
-            
-            current_heading = my_heading # Powerupy zbieramy kadłubem
-            rel_angle = self.normalize_angle(abs_angle - current_heading)
-            
-            pup_dist = min(dist / 500.0, 1.0)
-            pup_angle = rel_angle / 180.0
+        seen = sensor_data['seen_tanks']
+        enemies = [t for t in seen if t['team'] != my_team]
+        friends = [t for t in seen if t['team'] == my_team]
 
-        # 3. Friendly Fire Check
+        def dist_to(obj_pos):
+            return math.hypot(obj_pos['x'] - pos['x'], obj_pos['y'] - pos['y'])
+
+        def rel_angle(obj_pos, ref_angle):
+            dx, dy = obj_pos['x'] - pos['x'], obj_pos['y'] - pos['y']
+            return self.normalize_angle(math.degrees(math.atan2(dy, dx)) - ref_angle) / 180.0
+
+        def nearest(objects, pos_key='position'):
+            return min(objects, key=lambda o: dist_to(o[pos_key])) if objects else None
+
+        def encode_nearest(objects, ref_angle, pos_key='position'):
+            obj = nearest(objects, pos_key)
+            if not obj:
+                return 1.0, 0.0
+            return min(dist_to(obj[pos_key]) / 500.0, 1.0), rel_angle(obj[pos_key], ref_angle)
+
+        # Nearest enemy
+        ne = nearest(enemies)
+        enemy_dist, enemy_angle = encode_nearest(enemies, barrel_abs)
+        enemy_hp = ne['hp'] / 100.0 if ne else 0.0
+
+        # Friendly fire check
         aimed_at_friend = 0.0
-        friends = [t for t in seen_tanks if t.get('team') == my_team]
         for f in friends:
-            dx = f['position']['x'] - my_pos['x']
-            dy = f['position']['y'] - my_pos['y']
-            abs_angle = math.degrees(math.atan2(dy, dx))
-            current_barrel_abs = my_heading + my_barrel
-            diff = abs(self.normalize_angle(abs_angle - current_barrel_abs))
-            if diff < 5.0: # Celujemy w sojusznika
+            if abs(rel_angle(f['position'], barrel_abs)) * 180.0 < 5.0:
                 aimed_at_friend = 1.0
                 break
 
-        # 4. Najbliższa przeszkoda (Obstacle)
-        obstacles = sensor_data.get('seen_obstacles', [])
-        obs_dist = 1.0
-        obs_angle = 0.0
-        
-        if obstacles:
-            nearest_obs = min(obstacles, key=lambda o: math.hypot(o.get('position', {}).get('x', 0) - my_pos['x'], o.get('position', {}).get('y', 0) - my_pos['y']))
-            o_pos = nearest_obs.get('position', {'x': 0, 'y': 0})
-            dx = o_pos['x'] - my_pos['x']
-            dy = o_pos['y'] - my_pos['y']
-            dist = math.hypot(dx, dy)
-            abs_angle = math.degrees(math.atan2(dy, dx))
-            
-            # Przeszkody omijamy kadłubem
-            rel_angle = self.normalize_angle(abs_angle - my_heading)
-            
-            obs_dist = min(dist / 500.0, 1.0)
-            obs_angle = rel_angle / 180.0
-
-        # 5. Najbliższy niebezpieczny teren (Water, PotholeRoad)
-        terrains = sensor_data.get('seen_terrains', [])
-        danger_terrains = [t for t in terrains if t.get('terrain_type') in ['Water', 'PotholeRoad']]
-        dang_dist = 1.0
-        dang_angle = 0.0
-        
-        if danger_terrains:
-            nearest_dang = min(danger_terrains, key=lambda t: math.hypot(t.get('position', {}).get('x', 0) - my_pos['x'], t.get('position', {}).get('y', 0) - my_pos['y']))
-            t_pos = nearest_dang.get('position', {'x': 0, 'y': 0})
-            dx = t_pos['x'] - my_pos['x']
-            dy = t_pos['y'] - my_pos['y']
-            dist = math.hypot(dx, dy)
-            abs_angle = math.degrees(math.atan2(dy, dx))
-            
-            # Teren omijamy kadłubem
-            rel_angle = self.normalize_angle(abs_angle - my_heading)
-            
-            dang_dist = min(dist / 500.0, 1.0)
-            dang_angle = rel_angle / 180.0
-
-        # Budowa wektora
         state = [
-            my_status.get('hp', 0) / 100.0,
-            1.0 if my_status.get('ammo', {}).get('HEAVY', {}).get('count', 0) > 0 else 0.0,
-            enemy_dist,
-            enemy_angle,
-            enemy_hp,
-            pup_dist,
-            pup_angle,
+            my_status['hp'] / 100.0,
+            float(my_status['ammo']['HEAVY']['count'] > 0),
+            enemy_dist, enemy_angle, enemy_hp,
+            *encode_nearest(sensor_data['seen_powerups'], heading),
             aimed_at_friend,
-            obs_dist,
-            obs_angle,
-            dang_dist,
-            dang_angle
+            *encode_nearest(sensor_data['seen_obstacles'], heading),
+            *encode_nearest(
+                [t for t in sensor_data['seen_terrains'] if t['terrain_type'] in ('Water', 'PotholeRoad')],
+                heading
+            ),
         ]
-        return torch.tensor([state], device=self.device, dtype=torch.float32), nearest_enemy
+
+        assert len(state) == 12, f"Expected 12, got {len(state)}"
+        assert all(-1.0 <= v <= 1.0 for v in state), f"Out of range: {state}"
+
+        return torch.tensor([state], device=self.device, dtype=torch.float32), ne
 
     def select_action(self, state):
         """Epsilon-Greedy Policy."""
@@ -353,6 +323,7 @@ class DQNAgent:
 
     def calculate_reward(self, current_state_vec, enemies_remaining, my_hp, enemy_hp_sum, action_taken):
         """Oblicza nagrodę na podstawie zmiany stanu."""
+        # nie podoba mi sie reward -> inne dzialajace czolgi beda dawac lepsze akcje -> lipton
         reward = 0.0
         
         # --- Reward Shaping (Zagęszczanie nagród) ---
@@ -377,7 +348,7 @@ class DQNAgent:
         # 1. Nagroda za celowanie (jeśli wróg widoczny)
         if curr_enemy_dist < 1.0:
             # Kąt jest znormalizowany (-1 do 1). 0.1 to ok. 18 stopni.
-            if abs(curr_enemy_angle) < 0.1: 
+            if abs(curr_enemy_angle) < 0.1:
                 reward += 0.1
             
             # Nagroda za zbliżanie się przy ataku
@@ -390,7 +361,7 @@ class DQNAgent:
             if curr_pup_dist < 0.05:
                 reward += 1.0
             # Mała nagroda za zbliżanie się
-            elif curr_pup_dist < prev_pup_dist:
+            elif curr_pup_dist < prev_pup_dist: # -> zalezy jak daleko ten popup jest
                 reward += 0.1
         
         # Sprawdź czy strzelaliśmy niedawno (np. w ciągu ostatnich 25 ticków)
@@ -425,6 +396,17 @@ class DQNAgent:
             
         if self.experiment:
             self.experiment.log_metric("reward", reward, step=self.steps_done)
+            # Log components of the reward for better analysis
+            if recently_fired:
+                if enemies_remaining < self.prev_enemies_count:
+                    self.experiment.log_metric("reward_kill", 100.0, step=self.steps_done)
+                if enemy_hp_sum < self.prev_enemy_hp_sum:
+                    self.experiment.log_metric("reward_damage", (self.prev_enemy_hp_sum - enemy_hp_sum) * 0.5, step=self.steps_done)
+            if my_hp < self.prev_my_hp:
+                self.experiment.log_metric("penalty_hp_loss", (self.prev_my_hp - my_hp) * 0.5, step=self.steps_done)
+            if fire_val and aimed_at_friend > 0.5:
+                self.experiment.log_metric("penalty_ff", 5.0, step=self.steps_done)
+                
         return reward
 
     def optimize_model(self):
@@ -552,6 +534,14 @@ class DQNAgent:
         # Reset stanu epizodu
         self.last_state = None
         self.last_action = None
+        
+        # Wymuszamy synchroniczny upload wszystkich danych przed zamknięciem
+        if self.experiment:
+            try:
+                print(f"[{self.name}] Flushing CometML data...")
+                self.experiment.flush()
+            except Exception as e:
+                print(f"[{self.name}] Error flushing experiment: {e}")
 
     def end(self, damage_dealt, tanks_killed):
         """Zapis modelu na koniec gry."""
@@ -561,7 +551,8 @@ class DQNAgent:
         if self.experiment:
             self.experiment.log_metrics({
                 "game_damage_dealt": damage_dealt,
-                "game_tanks_killed": tanks_killed
+                "game_tanks_killed": tanks_killed,
+                "total_steps": self.steps_done
             }, step=self.steps_done)
 
         # Zapis pełnego stanu (model + optymalizator + kroki)
@@ -570,6 +561,17 @@ class DQNAgent:
             'optimizer_state_dict': self.optimizer.state_dict(),
             'steps_done': self.steps_done
         }, MODEL_PATH)
+        
+        # Wymuszamy synchroniczny upload wszystkich danych
+        # NIE kończymy eksperymentu tutaj - train_runner restartuje agentów
+        # i kolejny epizod wznowi ten sam eksperyment przez comet_key.txt
+        if self.experiment:
+            try:
+                print(f"[{self.name}] Flushing CometML data...")
+                self.experiment.flush()
+                print(f"[{self.name}] CometML data flushed successfully.")
+            except Exception as e:
+                print(f"[{self.name}] Error flushing experiment: {e}")
 
 # ============================================================================
 # SERWER FASTAPI

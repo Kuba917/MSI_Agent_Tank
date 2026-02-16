@@ -124,6 +124,8 @@ class ANFISDQN(nn.Module):
         
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """x: (batch, n_inputs) → (batch, n_outputs)"""
+        assert (x.abs() > 1.0).any(), "Cos sie zjebalo z normalizacja i weszlo do ANFISa"
+
         batch = x.size(0)
 
         # Layer 1: Fuzzify → (batch, n_rules, n_inputs).

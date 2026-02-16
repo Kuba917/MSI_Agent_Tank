@@ -605,6 +605,12 @@ def main() -> int:
     args = parse_args()
     ensure_maps_exist(args.maps)
     configure_engine(args)
+    
+    # Usuń stary klucz eksperymentu aby każdy run tworzył nowy eksperyment w CometML
+    comet_key_path = AGENTS_DIR / "comet_key.txt"
+    if comet_key_path.exists():
+        comet_key_path.unlink()
+        print(f"Removed old CometML experiment key - new experiment will be created.")
 
     weights = FitnessWeights(
         win=args.w_win,
@@ -667,6 +673,23 @@ def main() -> int:
     finally:
         if persistent_processes:
             stop_processes(persistent_processes)
+        
+        # Zakończ eksperyment CometML po wszystkich epizodach
+        comet_key_path = AGENTS_DIR / "comet_key.txt"
+        if comet_key_path.exists():
+            try:
+                import comet_ml
+                with open(comet_key_path, 'r') as f:
+                    experiment_key = f.read().strip()
+                from comet_ml import ExistingExperiment
+                exp = ExistingExperiment(
+                    api_key="L2PzW7c3YM3WqM5hNfCsloeLZ",
+                    previous_experiment=experiment_key
+                )
+                exp.end()
+                print("CometML experiment ended successfully.")
+            except Exception as e:
+                print(f"CometML cleanup error (non-critical): {e}")
 
 
 if __name__ == "__main__":
