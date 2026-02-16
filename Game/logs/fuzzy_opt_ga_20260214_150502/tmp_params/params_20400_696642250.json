@@ -1,0 +1,20 @@
+{
+  "near_distance": 37.51589578603769,
+  "mid_distance": 65.65753076177467,
+  "far_distance": 106.06930770821211,
+  "preferred_distance": 55.260767068733315,
+  "low_hp_ratio": 0.361385664471887,
+  "aggression": 0.9949907774410999,
+  "retreat_bias": 0.5592726315905395,
+  "heading_gain": 1.9703641374529959,
+  "barrel_gain": 1.8367737304891802,
+  "distance_hold_gain": 1.7583997122010462,
+  "advance_speed": 0.6897804396488489,
+  "retreat_speed": -0.6769897838392798,
+  "explore_speed": 0.6083384927120618,
+  "explore_turn": 18.65646439695706,
+  "fire_alignment_deg": 9.02809135447185,
+  "fire_threshold": 0.5053942295708692,
+  "scan_speed": 15.990628403033963,
+  "scan_arc": 34.73346251835366
+}

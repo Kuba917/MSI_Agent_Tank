@@ -52,7 +52,7 @@ MAP_SEED = "advanced_road_trees.csv"
 TARGET_FPS = 60
 SCALE = 5  # Współczynnik skalowania grafiki (wszystko będzie 4x większe)
 TILE_SIZE = 10  # To MUSI być zgodne z domyślną wartością w map_loader.py
-AGENT_NAME = "random_agent.py" # Nazwa pliku agenta
+AGENT_NAME = "Agent_1.py" # Nazwa pliku agenta
 
 ASSETS_BASE_PATH = os.path.join(current_file_dir, 'frontend', 'assets')
 TILE_ASSETS_PATH = os.path.join(ASSETS_BASE_PATH, 'tiles')

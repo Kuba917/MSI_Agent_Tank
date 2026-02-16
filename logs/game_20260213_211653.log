@@ -1,0 +1,4 @@
+21:16:53 | INFO     | TICK:0000 | GameCore initialized with session ID: 7c0ac212
+21:16:54 | INFO     | TICK:0000 | Starting game cleanup...
+21:16:54 | INFO     | TICK:0000 | Performance report: {'session_id': '20260213_211653', 'total_ticks': 0, 'average_tick_time': 0, 'min_tick_time': 0, 'max_tick_time': 0, 'agent_response_times': {}, 'game_stats': {'tanks_spawned': 0, 'tanks_killed': 0, 'shots_fired': 0, 'hits_landed': 0, 'powerups_spawned': 0, 'powerups_collected': 0, 'collisions': 0}}
+21:16:54 | INFO     | TICK:0000 | Game cleanup completed
