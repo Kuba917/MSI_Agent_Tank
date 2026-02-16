@@ -7,6 +7,12 @@ computes fitness, and writes per-match CSV + summary JSON.
 
 from __future__ import annotations
 
+try:
+    import comet_ml
+    COMET_AVAILABLE = True
+except ImportError:
+    COMET_AVAILABLE = False
+
 import argparse
 import csv
 import json
@@ -20,6 +26,10 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+API_KEY = "L2PzW7c3YM3WqM5hNfCsloeLZ"
+PROJECT_NAME = "msi-projekt"
+WORKSPACE = "kluski777"
 
 
 THIS_FILE = Path(__file__).resolve()
@@ -265,7 +275,7 @@ def start_agent_group(
 
     for i in range(count):
         port = start_port + i
-        cmd = [sys.executable, str(script_path), "--port", str(port), *extra_args]
+        cmd = [sys.executable, "-u", str(script_path), "--port", str(port), *extra_args]
 
         # Optional: some agent scripts expose --name, others don't.
         if set_agent_names:
@@ -602,6 +612,7 @@ def write_outputs(
 
 
 def main() -> int:
+    global COMET_AVAILABLE
     args = parse_args()
     ensure_maps_exist(args.maps)
     configure_engine(args)
@@ -610,7 +621,36 @@ def main() -> int:
     comet_key_path = AGENTS_DIR / "comet_key.txt"
     if comet_key_path.exists():
         comet_key_path.unlink()
-        print(f"Removed old CometML experiment key - new experiment will be created.")
+
+    if COMET_AVAILABLE:
+        try:
+            experiment = comet_ml.start(
+                api_key=API_KEY,
+                project_name=PROJECT_NAME,
+                workspace=WORKSPACE
+            )
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            experiment.set_name(f"ANFIS_Training_{timestamp}")
+            
+            # Zapisz klucz eksperymentu dla agentów
+            with open(comet_key_path, 'w') as f:
+                f.write(experiment.get_key())
+            
+            # Loguj kod i parametry tylko raz z poziomu runnera
+            experiment.log_code(folder=str(AGENTS_DIR))
+            experiment.log_parameters({
+                "episodes": args.episodes,
+                "maps": args.maps,
+                "base_seed": args.base_seed,
+                "team_a": args.team_a,
+                "team_b": args.team_b,
+                "eval_team": args.eval_team,
+                "restart_agents_per_game": args.restart_agents_per_game,
+            })
+            print(f"CometML initialized: {experiment.url}")
+        except Exception as e:
+            print(f"CometML init failed: {e}")
+            COMET_AVAILABLE = False
 
     weights = FitnessWeights(
         win=args.w_win,
@@ -676,20 +716,23 @@ def main() -> int:
         
         # Zakończ eksperyment CometML po wszystkich epizodach
         comet_key_path = AGENTS_DIR / "comet_key.txt"
-        if comet_key_path.exists():
+        if comet_key_path.exists() and COMET_AVAILABLE:
             try:
-                import comet_ml
                 with open(comet_key_path, 'r') as f:
                     experiment_key = f.read().strip()
                 from comet_ml import ExistingExperiment
                 exp = ExistingExperiment(
-                    api_key="L2PzW7c3YM3WqM5hNfCsloeLZ",
-                    previous_experiment=experiment_key
+                    api_key=API_KEY,
+                    previous_experiment=experiment_key,
+                    display_summary_level=0 # Quiet mode
                 )
                 exp.end()
                 print("CometML experiment ended successfully.")
             except Exception as e:
                 print(f"CometML cleanup error (non-critical): {e}")
+        
+        if comet_key_path.exists():
+            comet_key_path.unlink()
 
 
 if __name__ == "__main__":

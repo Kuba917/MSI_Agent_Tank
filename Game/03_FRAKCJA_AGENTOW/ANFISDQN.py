@@ -113,6 +113,7 @@ class ANFISDQN(nn.Module):
             mf_type: Literal["gaussian", "triangular", "bell"] = "gaussian", 
         ):
         super().__init__()
+        print('ANFISDQN initialized')
         self.n_inputs = n_inputs
         self.n_rules = n_rules
         self.n_outputs = n_outputs
@@ -124,7 +125,7 @@ class ANFISDQN(nn.Module):
         
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """x: (batch, n_inputs) → (batch, n_outputs)"""
-        assert (x.abs() > 1.0).any(), "Cos sie zjebalo z normalizacja i weszlo do ANFISa"
+        assert (x.abs() <= 1.0).all(), "Input values must be normalized to [-1, 1] range"
 
         batch = x.size(0)
 

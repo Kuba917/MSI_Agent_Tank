@@ -9,6 +9,11 @@ Uruchomienie:
     python dqn_agent.py --port 8001 --name DQNAgent_1
 """
 
+try:
+    import comet_ml
+    COMET_AVAILABLE = True
+except ImportError:
+    COMET_AVAILABLE = False
 import argparse
 import sys
 import os
@@ -19,11 +24,6 @@ from collections import deque
 from typing import Dict, Any, List, Tuple, Optional
 from ANFISDQN import ANFISDQN
 
-try:
-    import comet_ml
-    COMET_AVAILABLE = True
-except ImportError:
-    COMET_AVAILABLE = False
 
 # --- PyTorch Imports ---
 try:
@@ -157,84 +157,57 @@ class DQNAgent:
         self.experiment = None
 
         # Ładowanie modelu jeśli istnieje
-        if os.path.exists(MODEL_PATH):
-            try:
-                checkpoint = torch.load(MODEL_PATH, map_location=self.device)
-                # Obsługa nowego formatu zapisu (słownik ze stanem)
-                if isinstance(checkpoint, dict) and 'model_state_dict' in checkpoint:
-                    self.policy_net.load_state_dict(checkpoint['model_state_dict'])
-                    self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-                    self.steps_done = checkpoint.get('steps_done', 0)
-                else:
-                    self.policy_net.load_state_dict(checkpoint)
+        # if os.path.exists(MODEL_PATH):
+        #     try:
+        #         checkpoint = torch.load(MODEL_PATH, map_location=self.device)
+        #         # Obsługa nowego formatu zapisu (słownik ze stanem)
+        #         if isinstance(checkpoint, dict) and 'model_state_dict' in checkpoint:
+        #             self.policy_net.load_state_dict(checkpoint['model_state_dict'])
+        #             self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        #             self.steps_done = checkpoint.get('steps_done', 0)
+        #         else:
+        #             self.policy_net.load_state_dict(checkpoint)
                 
-                self.target_net.load_state_dict(self.policy_net.state_dict())
-                print(f"[{self.name}] Załadowano model z {MODEL_PATH} (Kroki: {self.steps_done})")
-            except Exception as e:
-                print(f"[{self.name}] Błąd ładowania modelu: {e}")
+        #         self.target_net.load_state_dict(self.policy_net.state_dict())
+        #         print(f"[{self.name}] Załadowano model z {MODEL_PATH} (Kroki: {self.steps_done})")
+        #     except Exception as e:
+        #         print(f"[{self.name}] Błąd ładowania modelu: {e}")
 
     def init_comet(self):
         """Inicjalizacja Comet ML - każdy run train_runner.py tworzy nowy eksperyment."""
-        if COMET_AVAILABLE:
-            try:
-                from datetime import datetime
-                
-                # Sprawdź czy istnieje zapisany klucz eksperymentu z tego samego uruchomienia
-                experiment_key = None
-                if os.path.exists(COMET_KEY_PATH):
-                    with open(COMET_KEY_PATH, 'r') as f:
-                        previous_key = f.read().strip()
-                    
-                    # Wznów istniejący eksperyment (dla innych agentów w tym samym run)
-                    from comet_ml import ExistingExperiment
-                    try:
-                        self.experiment = ExistingExperiment(
-                            api_key=API_KEY,
-                            previous_experiment=previous_key
-                        )
-                        print(f"[{self.name}] Comet ML resumed experiment: {previous_key}")
-                        experiment_key = previous_key
-                    except:
-                        # Jeśli nie udało się wznowić, utwórz nowy
-                        pass
-                
-                if not experiment_key:
-                    # Utwórz nowy eksperyment z timestamp
-                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                    self.experiment = comet_ml.start(
-                        api_key=API_KEY,
-                        project_name=PROJECT_NAME,
-                        workspace=WORKSPACE
-                    )
-                    self.experiment.set_name(f"ANFIS_Training_{timestamp}")
-                    
-                    # Zapisz klucz eksperymentu dla innych agentów w tym samym run
-                    with open(COMET_KEY_PATH, 'w') as f:
-                        f.write(self.experiment.get_key())
-                    
-                    # Loguj kod i parametry tylko raz (przy tworzeniu nowego eksperymentu)
-                    self.experiment.log_code(folder=current_dir)
-                    self.experiment.log_parameters({
-                        "batch_size": BATCH_SIZE,
-                        "gamma": GAMMA,
-                        "lr": LR,
-                        "eps_start": EPS_START,
-                        "eps_end": EPS_END,
-                        "eps_decay": EPS_DECAY,
-                        "memory_size": MEMORY_SIZE,
-                        "target_update": TARGET_UPDATE,
-                        "frame_skip": FRAME_SKIP,
-                        "input_dim": self.input_dim,
-                        "num_actions": NUM_ACTIONS,
-                        "anfis_rules": 50
-                    })
-                    print(f"[{self.name}] Comet ML initialized (New Experiment: {timestamp}).")
-                
-                print(f"[{self.name}] Comet ML Experiment URL: {self.experiment.url}")
-            except Exception as e:
-                print(f"[{self.name}] Comet ML init failed (logging disabled): {e}")
-                import traceback
-                traceback.print_exc()
+        if not COMET_AVAILABLE:
+            return
+
+        try:
+            if os.path.exists(COMET_KEY_PATH):
+                key = open(COMET_KEY_PATH).read().strip()
+                try:
+                    self.experiment = comet_ml.ExistingExperiment(api_key=API_KEY, previous_experiment=key)
+                    print(f"[{self.name}] Comet resumed: {key}")
+                    return
+                except:
+                    pass
+
+            # Fallback for standalone run
+            from datetime import datetime
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            self.experiment = comet_ml.start(api_key=API_KEY, project_name=PROJECT_NAME, workspace=WORKSPACE)
+            self.experiment.set_name(f"ANFIS_Training_{timestamp}")
+            
+            open(COMET_KEY_PATH, 'w').write(self.experiment.get_key())
+            self.experiment.log_code(folder=current_dir)
+            self.experiment.log_parameters({
+                "batch_size": BATCH_SIZE, "gamma": GAMMA, "lr": LR,
+                "eps_start": EPS_START, "eps_end": EPS_END, "eps_decay": EPS_DECAY,
+                "memory_size": MEMORY_SIZE, "target_update": TARGET_UPDATE,
+                "frame_skip": FRAME_SKIP, "input_dim": self.input_dim,
+                "num_actions": NUM_ACTIONS, "anfis_rules": 50
+            })
+            print(f"[{self.name}] Comet new experiment: {timestamp} | {self.experiment.url}")
+
+        except Exception as e:
+            print(f"[{self.name}] Comet init failed (logging disabled): {e}")
+            self.experiment = None
 
     def normalize_angle(self, angle):
         """Sprowadza kąt do zakresu [-180, 180]."""
@@ -286,7 +259,7 @@ class DQNAgent:
             aimed_at_friend,
             *encode_nearest(sensor_data['seen_obstacles'], heading),
             *encode_nearest(
-                [t for t in sensor_data['seen_terrains'] if t['terrain_type'] in ('Water', 'PotholeRoad')],
+                [t for t in sensor_data['seen_terrains'] if t['type'] in ('Water', 'PotholeRoad')],
                 heading
             ),
         ]
@@ -507,6 +480,11 @@ class DQNAgent:
                 self.last_fire_tick = current_tick
 
             self.last_action_cmd = cmd
+            
+            # Log periodic summary of actions
+            if current_tick % 100 == 0:
+                print(f"[{self.name}] Tick {current_tick} | Action: MV={move_val}, HT={hull_val}, BT={barrel_val}, FIRE={fire_val}")
+                
             return cmd
         except Exception as e:
             print(f"[{self.name}] ERROR in get_action: {e}")
@@ -614,4 +592,4 @@ if __name__ == "__main__":
     agent.name = args.name
     agent.init_comet() # Inicjalizacja logowania dopiero po ustawieniu nazwy
     print(f"Starting DQN Agent {agent.name} on port {args.port}")
-    uvicorn.run(app, host=args.host, port=args.port)
+    uvicorn.run(app, host=args.host, port=args.port, log_level="warning", access_log=False)
