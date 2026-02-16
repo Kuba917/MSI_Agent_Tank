@@ -1,8 +1,8 @@
 from comet_ml import Experiment
 
-API_KEY = "RoqFxUQ2dJHm8RjW1YatD0VQw" 
-PROJECT_NAME = "MSI_Tank_DQN"
-WORKSPACE = "jbuka"    
+API_KEY = "L2PzW7c3YM3WqM5hNfCsloeLZ" 
+PROJECT_NAME = "msi-projekt"
+WORKSPACE = "kluski777"
 
 experiment = Experiment(
         api_key=API_KEY,

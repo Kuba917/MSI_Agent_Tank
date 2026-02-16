@@ -1,0 +1,38 @@
+{
+  "generated_at": "20260216_141805",
+  "config": {
+    "episodes": 20,
+    "maps": [
+      "advanced_road_trees.csv"
+    ],
+    "base_seed": 42,
+    "agent_team1": "/home/mamusiaarusia/pollodzka/sem2/msi/MSI_2/projekt/MSI_project/MSI_Agent_Tank/Game/03_FRAKCJA_AGENTOW/random_agent.py",
+    "agent_team2": "/home/mamusiaarusia/pollodzka/sem2/msi/MSI_2/projekt/MSI_project/MSI_Agent_Tank/Game/03_FRAKCJA_AGENTOW/random_agent.py",
+    "team_a": 5,
+    "team_b": 5,
+    "base_port": 8001,
+    "agent_host": "127.0.0.1",
+    "agent_timeout": 1.0,
+    "eval_team": 1,
+    "restart_agents_per_game": true,
+    "log_level": "WARNING",
+    "weights": {
+      "win": 200.0,
+      "loss": -200.0,
+      "draw": 0.0,
+      "kill": 30.0,
+      "damage": 0.25,
+      "alive": 10.0,
+      "enemy_alive": -10.0
+    }
+  },
+  "results": {
+    "matches_total": 20,
+    "matches_successful": 20,
+    "avg_fitness_successful": -197.5
+  },
+  "files": {
+    "csv": "/home/mamusiaarusia/pollodzka/sem2/msi/MSI_2/projekt/MSI_project/MSI_Agent_Tank/Game/logs/training_run_20260216_141805.csv",
+    "json": "/home/mamusiaarusia/pollodzka/sem2/msi/MSI_2/projekt/MSI_project/MSI_Agent_Tank/Game/logs/training_run_20260216_141805.json"
+  }
+}

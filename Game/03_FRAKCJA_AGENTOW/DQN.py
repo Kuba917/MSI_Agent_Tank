@@ -17,6 +17,7 @@ import math
 import numpy as np
 from collections import deque
 from typing import Dict, Any, List, Tuple, Optional
+from ANFISDQN import ANFISDQN
 
 try:
     from comet_ml import Experiment, ExistingExperiment
@@ -50,7 +51,7 @@ import uvicorn
 # ============================================================================
 
 BATCH_SIZE = 128    # Zwiększono dla stabilniejszego uczenia
-GAMMA = 0.95        # Discount factor
+GAMMA = 0.99        # Discount factor
 EPS_START = 1.0     # Początkowa losowość
 EPS_END = 0.05      # Końcowa losowość
 EPS_DECAY = 15000   # Znacznie wolniejszy zanik losowości (więcej eksploracji)
@@ -62,11 +63,11 @@ COMET_KEY_PATH = os.path.join(current_dir, "comet_key.txt")
 FRAME_SKIP = 4      # Podejmuj decyzję co 4 klatki (ok. 15 razy na sekundę przy 60 FPS)
 
 # Konfiguracja Comet ML
-API_KEY = "RoqFxUQ2dJHm8RjW1YatD0VQw"
-PROJECT_NAME = "MSI_Tank_DQN"
-WORKSPACE = "jbuka"
+API_KEY = "L2PzW7c3YM3WqM5hNfCsloeLZ"
+PROJECT_NAME = "msi-projekt"
+WORKSPACE = "kluski777"
 
-# Definicja akcji niskopoziomowych (Kombinatoryka)
+# Definicja akcji niskopoziomowych (Kombinatoryka) - poki co niech zostana hardkodowane, ale czy my wiemy czy to jest duzo czy malo chyba nie.
 # Move (3) * Hull (3) * Barrel (3) * Fire (2) = 54 akcje
 MOVES = [0.0, 100.0, -100.0]  # Stop, Przód, Tył
 TURNS = [0.0, -15.0, 15.0]    # Brak, Lewo, Prawo
@@ -79,7 +80,7 @@ NUM_ACTIONS = 3 * 3 * 3 * 2  # 54
 # ============================================================================
 
 class DQN(nn.Module):
-    def __init__(self, input_dim, output_dim):
+    def __init__(self, input_dim, output_dim): # najgorsze jest to ze to nie jest ANFIS
         super(DQN, self).__init__()
         self.fc1 = nn.Linear(input_dim, 128)
         self.fc2 = nn.Linear(128, 128)
@@ -112,7 +113,7 @@ class ReplayMemory:
 # ============================================================================
 
 class ActionCommand(BaseModel):
-    barrel_rotation_angle: float = 0.0
+    barrel_rotation_angle: float = 0.0      # -> Wartosc ciagla
     heading_rotation_angle: float = 0.0
     move_speed: float = 0.0
     ammo_to_load: str = None
@@ -131,8 +132,9 @@ class DQNAgent:
         # [MyHP, MyAmmo, EnemyDist, EnemyAngle, EnemyHP, PowerupDist, PowerupAngle, AimedAtFriend, ObsDist, ObsAngle, DangDist, DangAngle]
         self.input_dim = 12
         
-        self.policy_net = DQN(self.input_dim, NUM_ACTIONS).to(self.device)
-        self.target_net = DQN(self.input_dim, NUM_ACTIONS).to(self.device)
+        # generalnie bym rozdzielil akcje na te ktore sa od siebie niezalezne
+        self.policy_net = ANFISDQN(self.input_dim, NUM_ACTIONS).to(self.device)
+        self.target_net = ANFISDQN(self.input_dim, NUM_ACTIONS).to(self.device)
         self.target_net.load_state_dict(self.policy_net.state_dict())
         self.target_net.eval()
         
@@ -203,11 +205,9 @@ class DQNAgent:
 
     def normalize_angle(self, angle):
         """Sprowadza kąt do zakresu [-180, 180]."""
-        while angle > 180: angle -= 360
-        while angle < -180: angle += 360
-        return angle
-
-    def get_state_vector(self, my_status, sensor_data, enemies_remaining):
+        return ((angle + 180) % 360) - 180
+    
+    def get_state_vector(self, my_status, sensor_data, enemies_remaining): # chyba wszystko jest normalizowane
         """Przetwarza surowe dane JSON na wektor wejściowy sieci."""
         my_pos = my_status.get('position', {'x': 0, 'y': 0})
         my_heading = my_status.get('heading', 0)
@@ -243,6 +243,7 @@ class DQNAgent:
         pup_dist = 1.0
         pup_angle = 0.0
         
+        # imo w powerupach logika jest bledna, jak nie istieje jeszcze zaden powerup (mozna by zalozyc ze jednak istnieje)
         if powerups:
             nearest_pup = min(powerups, key=lambda p: math.hypot(p.get('position', {}).get('x', 0) - my_pos['x'], p.get('position', {}).get('y', 0) - my_pos['y']))
             dx = nearest_pup.get('position', {}).get('x', 0) - my_pos['x']
@@ -340,7 +341,7 @@ class DQNAgent:
         else:
             return torch.tensor([[random.randrange(NUM_ACTIONS)]], device=self.device, dtype=torch.long)
 
-    def decode_action(self, action_idx: int) -> Tuple[float, float, float, bool]:
+    def decode_action(self, action_idx: int) -> Tuple[float, float, float, bool]: #! IMO oddzielnie to powinno isc
         """Zamienia indeks akcji (0-53) na konkretne wartości sterowania."""
         # Dekodowanie od końca (jak system liczbowy)
         fire_idx = action_idx % 2

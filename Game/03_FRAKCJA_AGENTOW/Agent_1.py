@@ -167,7 +167,7 @@ class RandomAgent:
                 self.move_timer = random.randint(10, 40)
             move_speed = self.current_move_speed
 
-            # --- Skanowanie radarem (lufą) w trakcie jazdy ---
+            # --- Skanowanie radarem (lufą) w trakcie jazdy --- -- nie=glupie
             if my_barrel_rel > 45.0:
                 self.barrel_scan_direction = -1.0
             elif my_barrel_rel < -45.0:
