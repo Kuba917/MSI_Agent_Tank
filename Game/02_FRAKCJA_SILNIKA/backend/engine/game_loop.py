@@ -38,6 +38,7 @@ Configurable Team Sizes:
 ============================================================================
 """
 
+import os
 import random
 import time
 from dataclasses import dataclass, field
@@ -71,7 +72,10 @@ TEAM_A_NBR = 5  # Number of tanks in Team A (Team 1)
 TEAM_B_NBR = 5  # Number of tanks in Team B (Team 2)
 
 # Base port for agent servers (tank_1_1 -> 8001, tank_1_2 -> 8002, etc.)
-AGENT_BASE_PORT = 8001
+try:
+    AGENT_BASE_PORT = max(1, int(os.environ.get("AGENT_BASE_PORT", "8001")))
+except ValueError:
+    AGENT_BASE_PORT = 8001
 AGENT_HOST = "127.0.0.1"
 AGENT_TIMEOUT = 1.0  # Seconds to wait for agent response
 

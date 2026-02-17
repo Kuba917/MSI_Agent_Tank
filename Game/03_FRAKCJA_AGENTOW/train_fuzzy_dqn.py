@@ -19,6 +19,7 @@ import ast
 import argparse
 import csv
 import json
+import os
 import re
 import subprocess
 import sys
@@ -33,6 +34,10 @@ import urllib.request
 THIS_DIR = Path(__file__).resolve().parent
 ENGINE_DIR = THIS_DIR.parent / "02_FRAKCJA_SILNIKA"
 AGENT_DIR = THIS_DIR
+KILL_RE = re.compile(
+    r"Tank\s+tank_(?P<victim_team>[12])_(?P<victim_idx>\d+)\s+"
+    r"killed by\s+tank_(?P<killer_team>[12])_(?P<killer_idx>\d+)\s+\(projectile\)"
+)
 
 
 def build_args() -> argparse.Namespace:
@@ -58,7 +63,7 @@ def build_args() -> argparse.Namespace:
     )
 
     parser.add_argument("--max-ticks", type=int, default=5000)
-    parser.add_argument("--log-level", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], default="WARNING")
+    parser.add_argument("--log-level", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], default="INFO")
 
     parser.add_argument("--restart-agents-every", type=int, default=0, help="Restart agent processes every N episodes (0 = keep alive).")
     parser.add_argument("--start-delay", type=float, default=4.0)
@@ -66,8 +71,18 @@ def build_args() -> argparse.Namespace:
     parser.add_argument("--episode-delay", type=float, default=0.5)
 
     parser.add_argument("--selfplay-start-episode", type=int, default=0, help="Enable self-play opponents from this episode (1-based, 0 = disabled).")
+    parser.add_argument(
+        "--selfplay-start-ratio",
+        type=float,
+        default=0.40,
+        help=(
+            "If --selfplay-start-episode is 0 and --selfplay-opponents > 0, "
+            "self-play starts after this fraction of total episodes "
+            "(e.g. 0.40 = first 40%% vs baseline, then self-play)."
+        ),
+    )
     parser.add_argument("--selfplay-opponents", type=int, default=0, help="How many non-learning agents to run as DQN inference in self-play stage.")
-    parser.add_argument("--selfplay-model-path", type=str, default="", help="Checkpoint path for self-play opponents. Default: first learner checkpoint.")
+    parser.add_argument("--selfplay-model-path", type=str, default="", help="Checkpoint path for self-play opponents. Default: first learner best checkpoint.")
 
     parser.add_argument("--warmup-steps", type=int, default=512)
     parser.add_argument("--batch-size", type=int, default=128)
@@ -97,6 +112,18 @@ def terminate_processes(processes: List[subprocess.Popen]) -> None:
             proc.wait(timeout=remaining)
         except subprocess.TimeoutExpired:
             proc.kill()
+
+
+def dead_agent_processes(
+    processes: List[subprocess.Popen],
+    base_port: int,
+) -> List[Tuple[int, int]]:
+    dead: List[Tuple[int, int]] = []
+    for idx, proc in enumerate(processes):
+        rc = proc.poll()
+        if rc is not None:
+            dead.append((base_port + idx, int(rc)))
+    return dead
 
 
 def wait_for_agents_ready(
@@ -149,7 +176,14 @@ def latest_summary_file() -> Optional[Path]:
 
 def parse_summary_metrics(path: Path) -> Dict[str, Any]:
     text = path.read_text(encoding="utf-8", errors="ignore")
+    run_id = path.stem.replace("summary_", "")
     metrics: Dict[str, Any] = {
+        "run_id": run_id,
+        "game_log_file": None,
+        "kill_breakdown_available": False,
+        "kill_lines": 0,
+        "friendly_kills": 0,
+        "enemy_kills": 0,
         "shots_fired": None,
         "hits_landed": None,
         "tanks_killed": None,
@@ -178,6 +212,10 @@ def parse_summary_metrics(path: Path) -> Dict[str, Any]:
         if match:
             metrics[key] = int(match.group(1))
 
+    session_match = re.search(r"Session ID:\s*([A-Za-z0-9_:-]+)", text)
+    if session_match:
+        metrics["run_id"] = session_match.group(1).strip()
+
     result_line = None
     for line in reversed(text.splitlines()):
         stripped = line.strip()
@@ -202,6 +240,26 @@ def parse_summary_metrics(path: Path) -> Dict[str, Any]:
                     metrics["mobility_label"] = behavior.get("mobility_label")
         except Exception:
             pass
+
+    game_log_path = path.parent / f"game_{metrics['run_id']}.log"
+    if game_log_path.exists():
+        metrics["kill_breakdown_available"] = True
+        metrics["game_log_file"] = game_log_path.name
+        game_log_text = game_log_path.read_text(encoding="utf-8", errors="ignore")
+        friendly = 0
+        enemy = 0
+        kill_lines = 0
+        for match in KILL_RE.finditer(game_log_text):
+            kill_lines += 1
+            victim_team = int(match.group("victim_team"))
+            killer_team = int(match.group("killer_team"))
+            if victim_team == killer_team:
+                friendly += 1
+            else:
+                enemy += 1
+        metrics["kill_lines"] = kill_lines
+        metrics["friendly_kills"] = friendly
+        metrics["enemy_kills"] = enemy
 
     return metrics
 
@@ -287,30 +345,69 @@ def build_map_schedule(args: argparse.Namespace) -> List[str]:
 
 
 def planned_selfplay_opponents(args: argparse.Namespace, episode: int, non_learner_count: int) -> int:
-    if args.selfplay_start_episode <= 0:
+    start_episode = effective_selfplay_start_episode(args)
+    if start_episode <= 0:
         return 0
-    if episode < args.selfplay_start_episode:
+    if episode < start_episode:
         return 0
     return max(0, min(int(args.selfplay_opponents), non_learner_count))
 
 
+def effective_selfplay_start_episode(args: argparse.Namespace) -> int:
+    explicit = int(args.selfplay_start_episode)
+    if explicit > 0:
+        return explicit
+    if int(args.selfplay_opponents) <= 0:
+        return 0
+
+    ratio = float(args.selfplay_start_ratio)
+    ratio = max(0.0, min(1.0, ratio))
+    warmup_episodes = int(args.episodes * ratio)
+    return max(1, warmup_episodes + 1)
+
+
+def effective_learner_count(args: argparse.Namespace) -> int:
+    # Keep learners on Team 1 only; Team 2 is reserved for baseline/self-play opponents.
+    return max(0, min(int(args.learning_agents), int(args.team_size)))
+
+
+def normalize_path(path_value: str) -> Path:
+    path = Path(path_value).expanduser()
+    if not path.is_absolute():
+        path = (Path.cwd() / path).resolve()
+    return path
+
+
+def baseline_agent_script_for_episode(args: argparse.Namespace, episode: int, team: int) -> str:
+    # Keep Team 1 allies stable, use random-only opponents in warm-up.
+    if team == 2 and int(args.selfplay_opponents) > 0 and episode < effective_selfplay_start_episode(args):
+        return "random_agent.py"
+    return "Agent_1.py"
+
+
 def resolve_selfplay_model_path(args: argparse.Namespace, model_path: Path, learner_count: int) -> Path:
     if args.selfplay_model_path.strip():
-        return Path(args.selfplay_model_path)
-    return learner_model_path(model_path, 0, max(1, learner_count))
+        return normalize_path(args.selfplay_model_path)
+
+    first_learner_path = learner_model_path(model_path, 0, max(1, learner_count))
+    # Use "best" checkpoint as self-play opponent to fine-tune against a strong policy.
+    return model_path_with_tag(first_learner_path, "best")
 
 
 def launch_agents(args: argparse.Namespace, episode: int) -> Tuple[List[subprocess.Popen], Dict[str, Any]]:
     total_agents = args.team_size * 2
-    learner_count = max(0, min(args.learning_agents, total_agents))
-    non_learner_count = total_agents - learner_count
-    selfplay_requested = planned_selfplay_opponents(args, episode, non_learner_count)
+    learner_count = effective_learner_count(args)
+    # Self-play opponents are placed only on Team 2 (the opposing team).
+    selfplay_slots = max(0, int(args.team_size))
+    selfplay_requested = planned_selfplay_opponents(args, episode, selfplay_slots)
 
-    model_path = Path(args.model_path)
+    model_path = normalize_path(args.model_path)
     model_path.parent.mkdir(parents=True, exist_ok=True)
 
     selfplay_model_path = resolve_selfplay_model_path(args, model_path, learner_count)
     selfplay_enabled = selfplay_requested > 0 and selfplay_model_path.exists()
+    baseline_team1_script = baseline_agent_script_for_episode(args, episode, team=1)
+    baseline_team2_script = baseline_agent_script_for_episode(args, episode, team=2)
 
     processes: List[subprocess.Popen] = []
     launch_info: Dict[str, Any] = {
@@ -318,6 +415,8 @@ def launch_agents(args: argparse.Namespace, episode: int) -> Tuple[List[subproce
         "selfplay_requested": selfplay_requested,
         "selfplay": 0,
         "baselines": 0,
+        "baseline_team1_script": baseline_team1_script,
+        "baseline_team2_script": baseline_team2_script,
         "selfplay_enabled": selfplay_enabled,
         "selfplay_model_path": str(selfplay_model_path),
     }
@@ -325,8 +424,9 @@ def launch_agents(args: argparse.Namespace, episode: int) -> Tuple[List[subproce
     for idx in range(total_agents):
         port = args.base_port + idx
         seed_for_agent = int(args.seed) + idx
+        team = 1 if idx < args.team_size else 2
 
-        if idx < learner_count:
+        if team == 1 and idx < learner_count:
             model_for_agent = learner_model_path(model_path, idx, learner_count)
             best_for_agent = model_path_with_tag(model_for_agent, "best")
             final_for_agent = model_path_with_tag(model_for_agent, "final")
@@ -366,8 +466,8 @@ def launch_agents(args: argparse.Namespace, episode: int) -> Tuple[List[subproce
                 str(seed_for_agent),
             ]
         else:
-            non_learner_idx = idx - learner_count
-            use_selfplay = selfplay_enabled and non_learner_idx < selfplay_requested
+            team2_idx = idx - args.team_size
+            use_selfplay = team == 2 and selfplay_enabled and team2_idx < selfplay_requested
             if use_selfplay:
                 launch_info["selfplay"] += 1
                 cmd = [
@@ -390,9 +490,10 @@ def launch_agents(args: argparse.Namespace, episode: int) -> Tuple[List[subproce
                 ]
             else:
                 launch_info["baselines"] += 1
+                baseline_script = baseline_team1_script if team == 1 else baseline_team2_script
                 cmd = [
                     sys.executable,
-                    "Agent_1.py",
+                    baseline_script,
                     "--host",
                     "127.0.0.1",
                     "--port",
@@ -441,8 +542,11 @@ def run_engine_episode(args: argparse.Namespace, map_seed: str) -> subprocess.Co
     if args.max_ticks > 0:
         cmd.extend(["--max-ticks", str(args.max_ticks)])
 
+    env = os.environ.copy()
+    env["AGENT_BASE_PORT"] = str(int(args.base_port))
+
     if args.verbose:
-        return subprocess.run(cmd, cwd=str(ENGINE_DIR), check=False)
+        return subprocess.run(cmd, cwd=str(ENGINE_DIR), check=False, env=env)
 
     return subprocess.run(
         cmd,
@@ -450,6 +554,7 @@ def run_engine_episode(args: argparse.Namespace, map_seed: str) -> subprocess.Co
         check=False,
         text=True,
         capture_output=True,
+        env=env,
     )
 
 
@@ -486,6 +591,10 @@ def summarize_episode_reports(episode_reports: List[Dict[str, Any]]) -> Dict[str
     tanks_killed_total = 0
     projectile_deaths_total = 0
     non_projectile_deaths_total = 0
+    friendly_kills_total = 0
+    enemy_kills_total = 0
+    kill_lines_total = 0
+    episodes_with_kill_breakdown = 0
 
     turn_ratios: List[float] = []
     move_ratios: List[float] = []
@@ -512,6 +621,11 @@ def summarize_episode_reports(episode_reports: List[Dict[str, Any]]) -> Dict[str
         tanks_killed_total += int(row.get("tanks_killed") or 0)
         projectile_deaths_total += int(row.get("projectile_deaths") or 0)
         non_projectile_deaths_total += int(row.get("non_projectile_deaths") or 0)
+        friendly_kills_total += int(row.get("friendly_kills") or 0)
+        enemy_kills_total += int(row.get("enemy_kills") or 0)
+        kill_lines_total += int(row.get("kill_lines") or 0)
+        if bool(row.get("kill_breakdown_available")):
+            episodes_with_kill_breakdown += 1
 
         tr = _to_float(row.get("turn_ratio"))
         mr = _to_float(row.get("move_command_ratio"))
@@ -529,6 +643,12 @@ def summarize_episode_reports(episode_reports: List[Dict[str, Any]]) -> Dict[str
     total_deaths = projectile_deaths_total + non_projectile_deaths_total
     projectile_share = (projectile_deaths_total / total_deaths) if total_deaths > 0 else 0.0
     hit_accuracy = (hits_total / shots_total) if shots_total > 0 else 0.0
+    counted_projectile_kills = friendly_kills_total + enemy_kills_total
+    friendly_fire_ratio = (
+        (friendly_kills_total / counted_projectile_kills)
+        if counted_projectile_kills > 0
+        else None
+    )
 
     def _mean(values: List[float]) -> Optional[float]:
         if not values:
@@ -548,8 +668,15 @@ def summarize_episode_reports(episode_reports: List[Dict[str, Any]]) -> Dict[str
         "tanks_killed_total": tanks_killed_total,
         "projectile_deaths_total": projectile_deaths_total,
         "non_projectile_deaths_total": non_projectile_deaths_total,
+        "friendly_kills_total": friendly_kills_total,
+        "enemy_kills_total": enemy_kills_total,
+        "kill_lines_total": kill_lines_total,
+        "episodes_with_kill_breakdown": episodes_with_kill_breakdown,
         "hit_accuracy": round(hit_accuracy, 4),
         "projectile_death_share": round(projectile_share, 4),
+        "friendly_fire_ratio": (
+            round(friendly_fire_ratio, 4) if friendly_fire_ratio is not None else None
+        ),
         "avg_turn_ratio": _mean(turn_ratios),
         "avg_move_command_ratio": _mean(move_ratios),
         "avg_idle_ratio": _mean(idle_ratios),
@@ -592,6 +719,9 @@ def save_training_report(
         "episode_ok",
         "has_new_summary",
         "summary_file",
+        "run_id",
+        "game_log_file",
+        "kill_breakdown_available",
         "winner_team",
         "learners",
         "selfplay",
@@ -601,6 +731,10 @@ def save_training_report(
         "tanks_killed",
         "projectile_deaths",
         "non_projectile_deaths",
+        "friendly_kills",
+        "enemy_kills",
+        "kill_lines",
+        "friendly_fire_ratio",
         "elimination_source",
         "mobility",
         "move_command_ratio",
@@ -627,15 +761,26 @@ def main() -> int:
         return 1
 
     total_agents = args.team_size * 2
-    learner_count = max(0, min(args.learning_agents, total_agents))
+    learner_count = effective_learner_count(args)
+    effective_start = effective_selfplay_start_episode(args)
     map_schedule = build_map_schedule(args)
+
+    if int(args.learning_agents) > int(args.team_size):
+        print(
+            f"Requested learning_agents={args.learning_agents}, "
+            f"but max per-side is team_size={args.team_size}. "
+            f"Capping learners to {learner_count} (Team 1)."
+        )
 
     print("=== Fuzzy DQN Training Runner ===")
     print(f"Episodes: {args.episodes}")
     print(f"Team size: {args.team_size} (total agents: {total_agents})")
     print(f"Learning agents: {learner_count}")
-    print(f"Model path: {args.model_path}")
+    print(f"Model path: {normalize_path(args.model_path)}")
     print(f"MF type: {args.mf_type}, rules: {args.rules}")
+    print(f"Engine log level: {args.log_level}")
+    if str(args.log_level).upper() not in {"INFO", "DEBUG"}:
+        print("Note: friendly/enemy kill breakdown may be unavailable (needs INFO or DEBUG logs).")
     print(
         "Learner training params: "
         f"warmup={max(0, int(args.warmup_steps))} "
@@ -646,10 +791,13 @@ def main() -> int:
     print(f"Agent restart policy: every {args.restart_agents_every} episodes (0 = persistent)")
     print(
         "Self-play policy: "
-        f"start_episode={args.selfplay_start_episode}, "
+        f"start_episode={effective_start}, "
+        f"start_ratio={max(0.0, min(1.0, float(args.selfplay_start_ratio))):.2f}, "
         f"opponents={args.selfplay_opponents}, "
-        f"model={args.selfplay_model_path or '(first learner checkpoint)'}"
+        f"model={args.selfplay_model_path or '(first learner best checkpoint)'}"
     )
+    if int(args.selfplay_opponents) > 0:
+        print("Opponent curriculum: Team2 warm-up=random_agent.py, post-warmup baseline=Agent_1.py")
     if args.map_curriculum.strip():
         print(f"Map curriculum: {args.map_curriculum}")
     else:
@@ -666,8 +814,7 @@ def main() -> int:
     try:
         for episode in range(1, args.episodes + 1):
             map_seed = map_schedule[episode - 1]
-            non_learner_count = total_agents - learner_count
-            desired_selfplay = planned_selfplay_opponents(args, episode, non_learner_count)
+            desired_selfplay = planned_selfplay_opponents(args, episode, args.team_size)
 
             processes_dead = any(proc.poll() is not None for proc in processes)
             role_change = bool(
@@ -700,7 +847,9 @@ def main() -> int:
                     f"[Episode {episode}/{args.episodes}] roster: "
                     f"learners={launch_info['learners']} "
                     f"selfplay={launch_info['selfplay']} "
-                    f"baselines={launch_info['baselines']}"
+                    f"baselines={launch_info['baselines']} "
+                    f"baseline_team1={launch_info.get('baseline_team1_script')} "
+                    f"baseline_team2={launch_info.get('baseline_team2_script')}"
                 )
                 if int(launch_info.get("selfplay_requested", 0)) > 0 and not bool(launch_info.get("selfplay_enabled", False)):
                     print(
@@ -709,6 +858,18 @@ def main() -> int:
                     )
 
                 time.sleep(max(0.0, args.start_delay))
+                dead_after_launch = dead_agent_processes(processes, int(args.base_port))
+                if dead_after_launch:
+                    dead_desc = ", ".join(f"{port}(rc={rc})" for port, rc in dead_after_launch)
+                    print(
+                        f"[Episode {episode}/{args.episodes}] error: some agent processes exited during startup: "
+                        f"{dead_desc}"
+                    )
+                    if not args.continue_on_error:
+                        print("Stopping training because agent startup failed.")
+                        exit_code = 1
+                        break
+
                 unready_ports = wait_for_agents_ready(
                     base_port=int(args.base_port),
                     total_agents=total_agents,
@@ -723,10 +884,22 @@ def main() -> int:
                         print("Stopping training because some agent servers did not become ready.")
                         exit_code = 1
                         break
+
+                dead_after_ready = dead_agent_processes(processes, int(args.base_port))
+                if dead_after_ready:
+                    dead_desc = ", ".join(f"{port}(rc={rc})" for port, rc in dead_after_ready)
+                    print(
+                        f"[Episode {episode}/{args.episodes}] error: some agent processes exited after ready check: "
+                        f"{dead_desc}"
+                    )
+                    if not args.continue_on_error:
+                        print("Stopping training because agent processes are not stable.")
+                        exit_code = 1
+                        break
             else:
                 print(
                     f"[Episode {episode}/{args.episodes}] reusing agents "
-                    f"(learners={launch_info['learners']} selfplay={launch_info['selfplay']} baselines={launch_info['baselines']})"
+                    f"(learners={launch_info['learners']} selfplay={launch_info['selfplay']} baselines={launch_info['baselines']} baseline_team1={launch_info.get('baseline_team1_script')} baseline_team2={launch_info.get('baseline_team2_script')})"
                 )
 
             print(f"[Episode {episode}/{args.episodes}] running engine on map={map_seed}...")
@@ -749,6 +922,19 @@ def main() -> int:
                 winner = parse_winner(summary_after.read_text(encoding="utf-8", errors="ignore"))
             if winner is None and episode_metrics and episode_metrics.get("winner_team") is not None:
                 winner = str(episode_metrics["winner_team"])
+            friendly_kills_ep = _to_int((episode_metrics or {}).get("friendly_kills"))
+            enemy_kills_ep = _to_int((episode_metrics or {}).get("enemy_kills"))
+            kill_lines_ep = _to_int((episode_metrics or {}).get("kill_lines"))
+            friendly_fire_ratio_ep: Optional[float] = None
+            if friendly_kills_ep is not None and enemy_kills_ep is not None:
+                counted = friendly_kills_ep + enemy_kills_ep
+                if counted > 0:
+                    friendly_fire_ratio_ep = round(float(friendly_kills_ep) / float(counted), 4)
+            ff_ratio_print = (
+                f"{friendly_fire_ratio_ep:.4f}"
+                if friendly_fire_ratio_ep is not None
+                else "n/a"
+            )
 
             if args.verbose:
                 print(
@@ -767,6 +953,9 @@ def main() -> int:
                         f"tanks_killed={episode_metrics.get('tanks_killed')} "
                         f"projectile_deaths={episode_metrics.get('projectile_deaths')} "
                         f"non_projectile_deaths={episode_metrics.get('non_projectile_deaths')} "
+                        f"friendly_kills={friendly_kills_ep} "
+                        f"enemy_kills={enemy_kills_ep} "
+                        f"ff_ratio={ff_ratio_print} "
                         f"reason={episode_metrics.get('reason')} "
                         f"eliminations={classify_elimination_source(episode_metrics)} "
                         f"move_ratio={episode_metrics.get('move_command_ratio')} "
@@ -793,6 +982,9 @@ def main() -> int:
                         f"tanks_killed={episode_metrics.get('tanks_killed')} "
                         f"projectile_deaths={episode_metrics.get('projectile_deaths')} "
                         f"non_projectile_deaths={episode_metrics.get('non_projectile_deaths')} "
+                        f"friendly_kills={friendly_kills_ep} "
+                        f"enemy_kills={enemy_kills_ep} "
+                        f"ff_ratio={ff_ratio_print} "
                         f"reason={episode_metrics.get('reason')} "
                         f"eliminations={classify_elimination_source(episode_metrics)} "
                         f"move_ratio={episode_metrics.get('move_command_ratio')} "
@@ -824,6 +1016,9 @@ def main() -> int:
                 "episode_ok": False,  # filled below after episode_ok evaluation
                 "has_new_summary": has_new_summary,
                 "summary_file": str(summary_after) if (summary_after and has_new_summary) else None,
+                "run_id": (episode_metrics or {}).get("run_id"),
+                "game_log_file": (episode_metrics or {}).get("game_log_file"),
+                "kill_breakdown_available": bool((episode_metrics or {}).get("kill_breakdown_available")),
                 "winner_team": _to_int(winner),
                 "learners": int(launch_info.get("learners", 0)) if launch_info else 0,
                 "selfplay": int(launch_info.get("selfplay", 0)) if launch_info else 0,
@@ -833,6 +1028,10 @@ def main() -> int:
                 "tanks_killed": _to_int((episode_metrics or {}).get("tanks_killed")),
                 "projectile_deaths": _to_int((episode_metrics or {}).get("projectile_deaths")),
                 "non_projectile_deaths": _to_int((episode_metrics or {}).get("non_projectile_deaths")),
+                "friendly_kills": friendly_kills_ep,
+                "enemy_kills": enemy_kills_ep,
+                "kill_lines": kill_lines_ep,
+                "friendly_fire_ratio": friendly_fire_ratio_ep,
                 "elimination_source": elimination_source,
                 "mobility": mobility,
                 "move_command_ratio": _to_float((episode_metrics or {}).get("move_command_ratio")),

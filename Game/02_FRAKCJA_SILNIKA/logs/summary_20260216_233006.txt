@@ -1,0 +1,21 @@
+
+=== GAME SUMMARY ===
+Session ID: 20260216_233006
+Total Game Time: 72.77 seconds
+Total Ticks: 2639
+Average Tick Time: 0.0274 seconds
+
+=== STATISTICS ===
+Tanks Spawned: 10
+Tanks Killed: 9
+Projectile Deaths: 6
+Non-Projectile Deaths: 3
+Shots Fired: 32
+Hits Landed: 27
+Hit Accuracy: 84.4%
+PowerUps Spawned: 25
+PowerUps Collected: 0
+Collisions: 0
+
+=== RESULTS ===
+{'session_id': 'bff3ddd4', 'total_ticks': 2639, 'winner_team': 2, 'reason': 'normal', 'sudden_death_reached': True, 'final_team_counts': {1: 0, 2: 1}, 'behavior': {'action_samples': 20585, 'move_commands': 13962, 'heading_turn_commands': 3243, 'barrel_turn_commands': 12594, 'fire_commands': 663, 'idle_commands': 3622, 'movement_attempts': 13960, 'movement_successes': 10874, 'move_command_ratio': 0.6783, 'heading_turn_ratio': 0.1575, 'barrel_turn_ratio': 0.6118, 'idle_ratio': 0.176, 'fire_ratio': 0.0322, 'movement_success_ratio': 0.7789, 'mobility_label': 'mostly_moving'}}

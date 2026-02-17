@@ -147,8 +147,10 @@ class Observation:
     powerup_dist: float
     hp_ratio: float
     shield_ratio: float
+    speed_ratio: float
     can_fire: bool
     reload_norm: float
+    enemies_remaining: int
 
 
 class StateEncoder:
@@ -210,14 +212,18 @@ class StateEncoder:
         my_team: Optional[int],
         barrel_abs: float,
         seen_tanks: List[Dict[str, Any]],
+        max_distance: Optional[float] = None,
     ) -> bool:
         for tank in seen_tanks:
             if tank.get("team") != my_team:
                 continue
             ally_pos = tank.get("position", {"x": 0.0, "y": 0.0})
+            ally_dist = self._distance(my_pos, ally_pos)
+            if max_distance is not None and ally_dist > max_distance:
+                continue
             angle = self._angle_to(my_pos, ally_pos)
             error = abs(self.normalize_angle(angle - barrel_abs))
-            if error < 4.0:
+            if error < 6.0:
                 return True
         return False
 
@@ -297,7 +303,21 @@ class StateEncoder:
             enemy_hull_error = self.normalize_angle(target_angle - my_heading) / 180.0
             enemy_barrel_error = self.normalize_angle(target_angle - barrel_abs) / 180.0
 
-        ally_fire_risk = self._ally_in_fire_line(my_pos, my_team, barrel_abs, seen_tanks)
+        ally_risk_max_distance: Optional[float] = None
+        if nearest_enemy is not None:
+            enemy_pos = nearest_enemy.get("position", {"x": 0.0, "y": 0.0})
+            enemy_distance_raw = nearest_enemy.get("distance")
+            if enemy_distance_raw is None:
+                enemy_distance_raw = self._distance(my_pos, enemy_pos)
+            ally_risk_max_distance = max(2.0, float(enemy_distance_raw) + 1.0)
+
+        ally_fire_risk = self._ally_in_fire_line(
+            my_pos,
+            my_team,
+            barrel_abs,
+            seen_tanks,
+            max_distance=ally_risk_max_distance,
+        )
 
         seen_obstacles = sensor_data.get("seen_obstacles", [])
         obstacle_ahead = self._has_object_ahead(
@@ -338,7 +358,8 @@ class StateEncoder:
         speed = float(my_status.get("move_speed", 0.0) or 0.0)
         speed_ratio = self._clamp(speed / max(top_speed, 1.0), -1.0, 1.0)
 
-        enemies_remaining_norm = self._clamp(float(enemies_remaining) / 5.0, 0.0, 1.0)
+        enemies_remaining_safe = max(0, int(enemies_remaining))
+        enemies_remaining_norm = self._clamp(float(enemies_remaining_safe) / 5.0, 0.0, 1.0)
         can_fire = self._can_fire(my_status, reload_timer)
 
         vector = np.array(
@@ -377,8 +398,10 @@ class StateEncoder:
             powerup_dist=powerup_dist,
             hp_ratio=hp_ratio,
             shield_ratio=shield_ratio,
+            speed_ratio=speed_ratio,
             can_fire=can_fire,
             reload_norm=reload_norm,
+            enemies_remaining=enemies_remaining_safe,
         )
 
 
@@ -449,10 +472,10 @@ class FuzzyDQNAgent:
         self.last_observation: Optional[Observation] = None
         self.last_action_index: Optional[int] = None
         self.last_command = ActionCommand()
-        self.last_fire_tick = -10_000
-        self.prev_enemies_remaining: Optional[int] = None
+        self.last_known_enemies_remaining: Optional[int] = None
         self.was_destroyed = False
         self.best_score = float("-inf")
+        self.episode_reward_sum = 0.0
 
         self.lock = threading.Lock()
 
@@ -560,11 +583,50 @@ class FuzzyDQNAgent:
         obs: Observation,
     ) -> ActionCommand:
         ammo_to_load = self._select_ammo_for_action(my_status, obs, action)
+        should_fire = bool(action.should_fire)
+        aligned_for_fire = (
+            obs.enemy_visible
+            and abs(obs.enemy_barrel_error) < 0.02
+            and abs(obs.enemy_hull_error) < 0.08
+            and obs.enemy_dist <= 0.95
+        )
+
+        # Friendly-fire guard: never fire into an ally line and avoid blind shots.
+        if should_fire:
+            if (
+                obs.ally_fire_risk
+                or (not obs.enemy_visible)
+                or (not obs.can_fire)
+                or obs.reload_norm > 0.02
+                or (not aligned_for_fire)
+            ):
+                should_fire = False
+
+        # If a clean shot is already lined up, force immediate fire.
+        clean_shot = (
+            obs.enemy_visible
+            and (not obs.ally_fire_risk)
+            and obs.can_fire
+            and obs.reload_norm <= 0.02
+            and aligned_for_fire
+        )
+        if clean_shot:
+            should_fire = True
+
+        move_speed = action.move_speed
+        heading_rotation = action.heading_rotation_angle
+        barrel_rotation = action.barrel_rotation_angle
+        if should_fire:
+            # Keep the platform stable at the firing tick to reduce accidental hits.
+            move_speed = 0.0
+            heading_rotation = 0.0
+            barrel_rotation = 0.0
+
         return ActionCommand(
-            barrel_rotation_angle=action.barrel_rotation_angle,
-            heading_rotation_angle=action.heading_rotation_angle,
-            move_speed=action.move_speed,
-            should_fire=action.should_fire,
+            barrel_rotation_angle=barrel_rotation,
+            heading_rotation_angle=heading_rotation,
+            move_speed=move_speed,
+            should_fire=should_fire,
             ammo_to_load=ammo_to_load,
         )
 
@@ -572,12 +634,13 @@ class FuzzyDQNAgent:
         self,
         prev_obs: Observation,
         current_obs: Observation,
-        action_index: int,
-        enemies_remaining: int,
-        current_tick: int,
+        prev_command: ActionCommand,
     ) -> float:
-        action = ACTION_SPACE[action_index]
-        reward = -0.025  # stronger time pressure for faster engagements
+        move_speed = float(prev_command.move_speed)
+        heading_rotation = float(prev_command.heading_rotation_angle)
+        barrel_rotation = float(prev_command.barrel_rotation_angle)
+        fired = bool(prev_command.should_fire)
+        reward = -0.02
 
         hp_delta = current_obs.hp_ratio - prev_obs.hp_ratio
         if hp_delta < 0.0:
@@ -589,53 +652,72 @@ class FuzzyDQNAgent:
 
         if current_obs.enemy_visible:
             if current_obs.enemy_dist < prev_obs.enemy_dist:
-                reward += 0.10
-            if abs(current_obs.enemy_barrel_error) < abs(prev_obs.enemy_barrel_error):
                 reward += 0.12
+            if abs(current_obs.enemy_barrel_error) < abs(prev_obs.enemy_barrel_error):
+                reward += 0.16
             if abs(current_obs.enemy_hull_error) < abs(prev_obs.enemy_hull_error):
-                reward += 0.05
+                reward += 0.06
+            if (
+                move_speed != 0.0
+                and abs(current_obs.speed_ratio) < 0.02
+                and current_obs.obstacle_ahead
+            ):
+                reward -= 0.12
         else:
-            # Penalty for spinning in place with no target.
-            if action.move_speed == 0.0 and abs(action.heading_rotation_angle) > 0.0:
-                reward -= 0.05
-            if action.move_speed == 0.0 and abs(action.barrel_rotation_angle) >= 10.0:
-                reward -= 0.03
+            # Reward exploration and discourage stationary spinning without a target.
+            if move_speed != 0.0 and not current_obs.obstacle_ahead and not current_obs.danger_ahead:
+                reward += 0.04
+            if move_speed == 0.0 and abs(heading_rotation) > 0.0:
+                reward -= 0.06
+            if move_speed == 0.0 and abs(barrel_rotation) > 0.0:
+                reward -= 0.04
 
-        if current_obs.obstacle_ahead and action.move_speed > 0.0:
-            reward -= 0.20
+        # Push policy toward objective completion (eliminate enemy team).
+        enemy_delta = int(prev_obs.enemies_remaining) - int(current_obs.enemies_remaining)
+        if enemy_delta > 0:
+            reward += 3.0 * float(enemy_delta)
+        elif enemy_delta < 0:
+            reward -= 0.6 * float(-enemy_delta)
 
-        if current_obs.danger_ahead and action.move_speed > 0.0:
+        if current_obs.obstacle_ahead and move_speed > 0.0:
+            reward -= 0.25
+
+        if current_obs.danger_ahead and move_speed > 0.0:
+            reward -= 0.22
+
+        if current_obs.ally_fire_risk:
+            # Encourage moving barrel away from teammates even before pressing fire.
             reward -= 0.18
 
         if prev_obs.powerup_visible and prev_obs.hp_ratio < 0.7:
             if current_obs.powerup_dist < prev_obs.powerup_dist:
                 reward += 0.06
 
-        if action.should_fire:
+        if fired:
             if prev_obs.ally_fire_risk:
-                reward -= 2.5
+                reward -= 5.0
             elif not prev_obs.enemy_visible:
-                reward -= 0.65
+                reward -= 1.20
             elif not prev_obs.can_fire or prev_obs.reload_norm > 0.02:
+                reward -= 1.00
+            elif (
+                abs(prev_obs.enemy_barrel_error) < 0.02
+                and abs(prev_obs.enemy_hull_error) < 0.08
+                and prev_obs.enemy_dist <= 0.95
+            ):
+                reward += 1.20
+            else:
                 reward -= 0.55
-            elif abs(prev_obs.enemy_barrel_error) < 0.04:
-                reward += 1.10
-            else:
-                reward -= 0.18
         else:
-            if prev_obs.enemy_visible and prev_obs.can_fire and abs(prev_obs.enemy_barrel_error) < 0.025:
-                reward -= 0.30
-
-        if self.prev_enemies_remaining is not None and enemies_remaining < self.prev_enemies_remaining:
-            enemy_drop = self.prev_enemies_remaining - enemies_remaining
-            recently_fired = (current_tick - self.last_fire_tick) <= 25
-            if recently_fired:
-                # Fast projectile eliminations are preferred over passive waiting.
-                speed_bonus = max(0.0, 2.0 - (float(current_tick) / 700.0))
-                reward += (4.0 * enemy_drop) + speed_bonus
-            else:
-                # Team got a kill without recent fire from this agent -> tiny credit.
-                reward += 0.15 * enemy_drop
+            if (
+                prev_obs.enemy_visible
+                and prev_obs.can_fire
+                and (not prev_obs.ally_fire_risk)
+                and abs(prev_obs.enemy_barrel_error) < 0.02
+                and abs(prev_obs.enemy_hull_error) < 0.08
+                and prev_obs.enemy_dist <= 0.95
+            ):
+                reward -= 0.35
 
         return reward
 
@@ -739,7 +821,6 @@ class FuzzyDQNAgent:
         self.last_observation = None
         self.last_action_index = None
         self.last_command = ActionCommand()
-        self.prev_enemies_remaining = None
 
     def get_action(
         self,
@@ -757,14 +838,13 @@ class FuzzyDQNAgent:
                 return self.last_command
 
             current_obs = self.encoder.encode(my_tank_status, sensor_data, enemies_remaining)
+            self.last_known_enemies_remaining = int(current_obs.enemies_remaining)
 
             if self.last_observation is not None and self.last_action_index is not None:
                 reward = self._compute_step_reward(
                     prev_obs=self.last_observation,
                     current_obs=current_obs,
-                    action_index=self.last_action_index,
-                    enemies_remaining=enemies_remaining,
-                    current_tick=current_tick,
+                    prev_command=self.last_command,
                 )
                 self.replay.add(
                     state=self.last_observation.vector,
@@ -773,19 +853,16 @@ class FuzzyDQNAgent:
                     next_state=current_obs.vector,
                     done=0.0,
                 )
+                self.episode_reward_sum += reward
                 self._maybe_train()
 
             action_index = self._select_action(current_obs.vector)
             action = ACTION_SPACE[action_index]
             command = self._to_command(action, my_tank_status, current_obs)
 
-            if command.should_fire:
-                self.last_fire_tick = current_tick
-
             self.last_observation = current_obs
             self.last_action_index = action_index
             self.last_command = command
-            self.prev_enemies_remaining = enemies_remaining
             self.total_steps += 1
 
             return command
@@ -794,13 +871,15 @@ class FuzzyDQNAgent:
         with self.lock:
             print(f"[{self.name}] destroyed")
             if self.last_observation is not None and self.last_action_index is not None:
+                destroy_penalty = -8.0
                 self.replay.add(
                     state=self.last_observation.vector,
                     action=self.last_action_index,
-                    reward=-8.0,
+                    reward=destroy_penalty,
                     next_state=self.last_observation.vector,
                     done=1.0,
                 )
+                self.episode_reward_sum += destroy_penalty
                 for _ in range(3):
                     self._maybe_train()
 
@@ -809,9 +888,13 @@ class FuzzyDQNAgent:
 
     def end(self, damage_dealt: float, tanks_killed: int) -> None:
         with self.lock:
-            final_reward = tanks_killed * 4.0 + (damage_dealt / 75.0)
+            # Keep episode-end reward independent from engine kill/damage counters,
+            # which can include friendly-fire side effects in this project setup.
+            final_reward = -0.5
             if not self.was_destroyed:
-                final_reward += 1.5
+                final_reward = 1.5
+            if self.last_known_enemies_remaining is not None and self.last_known_enemies_remaining <= 0:
+                final_reward += 6.0
 
             if self.last_observation is not None and self.last_action_index is not None:
                 self.replay.add(
@@ -824,17 +907,19 @@ class FuzzyDQNAgent:
                 for _ in range(5):
                     self._maybe_train()
 
+            self.episode_reward_sum += final_reward
             self.games_played += 1
 
             print(
                 f"[{self.name}] end | games={self.games_played} "
                 f"damage={damage_dealt:.1f} kills={tanks_killed} "
+                f"ep_reward={self.episode_reward_sum:.3f} "
                 f"epsilon={self.current_epsilon:.3f} replay={len(self.replay)} "
                 f"train_steps={self.train_steps}"
             )
 
             if self.training_enabled and self.games_played % max(1, self.config.save_every_games) == 0:
-                episode_score = final_reward + (4.0 * tanks_killed) + (damage_dealt / 40.0)
+                episode_score = float(self.episode_reward_sum)
                 if episode_score > self.best_score:
                     self.best_score = episode_score
                     self.save_checkpoint(self.best_model_path, label="best")
@@ -845,6 +930,8 @@ class FuzzyDQNAgent:
                 self.save_checkpoint(self.final_model_path, label="final")
 
             self.was_destroyed = False
+            self.last_known_enemies_remaining = None
+            self.episode_reward_sum = 0.0
             self._reset_episode_state()
 
     def status(self) -> Dict[str, Any]:

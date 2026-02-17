@@ -4,93 +4,54 @@ cd "c:\Users\jakub\Desktop\Do_zrobienia\Metody Sztucznej Inteligencji\Projekt"
 py -3 -m pip install -r Game/02_FRAKCJA_SILNIKA/requirements.txt
 py -3 -m pip install torch fastapi uvicorn numpy
 
-
-===sprawdzenie króciutkie czy smiga
+===test czy dziala
 py -3 Game/03_FRAKCJA_AGENTOW/train_fuzzy_dqn.py `
-  --episodes 20 `
-  --learning-agents 1 `
-  --map-seed road_trees.csv `
-  --max-ticks 1200 `
-  --restart-agents-every 0 `
-  --ready-timeout 60
-
-
-
-========================
-Właściwy trening (mała -> średnia -> trudniejsza mapa, self-play w drugiej połowie)
-
-py -3 Game/03_FRAKCJA_AGENTOW/train_fuzzy_dqn.py `
-  --episodes 800 `
+  --episodes 8 `
   --team-size 5 `
-  --learning-agents 2 `
-  --model-path Game/03_FRAKCJA_AGENTOW/fuzzy_dqn_model.pt `
-  --map-curriculum "road_trees.csv:300,semi-open.csv:250,advanced_road_trees.csv:250" `
-  --max-ticks 2500 `
+  --learning-agents 1 `
+  --base-port 8201 `
+  --model-path Game/03_FRAKCJA_AGENTOW/fuzzy_dqn_model_quick.pt `
+  --map-seed road_trees.csv `
+  --max-ticks 900 `
   --restart-agents-every 0 `
-  --selfplay-start-episode 401 `
+  --warmup-steps 128 `
+  --batch-size 64 `
+  --train-every 2 `
+  --target-sync-every 200 `
+  --epsilon-decay-steps 20000 `
+  --start-delay 8 `
+  --ready-timeout 120 `
+  --episode-delay 0.1 `
+  --log-level INFO `
+  --verbose
+
+==wypis wynikow
+$p = Get-ChildItem Game/03_FRAKCJA_AGENTOW/training_reports/training_report_*.json | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
+py -3 -c "import json,pathlib; d=json.loads(pathlib.Path(r'''$p''').read_text(encoding='utf-8')); a=d['aggregate']; print('report=',r'''$p'''); print('episodes_ok=',a['episodes_ok'],'/',a['episodes_total']); print('friendly_fire_ratio=',a.get('friendly_fire_ratio')); print('friendly_kills_total=',a.get('friendly_kills_total')); print('enemy_kills_total=',a.get('enemy_kills_total')); print('projectile_death_share=',a.get('projectile_death_share')); print('sudden_death_episodes=',a.get('sudden_death_episodes')); print('mobility_counts=',a.get('mobility_counts'))"
+
+
+
+=== normalny treninig
+
+
+py -3 Game/03_FRAKCJA_AGENTOW/train_fuzzy_dqn.py `
+  --episodes 350 `
+  --team-size 5 `
+  --learning-agents 1 `
+  --model-path "$MODEL" `
+  --map-curriculum "road_trees.csv:200,semi-open.csv:90,advanced_road_trees.csv:60" `
+  --max-ticks 2200 `
+  --selfplay-start-episode 0 `
+  --selfplay-start-ratio 0.40 `
   --selfplay-opponents 2 `
   --warmup-steps 1024 `
   --batch-size 128 `
   --train-every 2 `
   --target-sync-every 500 `
-  --epsilon-decay-steps 250000 `
-  --ready-timeout 90
-
-
-
-Ewaluacja (bez uczenia, tylko sprawdzenie zachowania)
-
-py -3 Game/03_FRAKCJA_AGENTOW/train_fuzzy_dqn.py `
-  --episodes 100 `
-  --learning-agents 0 `
-  --selfplay-start-episode 1 `
-  --selfplay-opponents 5 `
-  --selfplay-model-path Game/03_FRAKCJA_AGENTOW/fuzzy_dqn_model_agent1_best.pt `
-  --map-curriculum "road_trees.csv:30,semi-open.csv:35,advanced_road_trees.csv:35" `
-  --max-ticks 2500 `
-  --restart-agents-every 0
-
-
-w raportach sprawdzamy czy rosnie combat_projectile i projectile_death_share
-ma spadac time_sudden_death
-mobility ma być mostly_moving nie mostly_spinning
-
-
-
-
-===============================
-wersja na noc ;D
-
-$ts = Get-Date -Format yyyyMMdd_HHmmss
-py -3 Game/03_FRAKCJA_AGENTOW/train_fuzzy_dqn.py `
-  --episodes 2000 `
-  --team-size 5 `
-  --learning-agents 2 `
-  --model-path Game/03_FRAKCJA_AGENTOW/fuzzy_dqn_model.pt `
-  --map-curriculum "road_trees.csv:800,semi-open.csv:700,advanced_road_trees.csv:500" `
-  --max-ticks 2800 `
+  --epsilon-decay-steps 200000 `
   --restart-agents-every 0 `
-  --selfplay-start-episode 1001 `
-  --selfplay-opponents 3 `
-  --warmup-steps 1024 `
-  --batch-size 128 `
-  --train-every 2 `
-  --target-sync-every 500 `
-  --epsilon-decay-steps 350000 `
   --ready-timeout 120 `
-  --continue-on-error `
-  2>&1 | Tee-Object -FilePath "Game/03_FRAKCJA_AGENTOW/night_train_$ts.log"
-
-
-szybki check już po treningu
-
-$p = Get-ChildItem Game/03_FRAKCJA_AGENTOW/training_reports/training_report_*.json |
-  Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
-
-py -3 -c "import json, pathlib; d=json.loads(pathlib.Path(r'''$p''').read_text(encoding='utf-8')); a=d['aggregate']; print('report=',r'''$p'''); print('episodes_ok=',a['episodes_ok'],'/',a['episodes_total']); print('elimination_counts=',a['elimination_counts']); print('projectile_death_share=',a['projectile_death_share']); print('mobility_counts=',a['mobility_counts'])"
-
-
-
+  --log-level INFO
 
 
 
