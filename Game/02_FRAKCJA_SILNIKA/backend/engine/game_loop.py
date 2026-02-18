@@ -132,6 +132,7 @@ class GameLoop:
         self.scoreboards: Dict[str, TankScoreboard] = {}
         self.last_attacker: Dict[str, str] = {}  # Maps tank_id -> last attacker tank_id
         self.processed_deaths: set[str] = set() # Śledzi czołgi, których śmierć została już przetworzona
+        self.last_sudden_death_victims: set[str] = set()
         
         # HTTP client for agent communication
         self.http_client: Optional[httpx.Client] = None
@@ -689,10 +690,12 @@ class GameLoop:
     def _apply_sudden_death_damage(self):
         """Aplikuje obrażenia nagłej śmierci wszystkim czołgom."""
         damage = self.game_core.get_sudden_death_damage()
+        self.last_sudden_death_victims = set()
 
         for tank_id, tank in self.tanks.items():
             if tank.is_alive():
                 apply_damage(tank, abs(damage))
+                self.last_sudden_death_victims.add(tank_id)
 
         self.logger.debug(f"Applied sudden death damage: {damage} to all tanks")
 
@@ -1027,6 +1030,14 @@ class GameLoop:
         """
         newly_dead_tanks = []
         
+        damage_events = self.last_physics_results.get("damage_events", [])
+        damage_by_tank: Dict[str, List[Dict[str, Any]]] = {}
+        for event in damage_events:
+            tank_id = event.get("tank_id")
+            if not tank_id:
+                continue
+            damage_by_tank.setdefault(tank_id, []).append(event)
+
         # Get tanks that were destroyed by projectile hits this tick
         projectile_kills = set()
         for hit in self.last_physics_results.get("projectile_hits", []):
@@ -1053,18 +1064,37 @@ class GameLoop:
                 else:
                     # Death from other cause (sudden death, terrain, collision)
                     self.logger.info(f"Tank {tank_id} died (non-projectile cause, no kill credit)")
+
+                # Refine non-projectile cause using damage events / sudden death.
+                if death_cause != "projectile":
+                    events = damage_by_tank.get(tank_id, [])
+                    if any(e.get("source") == "terrain" for e in events):
+                        death_cause = "terrain"
+                    elif any(e.get("source") == "collision" for e in events):
+                        death_cause = "collision"
+                    elif tank_id in self.last_sudden_death_victims:
+                        death_cause = "sudden_death"
+                    else:
+                        death_cause = "unknown"
                 
                 # Clear last_attacker to prevent incorrect future credit
                 if tank_id in self.last_attacker:
                     del self.last_attacker[tank_id]
 
                 # Powiadom agenta o zniszczeniu
-                self._notify_agent_destroyed(tank_id)
+                self._notify_agent_destroyed(
+                    tank_id,
+                    {
+                        "cause": death_cause,
+                        "final_hp": tank.hp,
+                        "damage_events": damage_by_tank.get(tank_id, []),
+                    },
+                )
 
                 self.logger.log_tank_action(
                     tank_id,
                     "death",
-                    {"final_hp": tank.hp, "cause": death_cause},
+                    {"final_hp": tank.hp, "cause": death_cause, "damage_events": damage_by_tank.get(tank_id, [])},
                 )
 
         # W trybie headless usuwamy czołgi z symulacji.
@@ -1078,7 +1108,7 @@ class GameLoop:
             if self.map_info:
                 self.map_info._all_tanks = [t for t in self.map_info._all_tanks if t._id not in newly_dead_tanks]
 
-    def _notify_agent_destroyed(self, tank_id: str):
+    def _notify_agent_destroyed(self, tank_id: str, payload: Optional[Dict[str, Any]] = None):
         """
         Notify agent that its tank was destroyed.
         Calls POST /agent/destroy endpoint.
@@ -1091,7 +1121,8 @@ class GameLoop:
         try:
             self.http_client.post(
                 f"{connection.base_url}/agent/destroy",
-                timeout=0.5
+                json=(payload or {}),
+                timeout=0.5,
             )
             self.logger.debug(f"Notified agent {tank_id} of destruction")
         except Exception as e:

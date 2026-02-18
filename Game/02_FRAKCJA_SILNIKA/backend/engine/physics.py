@@ -512,7 +512,8 @@ def process_physics_tick(
         "movement_successes": 0,
         "picked_powerups": [],
         "destroyed_tanks": [],
-        "destroyed_obstacles": []
+        "destroyed_obstacles": [],
+        "damage_events": []
     }
 
     for tank in all_tanks:
@@ -542,6 +543,14 @@ def process_physics_tick(
             if hit:
                 results["projectile_hits"].append(hit)
                 if hit.hit_tank_id:
+                    results["damage_events"].append(
+                        {
+                            "tank_id": hit.hit_tank_id,
+                            "source": "projectile",
+                            "damage": hit.damage_dealt,
+                            "attacker_id": tank._id,
+                        }
+                    )
                     for target in all_tanks:
                         if target._id == hit.hit_tank_id:
                             if apply_damage(target, hit.damage_dealt):
@@ -614,6 +623,16 @@ def process_physics_tick(
                 collision_type = CollisionType.TANK_TREE
                 # Spec: Zderzenie czołgu z drzewem: -5 HP (drzewo jest niszczone)
                 if not was_colliding_before_move:
+                    results["damage_events"].append(
+                        {
+                            "tank_id": tank._id,
+                            "source": "collision",
+                            "damage": 5,
+                            "collision_type": collision_type.value,
+                            "obstacle_type": obstacle_type,
+                            "obstacle_id": getattr(hit_obstacle, "id", getattr(hit_obstacle, "_id", None)),
+                        }
+                    )
                     if apply_damage(tank, 5):
                         results["destroyed_tanks"].append(tank._id)
                     if getattr(hit_obstacle, "is_destructible", False):
@@ -625,11 +644,31 @@ def process_physics_tick(
                 collision_type = CollisionType.TANK_WALL
                 # Spec: Zderzenie czołgu ze ścianą: -10 HP
                 if not was_colliding_before_move:
+                    results["damage_events"].append(
+                        {
+                            "tank_id": tank._id,
+                            "source": "collision",
+                            "damage": 10,
+                            "collision_type": collision_type.value,
+                            "obstacle_type": obstacle_type,
+                            "obstacle_id": getattr(hit_obstacle, "id", getattr(hit_obstacle, "_id", None)),
+                        }
+                    )
                     if apply_damage(tank, 10):
                         results["destroyed_tanks"].append(tank._id)
             else:
                 # Inne przeszkody: -5 HP
                 if not was_colliding_before_move:
+                    results["damage_events"].append(
+                        {
+                            "tank_id": tank._id,
+                            "source": "collision",
+                            "damage": 5,
+                            "collision_type": collision_type.value,
+                            "obstacle_type": obstacle_type,
+                            "obstacle_id": getattr(hit_obstacle, "id", getattr(hit_obstacle, "_id", None)),
+                        }
+                    )
                     if apply_damage(tank, 5):
                         results["destroyed_tanks"].append(tank._id)
 
@@ -657,7 +696,7 @@ def process_physics_tick(
             tank.position = old_pos
             results["collisions"].append(
                 {
-                    "type": CollisionType.TANK_TANK_MOVING.value,
+                    "type": CollisionType.TANK_TAK_MOVING.value,
                     "tank_id": tank._id,
                     "other_tank_id": collided_with,
                 }
@@ -671,8 +710,20 @@ def process_physics_tick(
     for tank in all_tanks:
         if tank.hp <= 0:
             continue
+        terrain = get_terrain_at_position(tank.position, map_info.terrain_list)
         dmg = _terrain_damage_at_position(tank.position, map_info.terrain_list)
         dmg *= 0.05
+        if not terrain and dmg:
+            raise ValueError("Terrain damage without terrain instance")
+        if dmg and terrain:
+            results["damage_events"].append(
+                {
+                    "tank_id": tank._id,
+                    "source": "terrain",
+                    "damage": dmg,
+                    "terrain_type": getattr(terrain, "terrain_type", getattr(terrain, "_terrain_type", None)),
+                }
+            )
         if dmg and apply_damage(tank, dmg):
             results["destroyed_tanks"].append(tank._id)
 

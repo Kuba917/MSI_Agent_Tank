@@ -191,7 +191,7 @@ async def get_action(payload: Dict[str, Any] = Body(...)):
 
 
 @app.post("/agent/destroy", status_code=204)
-async def destroy():
+async def destroy(payload: Dict[str, Any] = Body(None)):
     """Called when the tank is destroyed."""
     agent.destroy()
 

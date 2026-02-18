@@ -31,6 +31,8 @@ import torch.nn.functional as F
 from fastapi import Body, FastAPI
 from pydantic import BaseModel
 import uvicorn
+import matplotlib
+matplotlib.use("Agg")       # zeby uniknac bledow
 
 from ANFISDQN import ANFISDQN
 
@@ -45,6 +47,9 @@ sys.path.insert(0, engine_dir)
 
 STATE_DIM = 17
 DEFAULT_MODEL_PATH = os.path.join(current_dir, "fuzzy_dqn_model_agent1_final.pt")
+MAP_WIDTH = 200.0
+MAP_HEIGHT = 200.0
+COMET_LOG_EVERY = 20
 
 
 class ActionCommand(BaseModel):
@@ -67,23 +72,25 @@ class ActionSpec:
 ACTION_SPACE: List[ActionSpec] = [
     ActionSpec("idle", 0.0, 0.0, 0.0, False),
 
-    # Movement
-    ActionSpec("forward", 120.0, 0.0, 0.0, False),
-    ActionSpec("forward_left", 100.0, -1.5, 0.0, False),
-    ActionSpec("forward_right", 100.0, 1.5, 0.0, False),
-    ActionSpec("retreat", -80.0, 0.0, 0.0, False),
+    # Movement.
+    ActionSpec("forward", 1.0, 0.0, 0.0, False),
+    ActionSpec("forward_left", 0.75, -1.5, 0.0, False),
+    ActionSpec("forward_right", 0.75, 1.5, 0.0, False),
+    ActionSpec("retreat", -0.5, 0.0, 0.0, False),
 
     # Rotation
     ActionSpec("turn_left", 0.0, -2.5, 0.0, False),
     ActionSpec("turn_right", 0.0, 2.5, 0.0, False),
 
-    # Aiming (ONLY ONE SCALE)
-    ActionSpec("aim_left", 0.0, 0.0, -3.0, False),
-    ActionSpec("aim_right", 0.0, 0.0, 3.0, False),
+    # Aiming (ONLY ONE SCALE) - serio boje sie ze nie beda mogly dobrze do siebie przymierzyc.
+    ActionSpec("aim_left", 0.0, 0.0, -1.0, False),
+    ActionSpec("aim_right", 0.0, 0.0, 1.0, False),
+    ActionSpec("aim_left_fast", 0.0, 0.0, -60.0, False),
+    ActionSpec("aim_right", 0.0, 0.0, 60.0, False),
 
     # Fire
     ActionSpec("fire", 0.0, 0.0, 0.0, True),
-    ActionSpec("fire_forward", 80.0, 0.0, 0.0, True),
+    ActionSpec("fire_forward", 1.0, 0.0, 0.0, True),
 ]
 
 
@@ -468,6 +475,7 @@ class FuzzyDQNAgent:
         self.prev_enemies_remaining: Optional[int] = None
         self.was_destroyed = False
         self.best_score = float("-inf")
+        self.last_status: Optional[Dict[str, Any]] = None
 
         self.lock = threading.Lock()
 
@@ -612,7 +620,7 @@ class FuzzyDQNAgent:
         current_tick: int,
     ) -> float:
         action = ACTION_SPACE[action_index]
-        reward = -0.03  # time pressure
+        reward = 0.1  # time pressure
 
         # Damage avoidance (biggest issue: entering danger zone).
         hp_delta = current_obs.hp_ratio - prev_obs.hp_ratio
@@ -625,11 +633,11 @@ class FuzzyDQNAgent:
         if current_obs.danger_ahead:
             reward -= 1
             if action.move_speed > 1e-2:
-                reward -= 1.5           # glownie przez to gina
+                reward -= 7.5           # glownie przez to gina
         if not prev_obs.danger_ahead and current_obs.danger_ahead:
-            reward -= 0.5
+            reward -= 1.0
         if prev_obs.danger_ahead and not current_obs.danger_ahead:
-            reward += 1.0
+            reward += 0.5
 
         if current_obs.obstacle_ahead and action.move_speed > 0.0:
             reward -= 0.2
@@ -654,23 +662,23 @@ class FuzzyDQNAgent:
             if not prev_obs.can_fire:
                 reward -= 0.4
             elif not prev_obs.enemy_visible:
-                reward -= 0.3
+                reward -= 2.0 # marnuje amunicje
             elif prev_obs.ally_fire_risk:
-                reward -= 0.6
+                reward -= 3.5
             else:
                 aim_error = abs(prev_obs.enemy_barrel_error - 0.5)      # -0.5 bo jest znormalizowane
-                reward -= aim_error * 4.0
+                reward -= aim_error + 0.25
 
         # Powerup pursuit.
         if current_obs.powerup_visible:
-            reward += (prev_obs.powerup_dist - current_obs.powerup_dist) * 0.2
+            reward += (prev_obs.powerup_dist - current_obs.powerup_dist) * 0.1
 
         # Small penalty for idling while enemy is visible.
         if action.name == "idle" and current_obs.enemy_visible:
             reward -= 0.05
 
         speed_ratio = current_obs.vector[15]
-        reward += abs(speed_ratio - 0.5) / 3  # centered -> 0.5 ->> stands still; no reward for standing still
+        reward += abs(speed_ratio - 0.5) / 4  # centered -> 0.5 ->> stands still; no reward for standing still
 
         return reward
 
@@ -701,7 +709,7 @@ class FuzzyDQNAgent:
         loss = F.smooth_l1_loss(q_values, target_q)
         self.last_loss = float(loss.item())
 
-        if self.experiment:
+        if self.experiment and (self.train_steps % COMET_LOG_EVERY == 0):
             self.experiment.log_metric("loss", self.last_loss, step=self.train_steps)
             self.experiment.log_metric("epsilon", self.current_epsilon, step=self.train_steps)
             self.experiment.log_metric("q_mean", q_values.mean().item(), step=self.train_steps)
@@ -790,6 +798,7 @@ class FuzzyDQNAgent:
         self.last_command = ActionCommand()
         self.prev_enemies_remaining = None
         self.current_episode_score = 0.0
+        self.last_status = None
         self.trace_positions.clear()
         self.trace_hp.clear()
         self.trace_shots.clear()
@@ -803,20 +812,29 @@ class FuzzyDQNAgent:
         current_obs: Observation,
         action: ActionSpec,
     ) -> None:
-        pos = my_status.get("position", {"x": 0.0, "y": 0.0})
-        x = float(pos.get("x", 0.0) or 0.0)
-        y = float(pos.get("y", 0.0) or 0.0)
+        pos = my_status.get("position")
+        if not pos or "x" not in pos or "y" not in pos:
+            raise ValueError(f"Plotting {pos=}")
+        x = float(pos.get("x") or 0.0)
+        y = float(pos.get("y") or 0.0)
+        if not (math.isfinite(x) and math.isfinite(y)):
+            raise ValueError(f"Plotting non-finite position x={x} y={y}")
+        hp = float(current_obs.hp_ratio)
+        if not math.isfinite(hp):
+            raise ValueError(f"Plotting non-finite hp={hp}")
         self.trace_positions.append((x, y))
-        self.trace_hp.append(float(current_obs.hp_ratio))
+        self.trace_hp.append(hp)
 
         seen_tanks = sensor_data.get("seen_tanks", [])
         my_team = my_status.get("_team")
         for tank in seen_tanks:
             tpos = tank.get("position")
-            if not tpos:
-                continue
-            tx = float(tpos.get("x", 0.0) or 0.0)
-            ty = float(tpos.get("y", 0.0) or 0.0)
+            if not tpos or "x" not in tpos or "y" not in tpos:
+                raise ValueError(f'Plotting {tpos=}')
+            tx = float(tpos.get("x") or 0.0)
+            ty = float(tpos.get("y") or 0.0)
+            if not (math.isfinite(tx) and math.isfinite(ty)):
+                raise ValueError(f"Plotting non-finite tank position x={tx} y={ty} tpos={tpos}")
             if tank.get("team") == my_team:
                 self.trace_allies.append((tx, ty))
             else:
@@ -828,23 +846,23 @@ class FuzzyDQNAgent:
             self.trace_shots.append((x, y, heading + barrel))
 
     def _save_episode_plot(self) -> None:
-        if len(self.trace_positions) < 2:
-            return
+        if len(self.trace_positions) == 0:
+            raise ValueError("Plotting: no trace positions")
 
         import matplotlib.pyplot as plt
         from matplotlib.collections import LineCollection
 
         hps = self.trace_hp
-        segments = []
-        colors = []
-        for i in range(len(self.trace_positions) - 1):
-            segments.append([self.trace_positions[i], self.trace_positions[i + 1]])
-            colors.append((hps[i] + hps[i + 1]) * 0.5)
-
         fig, ax = plt.subplots(figsize=(8, 8))
-        lc = LineCollection(segments, cmap="RdYlGn", linewidths=2.0)
-        lc.set_array(np.array(colors, dtype=np.float32))
-        ax.add_collection(lc)
+        if len(self.trace_positions) >= 2:
+            segments = []
+            colors = []
+            for i in range(len(self.trace_positions) - 1):
+                segments.append([self.trace_positions[i], self.trace_positions[i + 1]])
+                colors.append((hps[i] + hps[i + 1]) * 0.5)
+            lc = LineCollection(segments, cmap="RdYlGn", linewidths=2.0)
+            lc.set_array(np.array(colors, dtype=np.float32))
+            ax.add_collection(lc)
 
         xs = [p[0] for p in self.trace_positions]
         ys = [p[1] for p in self.trace_positions]
@@ -870,20 +888,24 @@ class FuzzyDQNAgent:
             )
         if self.trace_shots:
             for sx, sy, ang in self.trace_shots:
-                dx = math.cos(math.radians(ang)) * 2.0
-                dy = math.sin(math.radians(ang)) * 2.0
+                dx = math.cos(math.radians(ang)) * 10.0
+                dy = math.sin(math.radians(ang)) * 10.0
                 ax.arrow(
                     sx,
                     sy,
                     dx,
                     dy,
-                    color="yellow",
-                    width=0.1,
-                    head_width=0.5,
+                    color="#8a7500",
+                    width=0.12,
+                    head_width=0.6,
+                    head_length=1.0,
                     length_includes_head=True,
                 )
 
         ax.set_aspect("equal", adjustable="box")
+        ax.set_xlim(0.0, MAP_WIDTH)
+        ax.set_ylim(0.0, MAP_HEIGHT)
+        ax.autoscale(False)
         ax.set_title(f"{self.name} trajectory (game {self.games_played})")
         ax.grid(True, alpha=0.3)
 
@@ -944,13 +966,31 @@ class FuzzyDQNAgent:
             self.last_command = command
             self.prev_enemies_remaining = enemies_remaining
             self.total_steps += 1
+            self.last_status = my_tank_status
             self._record_trace(my_tank_status, sensor_data, current_obs, action)
 
             return command
 
-    def destroy(self) -> None:
+    def destroy(self, payload: Optional[Dict[str, Any]] = None) -> None:
         with self.lock:
             print(f"[{self.name}] destroyed")
+            if self.last_observation is not None:
+                tags = []
+                if self.last_observation.danger_ahead:
+                    tags.append("rough_terrain")
+                if self.last_observation.enemy_visible:
+                    tags.append("shot_likely")
+                if self.last_observation.ally_fire_risk:
+                    tags.append("ally_fire_risk")
+                if self.last_observation.obstacle_ahead:
+                    tags.append("obstacle_ahead")
+                if not tags:
+                    tags.append("unknown")
+                print(f"[{self.name}] destroy_context: {','.join(tags)}, {self.last_observation}\n\n")
+            status = self.last_status or {}
+            print(f"[{self.name}] destroy_state: hp={status.get('hp')} shield={status.get('shield')}")
+            if payload:
+                print(f"[{self.name}] destroy_reason: {payload.get('cause')} damage_events={payload.get('damage_events')}")
             if self.last_observation is not None and self.last_action_index is not None:
                 self.current_episode_score -= 8.0
                 self.replay.add(
@@ -964,8 +1004,8 @@ class FuzzyDQNAgent:
                     self._maybe_train()
 
             self.was_destroyed = True
-            self._save_episode_plot()
-            self._reset_episode_state()
+            # Do not reset trace here; /agent/end is called after destroy
+            # and should finalize the episode plot.
 
     def end(self, damage_dealt: float, tanks_killed: int) -> None:
         with self.lock:
@@ -994,12 +1034,13 @@ class FuzzyDQNAgent:
                 f"train_steps={self.train_steps}"
             )
 
-            if self.experiment:
-                self.experiment.log_metric("total_episode_reward", self.current_episode_score, step=self.games_played)
-                self.experiment.log_metric("damage_dealt", damage_dealt, step=self.games_played)
-                self.experiment.log_metric("tanks_killed", tanks_killed, step=self.games_played)
-                self.experiment.log_metric("was_destroyed", int(self.was_destroyed), step=self.games_played)
-                self.experiment.log_metric("replay_size", len(self.replay), step=self.games_played)
+            if self.experiment and (self.train_steps % COMET_LOG_EVERY == 0):
+                step = self.train_steps
+                self.experiment.log_metric("total_episode_reward", self.current_episode_score, step=step)
+                self.experiment.log_metric("damage_dealt", damage_dealt, step=step)
+                self.experiment.log_metric("tanks_killed", tanks_killed, step=step)
+                self.experiment.log_metric("was_destroyed", int(self.was_destroyed), step=step)
+                self.experiment.log_metric("replay_size", len(self.replay), step=step)
 
             if self.training_enabled and self.games_played % max(1, self.config.save_every_games) == 0:
                 episode_score = final_reward + (4.0 * tanks_killed) + (damage_dealt / 40.0)
@@ -1009,11 +1050,10 @@ class FuzzyDQNAgent:
 
                 # Save latest and final after potential best-score update, so
                 # best_score persists across process restarts.
-                self.save_checkpoint(self.config.model_path, label="latest")
                 self.save_checkpoint(self.final_model_path, label="final")
 
             self._save_episode_plot()
-
+            
             self.was_destroyed = False
             self._reset_episode_state()
 
@@ -1071,8 +1111,8 @@ async def get_action(payload: Dict[str, Any] = Body(...)) -> ActionCommand:
 
 
 @app.post("/agent/destroy", status_code=204, response_model=None)
-async def destroy() -> None:
-    _get_agent().destroy()
+async def destroy(payload: Dict[str, Any] = Body(None)) -> None:
+    _get_agent().destroy(payload)
 
 
 @app.post("/agent/end", status_code=204, response_model=None)

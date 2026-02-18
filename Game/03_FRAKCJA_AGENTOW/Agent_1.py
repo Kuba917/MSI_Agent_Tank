@@ -349,7 +349,7 @@ async def get_action(payload: Dict[str, Any] = Body(...)) -> ActionCommand:
 
 
 @app.post("/agent/destroy", status_code=204, response_model=None)
-async def destroy() -> None:
+async def destroy(payload: Dict[str, Any] = Body(None)) -> None:
     agent.destroy()
 
 
