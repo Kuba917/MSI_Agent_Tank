@@ -222,4 +222,4 @@ if __name__ == "__main__":
         agent.name = f"RandomBot_{args.port}"
     
     print(f"Starting {agent.name} on {args.host}:{args.port}")
-    uvicorn.run(app, host=args.host, port=args.port)
+    uvicorn.run(app, host=args.host, port=args.port, access_log=False)

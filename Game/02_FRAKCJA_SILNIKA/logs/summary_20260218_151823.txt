@@ -1,0 +1,21 @@
+
+=== GAME SUMMARY ===
+Session ID: 20260218_151823
+Total Game Time: 13.51 seconds
+Total Ticks: 1394
+Average Tick Time: 0.0096 seconds
+
+=== STATISTICS ===
+Tanks Spawned: 10
+Tanks Killed: 10
+Projectile Deaths: 3
+Non-Projectile Deaths: 7
+Shots Fired: 13
+Hits Landed: 9
+Hit Accuracy: 69.2%
+PowerUps Spawned: 25
+PowerUps Collected: 0
+Collisions: 0
+
+=== RESULTS ===
+{'session_id': '22f6c66e', 'total_ticks': 1394, 'winner_team': None, 'reason': 'normal', 'sudden_death_reached': True, 'final_team_counts': {1: 0, 2: 0}, 'behavior': {'action_samples': 12250, 'move_commands': 10470, 'heading_turn_commands': 512, 'barrel_turn_commands': 9826, 'fire_commands': 58, 'idle_commands': 1323, 'movement_attempts': 10467, 'movement_successes': 8151, 'move_command_ratio': 0.8547, 'heading_turn_ratio': 0.0418, 'barrel_turn_ratio': 0.8021, 'idle_ratio': 0.108, 'fire_ratio': 0.0047, 'movement_success_ratio': 0.7787, 'mobility_label': 'mostly_moving'}}

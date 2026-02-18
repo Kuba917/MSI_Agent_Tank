@@ -348,12 +348,12 @@ async def get_action(payload: Dict[str, Any] = Body(...)) -> ActionCommand:
     )
 
 
-@app.post("/agent/destroy", status_code=204)
+@app.post("/agent/destroy", status_code=204, response_model=None)
 async def destroy() -> None:
     agent.destroy()
 
 
-@app.post("/agent/end", status_code=204)
+@app.post("/agent/end", status_code=204, response_model=None)
 async def end(payload: Dict[str, Any] = Body(...)) -> None:
     agent.end(
         damage_dealt=float(payload.get("damage_dealt", 0.0) or 0.0),
@@ -374,5 +374,4 @@ if __name__ == "__main__":
         agent.name = f"RuleBot_{args.port}"
 
     print(f"Starting {agent.name} on {args.host}:{args.port}")
-    uvicorn.run(app, host=args.host, port=args.port)
-
+    uvicorn.run(app, host=args.host, port=args.port, access_log=False)

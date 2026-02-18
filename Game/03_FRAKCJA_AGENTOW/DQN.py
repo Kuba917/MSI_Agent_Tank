@@ -287,8 +287,8 @@ class StateEncoder:
 
         enemy_visible = nearest_enemy is not None
         enemy_dist = 1.0
-        enemy_hull_error = 0.0
-        enemy_barrel_error = 0.0
+        enemy_hull_error = 0.5
+        enemy_barrel_error = 0.5
 
         if nearest_enemy is not None:
             enemy_pos = nearest_enemy.get("position", {"x": 0.0, "y": 0.0})
@@ -300,8 +300,8 @@ class StateEncoder:
             enemy_dist = self._clamp(float(distance_raw) / max(vision_range, 1.0), 0.0, 1.0)
 
             target_angle = self._angle_to(my_pos, enemy_pos)
-            enemy_hull_error = self.normalize_angle(target_angle - my_heading) / 180.0
-            enemy_barrel_error = self.normalize_angle(target_angle - barrel_abs) / 180.0
+            enemy_hull_error = (self.normalize_angle(target_angle - my_heading) / 180.0 + 1.0) * 0.5
+            enemy_barrel_error = (self.normalize_angle(target_angle - barrel_abs) / 180.0 + 1.0) * 0.5
 
         ally_fire_risk = self._ally_in_fire_line(my_pos, my_team, barrel_abs, seen_tanks)
 
@@ -343,6 +343,7 @@ class StateEncoder:
         top_speed = float(my_status.get("_top_speed", 5.0) or 5.0)
         speed = float(my_status.get("move_speed", 0.0) or 0.0)
         speed_ratio = self._clamp(speed / max(top_speed, 1.0), -1.0, 1.0)
+        speed_ratio = (speed_ratio + 1.0) * 0.5
 
         enemies_remaining_norm = self._clamp(float(enemies_remaining) / 5.0, 0.0, 1.0)
         can_fire = self._can_fire(my_status, reload_timer)
@@ -480,12 +481,18 @@ class FuzzyDQNAgent:
             f"save_path={self.config.model_path}"
         )
 
+        self.trace_positions: List[Tuple[float, float]] = []
+        self.trace_hp: List[float] = []
+        self.trace_shots: List[Tuple[float, float, float]] = []
+        self.trace_allies: List[Tuple[float, float]] = []
+        self.trace_enemies: List[Tuple[float, float]] = []
+
     def _init_comet(self) -> None:
         try:
             self.experiment = Experiment(
-                api_key="RoqFxUQ2dJHm8RjW1YatD0VQw",
-                project_name="msi-tank-dqn",
-                workspace="jbuka",
+                api_key="L2PzW7c3YM3WqM5hNfCsloeLZ",
+                project_name="msi-projekt",
+                workspace="kluski777",
                 auto_output_logging="simple"
             )
             self.experiment.set_name(self.name)
@@ -605,74 +612,68 @@ class FuzzyDQNAgent:
         current_tick: int,
     ) -> float:
         action = ACTION_SPACE[action_index]
-        reward = -0.05  # stronger time pressure for faster engagements
+        reward = -0.03  # time pressure
 
-        if action.move_speed < 0.1: #brak ruchu
-            reward -= 0.04
+        # Damage avoidance (biggest issue: entering danger zone).
+        hp_delta = current_obs.hp_ratio - prev_obs.hp_ratio
+        reward += hp_delta * 10
+        
+        shield_delta = current_obs.shield_ratio - prev_obs.shield_ratio
+        reward += shield_delta * 2
 
-        hp_delta = current_obs.hp_ratio - prev_obs.hp_ratio # zmiana poziomu HP
-        if hp_delta < 0.0:
-            reward += hp_delta * 10.0
+        # Danger/obstacle penalties (angles already normalized).
+        if current_obs.danger_ahead:
+            reward -= 1
+            if action.move_speed > 1e-2:
+                reward -= 1.5           # glownie przez to gina
+        if not prev_obs.danger_ahead and current_obs.danger_ahead:
+            reward -= 0.5
+        if prev_obs.danger_ahead and not current_obs.danger_ahead:
+            reward += 1.0
 
-        shield_delta = current_obs.shield_ratio - prev_obs.shield_ratio #zmiana poziomu tarczy
-        if shield_delta < 0.0:
-            reward += shield_delta * 4.0
+        if current_obs.obstacle_ahead and action.move_speed > 0.0:
+            reward -= 0.2
 
+        # Enemy tracking/aiming.
         if current_obs.enemy_visible:
-            if current_obs.enemy_dist < prev_obs.enemy_dist:
-                reward += 0.10
-            if abs(current_obs.enemy_barrel_error) < abs(prev_obs.enemy_barrel_error):
-                reward += 0.12
-            if abs(current_obs.enemy_barrel_error) < 0.03:
-                reward += 0.25
-            if np.sign(prev_obs.enemy_barrel_error) != np.sign(current_obs.enemy_barrel_error):
-                reward -= 0.08
-            if abs(current_obs.enemy_hull_error) < abs(prev_obs.enemy_hull_error):
-                reward += 0.05
+            reward += 0.1
+
+            barrel_improve = abs(prev_obs.enemy_barrel_error - 0.5) - abs(current_obs.enemy_barrel_error - 0.5)
+            hull_improve = abs(prev_obs.enemy_hull_error - 0.5) - abs(current_obs.enemy_hull_error - 0.5)
+            reward += barrel_improve * 3.0  # bardzo wazne zeby ustawial wieze w jego kierunku
+            reward += hull_improve * 0.2
         else:
-            # Penalty for spinning in place with no target.
-            if action.move_speed == 0.0 and abs(action.heading_rotation_angle) > 0.0:
-                reward -= 0.05
-            if action.move_speed == 0.0 and abs(action.barrel_rotation_angle) >= 10.0:
-                reward -= 0.03
+            reward -= 0.05
 
-        if prev_obs.obstacle_ahead and action.move_speed > 0.0:
-            reward -= 0.20
+        # Ally safety.
+        if current_obs.ally_fire_risk:
+            reward -= 0.2
 
-        if prev_obs.danger_ahead and action.move_speed > 0.0:
-            reward -= 0.18
-
-        if prev_obs.powerup_visible and prev_obs.hp_ratio < 0.7:
-            if current_obs.powerup_dist < prev_obs.powerup_dist:
-                reward += 0.06
-
+        # Firing quality based on previous state (action chosen there).
         if action.should_fire:
-            if prev_obs.ally_fire_risk:
-                reward -= 2.5
+            if not prev_obs.can_fire:
+                reward -= 0.4
             elif not prev_obs.enemy_visible:
-                reward -= 0.65
-            elif not prev_obs.can_fire or prev_obs.reload_norm > 0.02:
-                reward -= 0.55
-            elif abs(prev_obs.enemy_barrel_error) < 0.04:
-                reward += 1.10
+                reward -= 0.3
+            elif prev_obs.ally_fire_risk:
+                reward -= 0.6
             else:
-                reward -= 0.18
-        else:
-            if prev_obs.enemy_visible and prev_obs.can_fire and abs(prev_obs.enemy_barrel_error) < 0.03:
-                reward -= 0.45
+                aim_error = abs(prev_obs.enemy_barrel_error - 0.5)      # -0.5 bo jest znormalizowane
+                reward -= aim_error * 4.0
 
-        if self.prev_enemies_remaining is not None and enemies_remaining < self.prev_enemies_remaining:
-            enemy_drop = self.prev_enemies_remaining - enemies_remaining
-            recently_fired = (current_tick - self.last_fire_tick) <= 25
-            if recently_fired:
-                # Fast projectile eliminations are preferred over passive waiting.
-                speed_bonus = max(0.0, 2.0 - (float(current_tick) / 700.0))
-                reward += (4.0 * enemy_drop) + speed_bonus
-            else:
-                # Team got a kill without recent fire from this agent -> tiny credit.
-                reward += 0.15 * enemy_drop
+        # Powerup pursuit.
+        if current_obs.powerup_visible:
+            reward += (prev_obs.powerup_dist - current_obs.powerup_dist) * 0.2
+
+        # Small penalty for idling while enemy is visible.
+        if action.name == "idle" and current_obs.enemy_visible:
+            reward -= 0.05
+
+        speed_ratio = current_obs.vector[15]
+        reward += abs(speed_ratio - 0.5) / 3  # centered -> 0.5 ->> stands still; no reward for standing still
 
         return reward
+
 
     def _maybe_train(self) -> None:
         if not self.training_enabled:
@@ -789,6 +790,108 @@ class FuzzyDQNAgent:
         self.last_command = ActionCommand()
         self.prev_enemies_remaining = None
         self.current_episode_score = 0.0
+        self.trace_positions.clear()
+        self.trace_hp.clear()
+        self.trace_shots.clear()
+        self.trace_allies.clear()
+        self.trace_enemies.clear()
+
+    def _record_trace(
+        self,
+        my_status: Dict[str, Any],
+        sensor_data: Dict[str, Any],
+        current_obs: Observation,
+        action: ActionSpec,
+    ) -> None:
+        pos = my_status.get("position", {"x": 0.0, "y": 0.0})
+        x = float(pos.get("x", 0.0) or 0.0)
+        y = float(pos.get("y", 0.0) or 0.0)
+        self.trace_positions.append((x, y))
+        self.trace_hp.append(float(current_obs.hp_ratio))
+
+        seen_tanks = sensor_data.get("seen_tanks", [])
+        my_team = my_status.get("_team")
+        for tank in seen_tanks:
+            tpos = tank.get("position")
+            if not tpos:
+                continue
+            tx = float(tpos.get("x", 0.0) or 0.0)
+            ty = float(tpos.get("y", 0.0) or 0.0)
+            if tank.get("team") == my_team:
+                self.trace_allies.append((tx, ty))
+            else:
+                self.trace_enemies.append((tx, ty))
+
+        if action.should_fire:
+            heading = float(my_status.get("heading", 0.0) or 0.0)
+            barrel = float(my_status.get("barrel_angle", 0.0) or 0.0)
+            self.trace_shots.append((x, y, heading + barrel))
+
+    def _save_episode_plot(self) -> None:
+        if len(self.trace_positions) < 2:
+            return
+
+        import matplotlib.pyplot as plt
+        from matplotlib.collections import LineCollection
+
+        hps = self.trace_hp
+        segments = []
+        colors = []
+        for i in range(len(self.trace_positions) - 1):
+            segments.append([self.trace_positions[i], self.trace_positions[i + 1]])
+            colors.append((hps[i] + hps[i + 1]) * 0.5)
+
+        fig, ax = plt.subplots(figsize=(8, 8))
+        lc = LineCollection(segments, cmap="RdYlGn", linewidths=2.0)
+        lc.set_array(np.array(colors, dtype=np.float32))
+        ax.add_collection(lc)
+
+        xs = [p[0] for p in self.trace_positions]
+        ys = [p[1] for p in self.trace_positions]
+        ax.scatter(xs, ys, c=hps, cmap="RdYlGn", s=10, alpha=0.7)
+
+        if self.trace_allies:
+            ax.scatter(
+                [p[0] for p in self.trace_allies],
+                [p[1] for p in self.trace_allies],
+                c="blue",
+                s=12,
+                alpha=0.6,
+                label="allies",
+            )
+        if self.trace_enemies:
+            ax.scatter(
+                [p[0] for p in self.trace_enemies],
+                [p[1] for p in self.trace_enemies],
+                c="black",
+                s=12,
+                alpha=0.6,
+                label="enemies",
+            )
+        if self.trace_shots:
+            for sx, sy, ang in self.trace_shots:
+                dx = math.cos(math.radians(ang)) * 2.0
+                dy = math.sin(math.radians(ang)) * 2.0
+                ax.arrow(
+                    sx,
+                    sy,
+                    dx,
+                    dy,
+                    color="yellow",
+                    width=0.1,
+                    head_width=0.5,
+                    length_includes_head=True,
+                )
+
+        ax.set_aspect("equal", adjustable="box")
+        ax.set_title(f"{self.name} trajectory (game {self.games_played})")
+        ax.grid(True, alpha=0.3)
+
+        out_dir = os.path.join(current_dir, "training_reports")
+        os.makedirs(out_dir, exist_ok=True)
+        out_path = os.path.join(out_dir, f"game_{self.games_played}_agent_{self.name}.png")
+        fig.savefig(out_path, dpi=150, bbox_inches="tight")
+        plt.close(fig)
 
     def get_action(
         self,
@@ -803,6 +906,9 @@ class FuzzyDQNAgent:
                 and self.last_action_index is not None
                 and current_tick % self.config.frame_skip != 0
             ):
+                action = ACTION_SPACE[self.last_action_index]
+                current_obs = self.encoder.encode(my_tank_status, sensor_data, enemies_remaining)
+                self._record_trace(my_tank_status, sensor_data, current_obs, action)
                 return self.last_command
 
             current_obs = self.encoder.encode(my_tank_status, sensor_data, enemies_remaining)
@@ -838,6 +944,7 @@ class FuzzyDQNAgent:
             self.last_command = command
             self.prev_enemies_remaining = enemies_remaining
             self.total_steps += 1
+            self._record_trace(my_tank_status, sensor_data, current_obs, action)
 
             return command
 
@@ -857,6 +964,7 @@ class FuzzyDQNAgent:
                     self._maybe_train()
 
             self.was_destroyed = True
+            self._save_episode_plot()
             self._reset_episode_state()
 
     def end(self, damage_dealt: float, tanks_killed: int) -> None:
@@ -903,6 +1011,8 @@ class FuzzyDQNAgent:
                 # best_score persists across process restarts.
                 self.save_checkpoint(self.config.model_path, label="latest")
                 self.save_checkpoint(self.final_model_path, label="final")
+
+            self._save_episode_plot()
 
             self.was_destroyed = False
             self._reset_episode_state()
@@ -960,12 +1070,12 @@ async def get_action(payload: Dict[str, Any] = Body(...)) -> ActionCommand:
     )
 
 
-@app.post("/agent/destroy", status_code=204)
+@app.post("/agent/destroy", status_code=204, response_model=None)
 async def destroy() -> None:
     _get_agent().destroy()
 
 
-@app.post("/agent/end", status_code=204)
+@app.post("/agent/end", status_code=204, response_model=None)
 async def end(payload: Dict[str, Any] = Body(...)) -> None:
     _get_agent().end(
         damage_dealt=float(payload.get("damage_dealt", 0.0) or 0.0),
@@ -1029,4 +1139,4 @@ if __name__ == "__main__":
         f"Starting {agent_name} on {args.host}:{args.port} "
         f"| train={args.train} | model={config.model_path}"
     )
-    uvicorn.run(app, host=args.host, port=args.port)
+    uvicorn.run(app, host=args.host, port=args.port, access_log=False)

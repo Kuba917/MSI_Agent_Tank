@@ -10,7 +10,7 @@ This module provides a readable and numerically stable fuzzy network:
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, Optional
 
 import torch
 import torch.nn as nn
@@ -146,6 +146,11 @@ class ANFISDQN(nn.Module):
         input_min: Lower bound of normalized inputs.
         input_max: Upper bound of normalized inputs.
     """
+    _shared_membership: Optional[BaseMembership] = None
+    _shared_value_weights: Optional[nn.Parameter] = None
+    _shared_value_bias: Optional[nn.Parameter] = None
+    _shared_adv_weights: Optional[nn.Parameter] = None
+    _shared_adv_bias: Optional[nn.Parameter] = None
 
     def __init__(
         self,
@@ -170,22 +175,32 @@ class ANFISDQN(nn.Module):
         self.n_inputs = n_inputs
         self.n_rules = n_rules
         self.n_actions = n_actions
+        if ANFISDQN._shared_membership is None:
+            try:
+                membership_cls = MEMBERSHIP_MAP[mf_type]
+                ANFISDQN._shared_membership = membership_cls(
+                    n_rules, n_inputs, input_min, input_max
+                )
 
-        membership_cls = MEMBERSHIP_MAP[mf_type]
-        self.membership = membership_cls(n_rules, n_inputs, input_min, input_max)
+                ANFISDQN._shared_value_weights = nn.Parameter(torch.empty(n_rules, 1, n_inputs))
+                ANFISDQN._shared_value_bias = nn.Parameter(torch.zeros(n_rules, 1))
+                ANFISDQN._shared_adv_weights = nn.Parameter(torch.empty(n_rules, n_actions, n_inputs))
+                ANFISDQN._shared_adv_bias = nn.Parameter(torch.zeros(n_rules, n_actions))
 
-        # Consequent part (first-order Sugeno):
-        # rule_output = w_rule * x + b_rule
-        self.consequent_weights = nn.Parameter(
-            torch.empty(n_rules, n_actions, n_inputs)
-        )
-        self.consequent_bias = nn.Parameter(torch.zeros(n_rules, n_actions))
+                nn.init.xavier_uniform_(ANFISDQN._shared_value_weights)
+                nn.init.zeros_(ANFISDQN._shared_value_bias)
+                nn.init.xavier_uniform_(ANFISDQN._shared_adv_weights)
+                nn.init.zeros_(ANFISDQN._shared_adv_bias)
+            except Exception as exc:
+                print(f"[ANFISDQN] ERROR: failed to initialize shared weights: {exc}")
+                raise
 
-        self.reset_parameters()
-
-    def reset_parameters(self) -> None:
-        nn.init.xavier_uniform_(self.consequent_weights)
-        nn.init.zeros_(self.consequent_bias)
+        # Bind shared modules/parameters to this instance so they are registered.
+        self.membership = ANFISDQN._shared_membership
+        self.value_weights = ANFISDQN._shared_value_weights
+        self.value_bias = ANFISDQN._shared_value_bias
+        self.adv_weights = ANFISDQN._shared_adv_weights
+        self.adv_bias = ANFISDQN._shared_adv_bias
 
     def _rule_strengths(self, x: torch.Tensor) -> torch.Tensor:
         # log_mu: [batch, rules, inputs]
@@ -202,12 +217,16 @@ class ANFISDQN(nn.Module):
         x = x.float()
 
         strengths = self._rule_strengths(x)  # [B, R]
-        rule_outputs = (
-            torch.einsum("bi,rai->bra", x, self.consequent_weights)
-            + self.consequent_bias
+        value_outputs = (
+            torch.einsum("bi,rvi->brv", x, self.value_weights) + self.value_bias
+        )  # [B, R, 1]
+        adv_outputs = (
+            torch.einsum("bi,rai->bra", x, self.adv_weights) + self.adv_bias
         )  # [B, R, A]
 
-        q_values = torch.einsum("br,bra->ba", strengths, rule_outputs)
+        state_value = torch.einsum("br,brv->bv", strengths, value_outputs)  # [B, 1]
+        advantages = torch.einsum("br,bra->ba", strengths, adv_outputs)  # [B, A]
+        q_values = state_value + (advantages - advantages.mean(dim=1, keepdim=True))
         return q_values
 
     def firing_strengths(self, x: torch.Tensor) -> torch.Tensor:
@@ -215,4 +234,3 @@ class ANFISDQN(nn.Module):
         if x.dim() == 1:
             x = x.unsqueeze(0)
         return self._rule_strengths(x.float())
-
