@@ -79,6 +79,7 @@ def build_args() -> argparse.Namespace:
 
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--continue-on-error", action="store_true")
+    parser.add_argument("--render", action="store_true", help="Show game window (disable headless mode)")
 
     return parser.parse_args()
 
@@ -431,12 +432,14 @@ def run_engine_episode(args: argparse.Namespace, map_seed: str) -> subprocess.Co
     cmd = [
         sys.executable,
         "run_game.py",
-        "--headless",
         "--log-level",
         args.log_level,
         "--map-seed",
         map_seed,
     ]
+
+    if not args.render:
+        cmd.append("--headless")
 
     if args.max_ticks > 0:
         cmd.extend(["--max-ticks", str(args.max_ticks)])

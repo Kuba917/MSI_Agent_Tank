@@ -73,12 +73,13 @@ def build_args() -> argparse.Namespace:
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--train-every", type=int, default=2)
     parser.add_argument("--target-sync-every", type=int, default=500)
-    parser.add_argument("--epsilon-decay-steps", type=int, default=120000)
+    parser.add_argument("--epsilon-decay-steps", type=int, default=300000)
     parser.add_argument("--save-every-games", type=int, default=1)
     parser.add_argument("--seed", type=int, default=1)
 
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--continue-on-error", action="store_true")
+    parser.add_argument("--render", action="store_true", help="Show game window (disable headless mode)")
 
     return parser.parse_args()
 
@@ -103,11 +104,22 @@ def wait_for_agents_ready(
     base_port: int,
     total_agents: int,
     timeout_seconds: float,
+    processes: List[subprocess.Popen] = None,
 ) -> List[int]:
     pending = {base_port + idx for idx in range(total_agents)}
     deadline = time.time() + max(0.0, float(timeout_seconds))
 
     while pending and time.time() < deadline:
+        # Check if any process crashed prematurely
+        if processes:
+            for i, proc in enumerate(processes):
+                if proc.poll() is not None:
+                    port = base_port + i
+                    if port in pending:
+                        print(f"[ERROR] Agent process #{i+1} (port {port}) crashed with exit code {proc.returncode}.")
+                        print("Tip: Run with --verbose to see the error output.")
+                        return list(pending)
+
         for port in list(pending):
             try:
                 with urllib.request.urlopen(f"http://127.0.0.1:{port}/", timeout=0.7) as response:
@@ -431,12 +443,14 @@ def run_engine_episode(args: argparse.Namespace, map_seed: str) -> subprocess.Co
     cmd = [
         sys.executable,
         "run_game.py",
-        "--headless",
         "--log-level",
         args.log_level,
         "--map-seed",
         map_seed,
     ]
+
+    if not args.render:
+        cmd.append("--headless")
 
     if args.max_ticks > 0:
         cmd.extend(["--max-ticks", str(args.max_ticks)])
@@ -713,6 +727,7 @@ def main() -> int:
                     base_port=int(args.base_port),
                     total_agents=total_agents,
                     timeout_seconds=float(args.ready_timeout),
+                    processes=processes,
                 )
                 if unready_ports:
                     print(

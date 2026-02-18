@@ -11,6 +11,11 @@ Key features:
 
 from __future__ import annotations
 
+try:
+    from comet_ml import Experiment
+except ImportError:
+    Experiment = None
+
 import argparse
 import math
 import os
@@ -39,7 +44,7 @@ sys.path.insert(0, engine_dir)
 
 
 STATE_DIM = 17
-DEFAULT_MODEL_PATH = os.path.join(current_dir, "fuzzy_dqn_model.pt")
+DEFAULT_MODEL_PATH = os.path.join(current_dir, "fuzzy_dqn_model_agent1_final.pt")
 
 
 class ActionCommand(BaseModel):
@@ -60,24 +65,25 @@ class ActionSpec:
 
 
 ACTION_SPACE: List[ActionSpec] = [
-    ActionSpec("scan_left", 0.0, 0.0, -2.5, False),
-    ActionSpec("scan_right", 0.0, 0.0, 2.5, False),
-    ActionSpec("forward", 100.0, 0.0, 0.0, False),
-    ActionSpec("forward_left", 100.0, -1.2, 0.0, False),
-    ActionSpec("forward_right", 100.0, 1.2, 0.0, False),
+    ActionSpec("idle", 0.0, 0.0, 0.0, False),
+
+    # Movement
+    ActionSpec("forward", 120.0, 0.0, 0.0, False),
+    ActionSpec("forward_left", 100.0, -1.5, 0.0, False),
+    ActionSpec("forward_right", 100.0, 1.5, 0.0, False),
     ActionSpec("retreat", -80.0, 0.0, 0.0, False),
-    ActionSpec("retreat_left", -80.0, -1.2, 0.0, False),
-    ActionSpec("retreat_right", -80.0, 1.2, 0.0, False),
-    ActionSpec("turn_left", 0.0, -2.0, 0.0, False),
-    ActionSpec("turn_right", 0.0, 2.0, 0.0, False),
-    ActionSpec("aim_left_small", 0.0, 0.0, -2.0, False),
-    ActionSpec("aim_right_small", 0.0, 0.0, 2.0, False),
-    ActionSpec("aim_left_large", 0.0, 0.0, -4.0, False),
-    ActionSpec("aim_right_large", 0.0, 0.0, 4.0, False),
-    ActionSpec("fire_still", 0.0, 0.0, 0.0, True),
-    ActionSpec("fire_push", 60.0, 0.0, 0.0, True),
-    ActionSpec("fire_turn_left", 0.0, -1.0, 0.0, True),
-    ActionSpec("fire_turn_right", 0.0, 1.0, 0.0, True),
+
+    # Rotation
+    ActionSpec("turn_left", 0.0, -2.5, 0.0, False),
+    ActionSpec("turn_right", 0.0, 2.5, 0.0, False),
+
+    # Aiming (ONLY ONE SCALE)
+    ActionSpec("aim_left", 0.0, 0.0, -3.0, False),
+    ActionSpec("aim_right", 0.0, 0.0, 3.0, False),
+
+    # Fire
+    ActionSpec("fire", 0.0, 0.0, 0.0, True),
+    ActionSpec("fire_forward", 80.0, 0.0, 0.0, True),
 ]
 
 
@@ -445,6 +451,14 @@ class FuzzyDQNAgent:
         self.games_played = 0
         self.current_epsilon = config.epsilon_start
         self.last_loss: Optional[float] = None
+        self.current_episode_score = 0.0
+
+        self.experiment = None
+        if self.training_enabled:
+            if Experiment:
+                threading.Thread(target=self._init_comet, daemon=True).start()
+            else:
+                print(f"[{self.name}] WARNING: comet_ml module not found. Experiment logging disabled.")
 
         self.last_observation: Optional[Observation] = None
         self.last_action_index: Optional[int] = None
@@ -462,8 +476,22 @@ class FuzzyDQNAgent:
         self._load_checkpoint_if_available()
         print(
             f"[{self.name}] ready | training={self.training_enabled} "
-            f"device={self.device} rules={self.config.n_rules} mf={self.config.mf_type}"
+            f"device={self.device} rules={self.config.n_rules} mf={self.config.mf_type} "
+            f"save_path={self.config.model_path}"
         )
+
+    def _init_comet(self) -> None:
+        try:
+            self.experiment = Experiment(
+                api_key="RoqFxUQ2dJHm8RjW1YatD0VQw",
+                project_name="msi-tank-dqn",
+                workspace="jbuka",
+                auto_output_logging="simple"
+            )
+            self.experiment.set_name(self.name)
+            self.experiment.log_parameters(vars(self.config))
+        except Exception as e:
+            print(f"[{self.name}] Failed to initialize Comet ML: {e}")
 
     def _resolve_best_model_path(self) -> Optional[str]:
         if self.config.best_model_path:
@@ -577,13 +605,16 @@ class FuzzyDQNAgent:
         current_tick: int,
     ) -> float:
         action = ACTION_SPACE[action_index]
-        reward = -0.025  # stronger time pressure for faster engagements
+        reward = -0.05  # stronger time pressure for faster engagements
 
-        hp_delta = current_obs.hp_ratio - prev_obs.hp_ratio
+        if action.move_speed < 0.1: #brak ruchu
+            reward -= 0.04
+
+        hp_delta = current_obs.hp_ratio - prev_obs.hp_ratio # zmiana poziomu HP
         if hp_delta < 0.0:
             reward += hp_delta * 10.0
 
-        shield_delta = current_obs.shield_ratio - prev_obs.shield_ratio
+        shield_delta = current_obs.shield_ratio - prev_obs.shield_ratio #zmiana poziomu tarczy
         if shield_delta < 0.0:
             reward += shield_delta * 4.0
 
@@ -592,6 +623,10 @@ class FuzzyDQNAgent:
                 reward += 0.10
             if abs(current_obs.enemy_barrel_error) < abs(prev_obs.enemy_barrel_error):
                 reward += 0.12
+            if abs(current_obs.enemy_barrel_error) < 0.03:
+                reward += 0.25
+            if np.sign(prev_obs.enemy_barrel_error) != np.sign(current_obs.enemy_barrel_error):
+                reward -= 0.08
             if abs(current_obs.enemy_hull_error) < abs(prev_obs.enemy_hull_error):
                 reward += 0.05
         else:
@@ -601,10 +636,10 @@ class FuzzyDQNAgent:
             if action.move_speed == 0.0 and abs(action.barrel_rotation_angle) >= 10.0:
                 reward -= 0.03
 
-        if current_obs.obstacle_ahead and action.move_speed > 0.0:
+        if prev_obs.obstacle_ahead and action.move_speed > 0.0:
             reward -= 0.20
 
-        if current_obs.danger_ahead and action.move_speed > 0.0:
+        if prev_obs.danger_ahead and action.move_speed > 0.0:
             reward -= 0.18
 
         if prev_obs.powerup_visible and prev_obs.hp_ratio < 0.7:
@@ -623,8 +658,8 @@ class FuzzyDQNAgent:
             else:
                 reward -= 0.18
         else:
-            if prev_obs.enemy_visible and prev_obs.can_fire and abs(prev_obs.enemy_barrel_error) < 0.025:
-                reward -= 0.30
+            if prev_obs.enemy_visible and prev_obs.can_fire and abs(prev_obs.enemy_barrel_error) < 0.03:
+                reward -= 0.45
 
         if self.prev_enemies_remaining is not None and enemies_remaining < self.prev_enemies_remaining:
             enemy_drop = self.prev_enemies_remaining - enemies_remaining
@@ -664,6 +699,11 @@ class FuzzyDQNAgent:
 
         loss = F.smooth_l1_loss(q_values, target_q)
         self.last_loss = float(loss.item())
+
+        if self.experiment:
+            self.experiment.log_metric("loss", self.last_loss, step=self.train_steps)
+            self.experiment.log_metric("epsilon", self.current_epsilon, step=self.train_steps)
+            self.experiment.log_metric("q_mean", q_values.mean().item(), step=self.train_steps)
 
         self.optimizer.zero_grad(set_to_none=True)
         loss.backward()
@@ -710,11 +750,19 @@ class FuzzyDQNAgent:
         try:
             checkpoint = torch.load(path, map_location=self.device)
             if isinstance(checkpoint, dict) and "model_state_dict" in checkpoint:
-                self.policy_net.load_state_dict(checkpoint["model_state_dict"], strict=False)
+                # Weryfikacja konfiguracji (jeśli dostępna w pliku)
+                saved_conf = checkpoint.get("config", {})
+                if saved_conf:
+                    if saved_conf.get("n_rules") != self.config.n_rules:
+                        print(f"[{self.name}] WARNING: Rules count mismatch! Saved: {saved_conf.get('n_rules')}, Current: {self.config.n_rules}")
+                    if saved_conf.get("mf_type") != self.config.mf_type:
+                        print(f"[{self.name}] WARNING: MF type mismatch! Saved: {saved_conf.get('mf_type')}, Current: {self.config.mf_type}")
+
+                self.policy_net.load_state_dict(checkpoint["model_state_dict"], strict=True)
 
                 target_state = checkpoint.get("target_state_dict")
                 if target_state:
-                    self.target_net.load_state_dict(target_state, strict=False)
+                    self.target_net.load_state_dict(target_state, strict=True)
                 else:
                     self.target_net.load_state_dict(self.policy_net.state_dict())
 
@@ -740,6 +788,7 @@ class FuzzyDQNAgent:
         self.last_action_index = None
         self.last_command = ActionCommand()
         self.prev_enemies_remaining = None
+        self.current_episode_score = 0.0
 
     def get_action(
         self,
@@ -766,6 +815,7 @@ class FuzzyDQNAgent:
                     enemies_remaining=enemies_remaining,
                     current_tick=current_tick,
                 )
+                self.current_episode_score += reward
                 self.replay.add(
                     state=self.last_observation.vector,
                     action=self.last_action_index,
@@ -776,6 +826,7 @@ class FuzzyDQNAgent:
                 self._maybe_train()
 
             action_index = self._select_action(current_obs.vector)
+
             action = ACTION_SPACE[action_index]
             command = self._to_command(action, my_tank_status, current_obs)
 
@@ -794,6 +845,7 @@ class FuzzyDQNAgent:
         with self.lock:
             print(f"[{self.name}] destroyed")
             if self.last_observation is not None and self.last_action_index is not None:
+                self.current_episode_score -= 8.0
                 self.replay.add(
                     state=self.last_observation.vector,
                     action=self.last_action_index,
@@ -813,6 +865,7 @@ class FuzzyDQNAgent:
             if not self.was_destroyed:
                 final_reward += 1.5
 
+            self.current_episode_score += final_reward
             if self.last_observation is not None and self.last_action_index is not None:
                 self.replay.add(
                     state=self.last_observation.vector,
@@ -832,6 +885,13 @@ class FuzzyDQNAgent:
                 f"epsilon={self.current_epsilon:.3f} replay={len(self.replay)} "
                 f"train_steps={self.train_steps}"
             )
+
+            if self.experiment:
+                self.experiment.log_metric("total_episode_reward", self.current_episode_score, step=self.games_played)
+                self.experiment.log_metric("damage_dealt", damage_dealt, step=self.games_played)
+                self.experiment.log_metric("tanks_killed", tanks_killed, step=self.games_played)
+                self.experiment.log_metric("was_destroyed", int(self.was_destroyed), step=self.games_played)
+                self.experiment.log_metric("replay_size", len(self.replay), step=self.games_played)
 
             if self.training_enabled and self.games_played % max(1, self.config.save_every_games) == 0:
                 episode_score = final_reward + (4.0 * tanks_killed) + (damage_dealt / 40.0)
@@ -970,4 +1030,3 @@ if __name__ == "__main__":
         f"| train={args.train} | model={config.model_path}"
     )
     uvicorn.run(app, host=args.host, port=args.port)
-

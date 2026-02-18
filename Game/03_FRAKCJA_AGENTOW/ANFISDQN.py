@@ -153,7 +153,7 @@ class ANFISDQN(nn.Module):
         n_rules: int,
         n_actions: int,
         mf_type: Literal["gaussian", "bell", "triangular"] = "gaussian",
-        input_min: float = -1.0,
+        input_min: float = 0.0,
         input_max: float = 1.0,
     ):
         super().__init__()

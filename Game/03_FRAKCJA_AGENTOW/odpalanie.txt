@@ -73,10 +73,10 @@ py -3 Game/03_FRAKCJA_AGENTOW/train_fuzzy_dqn.py `
   --selfplay-start-episode 1001 `
   --selfplay-opponents 3 `
   --warmup-steps 1024 `
-  --batch-size 128 `
+  --batch-size 512 `
   --train-every 2 `
   --target-sync-every 500 `
-  --epsilon-decay-steps 350000 `
+  --epsilon-decay-steps 600000 `
   --ready-timeout 120 `
   --continue-on-error `
   2>&1 | Tee-Object -FilePath "Game/03_FRAKCJA_AGENTOW/night_train_$ts.log"

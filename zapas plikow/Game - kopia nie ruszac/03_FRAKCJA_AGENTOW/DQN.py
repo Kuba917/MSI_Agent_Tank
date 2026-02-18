@@ -11,6 +11,11 @@ Key features:
 
 from __future__ import annotations
 
+try:
+    from comet_ml import Experiment
+except ImportError:
+    Experiment = None
+
 import argparse
 import math
 import os
@@ -398,7 +403,7 @@ class AgentConfig:
 
     epsilon_start: float = 1.0
     epsilon_final: float = 0.05
-    epsilon_decay_steps: int = 120_000
+    epsilon_decay_steps: int = 300_000
 
     frame_skip: int = 1
     save_every_games: int = 1
@@ -445,6 +450,7 @@ class FuzzyDQNAgent:
         self.games_played = 0
         self.current_epsilon = config.epsilon_start
         self.last_loss: Optional[float] = None
+        self.current_episode_score = 0.0
 
         self.last_observation: Optional[Observation] = None
         self.last_action_index: Optional[int] = None
@@ -459,11 +465,31 @@ class FuzzyDQNAgent:
         self.best_model_path = self._resolve_best_model_path()
         self.final_model_path = self._resolve_final_model_path()
 
+        self.experiment = None
+        if self.training_enabled:
+            if Experiment:
+                threading.Thread(target=self._init_comet, daemon=True).start()
+            else:
+                print(f"[{self.name}] WARNING: comet_ml module not found. Experiment logging disabled.")
+
         self._load_checkpoint_if_available()
         print(
             f"[{self.name}] ready | training={self.training_enabled} "
             f"device={self.device} rules={self.config.n_rules} mf={self.config.mf_type}"
         )
+
+    def _init_comet(self) -> None:
+        try:
+            self.experiment = Experiment(
+                api_key="RoqFxUQ2dJHm8RjW1YatD0VQw",
+                project_name="MSI_Tank_DQN",
+                workspace="jbuka",
+                auto_output_logging="simple"
+            )
+            self.experiment.set_name(self.name)
+            self.experiment.log_parameters(vars(self.config))
+        except Exception as e:
+            print(f"[{self.name}] Failed to initialize Comet ML: {e}")
 
     def _resolve_best_model_path(self) -> Optional[str]:
         if self.config.best_model_path:
@@ -665,6 +691,11 @@ class FuzzyDQNAgent:
         loss = F.smooth_l1_loss(q_values, target_q)
         self.last_loss = float(loss.item())
 
+        if self.experiment:
+            self.experiment.log_metric("loss", self.last_loss, step=self.train_steps)
+            self.experiment.log_metric("epsilon", self.current_epsilon, step=self.train_steps)
+            self.experiment.log_metric("q_mean", q_values.mean().item(), step=self.train_steps)
+
         self.optimizer.zero_grad(set_to_none=True)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(self.policy_net.parameters(), max_norm=1.0)
@@ -740,6 +771,7 @@ class FuzzyDQNAgent:
         self.last_action_index = None
         self.last_command = ActionCommand()
         self.prev_enemies_remaining = None
+        self.current_episode_score = 0.0
 
     def get_action(
         self,
@@ -766,6 +798,7 @@ class FuzzyDQNAgent:
                     enemies_remaining=enemies_remaining,
                     current_tick=current_tick,
                 )
+                self.current_episode_score += reward
                 self.replay.add(
                     state=self.last_observation.vector,
                     action=self.last_action_index,
@@ -794,6 +827,7 @@ class FuzzyDQNAgent:
         with self.lock:
             print(f"[{self.name}] destroyed")
             if self.last_observation is not None and self.last_action_index is not None:
+                self.current_episode_score -= 8.0
                 self.replay.add(
                     state=self.last_observation.vector,
                     action=self.last_action_index,
@@ -813,6 +847,7 @@ class FuzzyDQNAgent:
             if not self.was_destroyed:
                 final_reward += 1.5
 
+            self.current_episode_score += final_reward
             if self.last_observation is not None and self.last_action_index is not None:
                 self.replay.add(
                     state=self.last_observation.vector,
@@ -832,6 +867,13 @@ class FuzzyDQNAgent:
                 f"epsilon={self.current_epsilon:.3f} replay={len(self.replay)} "
                 f"train_steps={self.train_steps}"
             )
+
+            if self.experiment:
+                self.experiment.log_metric("total_episode_reward", self.current_episode_score, step=self.games_played)
+                self.experiment.log_metric("damage_dealt", damage_dealt, step=self.games_played)
+                self.experiment.log_metric("tanks_killed", tanks_killed, step=self.games_played)
+                self.experiment.log_metric("was_destroyed", int(self.was_destroyed), step=self.games_played)
+                self.experiment.log_metric("replay_size", len(self.replay), step=self.games_played)
 
             if self.training_enabled and self.games_played % max(1, self.config.save_every_games) == 0:
                 episode_score = final_reward + (4.0 * tanks_killed) + (damage_dealt / 40.0)
@@ -932,7 +974,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--train-every", type=int, default=2)
     parser.add_argument("--target-sync-every", type=int, default=500)
-    parser.add_argument("--epsilon-decay-steps", type=int, default=120000)
+    parser.add_argument("--epsilon-decay-steps", type=int, default=300000)
 
     return parser.parse_args()
 
@@ -970,4 +1012,3 @@ if __name__ == "__main__":
         f"| train={args.train} | model={config.model_path}"
     )
     uvicorn.run(app, host=args.host, port=args.port)
-

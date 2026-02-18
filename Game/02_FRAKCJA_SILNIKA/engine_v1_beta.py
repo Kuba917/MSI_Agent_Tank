@@ -48,11 +48,12 @@ except ImportError as e:
 
 # --- Stałe Konfiguracyjne Grafiki ---
 LOG_LEVEL = "DEBUG"
-MAP_SEED = "advanced_road_trees.csv"
+MAP_SEED =  "road_trees.csv" # "advanced_road_trees.csv"
 TARGET_FPS = 60
 SCALE = 5  # Współczynnik skalowania grafiki (wszystko będzie 4x większe)
 TILE_SIZE = 10  # To MUSI być zgodne z domyślną wartością w map_loader.py
-AGENT_NAME = "random_agent.py" # Nazwa pliku agenta
+AGENT_NAME = "DQN.py" #"random_agent.py" # Nazwa pliku agenta
+MODEL_FILE = "fuzzy_dqn_model.pt" # Upewnij się, że ta nazwa zgadza się z plikiem w folderze 03_FRAKCJA_AGENTOW
 
 ASSETS_BASE_PATH = os.path.join(current_file_dir, 'frontend', 'assets')
 TILE_ASSETS_PATH = os.path.join(ASSETS_BASE_PATH, 'tiles')
@@ -560,6 +561,12 @@ def main():
             port = AGENT_BASE_PORT + i
             name = f"Bot_{i+1}"
             command = [sys.executable, agent_script_path, "--port", str(port), "--name", name]
+            
+            # Przekazanie ścieżki do modelu, jeśli uruchamiamy DQN
+            if AGENT_NAME == "DQN.py":
+                model_full_path = os.path.join(os.path.dirname(agent_script_path), MODEL_FILE)
+                command.extend(["--model-path", model_full_path])
+
             proc = subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             agent_processes.append(proc)
             print(f"  -> Agent '{name}' uruchomiony na porcie {port} (PID: {proc.pid})")
