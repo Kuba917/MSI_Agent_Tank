@@ -17,6 +17,7 @@ except ImportError:
     Experiment = None
 
 import argparse
+import copy
 import math
 import os
 import random
@@ -45,11 +46,16 @@ sys.path.insert(0, controller_dir)
 sys.path.insert(0, engine_dir)
 
 
-STATE_DIM = 17
+STATE_DIM = 23
 DEFAULT_MODEL_PATH = os.path.join(current_dir, "fuzzy_dqn_model_agent1_final.pt")
 MAP_WIDTH = 200.0
 MAP_HEIGHT = 200.0
 COMET_LOG_EVERY = 20
+ACTION_DIM = 4
+# TODO: Scale actions using per-tank limits from my_tank_status (_top_speed, _heading_spin_rate, _barrel_spin_rate)
+MAX_MOVE_SPEED = 5.0
+MAX_HEADING_DELTA = 5.0
+MAX_BARREL_DELTA = 5.0
 
 
 class ActionCommand(BaseModel):
@@ -97,12 +103,13 @@ ACTION_SPACE: List[ActionSpec] = [
 class ReplayBuffer:
     """Simple ring buffer for off-policy learning."""
 
-    def __init__(self, capacity: int, state_dim: int):
+    def __init__(self, capacity: int, state_dim: int, action_dim: int):
         self.capacity = int(capacity)
         self.state_dim = int(state_dim)
+        self.action_dim = int(action_dim)
 
         self.states = np.zeros((self.capacity, self.state_dim), dtype=np.float32)
-        self.actions = np.zeros((self.capacity,), dtype=np.int64)
+        self.actions = np.zeros((self.capacity, self.action_dim), dtype=np.float32)
         self.rewards = np.zeros((self.capacity,), dtype=np.float32)
         self.next_states = np.zeros((self.capacity, self.state_dim), dtype=np.float32)
         self.dones = np.zeros((self.capacity,), dtype=np.float32)
@@ -113,13 +120,13 @@ class ReplayBuffer:
     def add(
         self,
         state: np.ndarray,
-        action: int,
+        action: np.ndarray,
         reward: float,
         next_state: np.ndarray,
         done: float,
     ) -> None:
         self.states[self.index] = state
-        self.actions[self.index] = int(action)
+        self.actions[self.index] = action
         self.rewards[self.index] = float(reward)
         self.next_states[self.index] = next_state
         self.dones[self.index] = float(done)
@@ -402,17 +409,19 @@ class AgentConfig:
     n_rules: int = 32
     mf_type: str = "gaussian"
 
-    gamma: float = 0.99
-    learning_rate: float = 3e-4
+    gamma: float = 0.95
+    actor_lr: float = 1e-2
+    critic_lr: float = 1e-2
+    tau: float = 0.005
+    action_noise_start: float = 0.3
+    action_noise_end: float = 0.05
+    action_noise_decay_steps: int = 50_000
     batch_size: int = 128
     replay_capacity: int = 50_000
     warmup_steps: int = 2_000
     train_every: int = 2
-    target_sync_every: int = 500
+    target_sync_every: int = 1
 
-    epsilon_start: float = 1.0
-    epsilon_final: float = 0.05
-    epsilon_decay_steps: int = 120_000
 
     frame_skip: int = 1
     save_every_games: int = 1
@@ -436,28 +445,31 @@ class FuzzyDQNAgent:
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.encoder = StateEncoder()
 
-        self.policy_net = ANFISDQN(
+        self.actor = ANFISDQN(
             n_inputs=config.state_dim,
             n_rules=config.n_rules,
-            n_actions=len(ACTION_SPACE),
+            n_actions=ACTION_DIM,
             mf_type=config.mf_type,
         ).to(self.device)
-        self.target_net = ANFISDQN(
-            n_inputs=config.state_dim,
-            n_rules=config.n_rules,
-            n_actions=len(ACTION_SPACE),
-            mf_type=config.mf_type,
-        ).to(self.device)
-        self.target_net.load_state_dict(self.policy_net.state_dict())
-        self.target_net.eval()
+        self.actor_target = copy.deepcopy(self.actor).to(self.device)
+        self.actor_target.eval()
 
-        self.optimizer = torch.optim.Adam(self.policy_net.parameters(), lr=config.learning_rate)
-        self.replay = ReplayBuffer(config.replay_capacity, config.state_dim)
+        self.critic = ANFISDQN(
+            n_inputs=config.state_dim + ACTION_DIM,
+            n_rules=config.n_rules,
+            n_actions=1,
+            mf_type=config.mf_type,
+        ).to(self.device)
+        self.critic_target = copy.deepcopy(self.critic).to(self.device)
+        self.critic_target.eval()
+
+        self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=config.actor_lr)
+        self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), lr=config.critic_lr)
+        self.replay = ReplayBuffer(config.replay_capacity, config.state_dim, ACTION_DIM)
 
         self.total_steps = 0
         self.train_steps = 0
         self.games_played = 0
-        self.current_epsilon = config.epsilon_start
         self.last_loss: Optional[float] = None
         self.current_episode_score = 0.0
 
@@ -469,7 +481,7 @@ class FuzzyDQNAgent:
                 print(f"[{self.name}] WARNING: comet_ml module not found. Experiment logging disabled.")
 
         self.last_observation: Optional[Observation] = None
-        self.last_action_index: Optional[int] = None
+        self.last_action_vector: Optional[np.ndarray] = None
         self.last_command = ActionCommand()
         self.last_fire_tick = -10_000
         self.prev_enemies_remaining: Optional[int] = None
@@ -494,6 +506,15 @@ class FuzzyDQNAgent:
         self.trace_shots: List[Tuple[float, float, float]] = []
         self.trace_allies: List[Tuple[float, float]] = []
         self.trace_enemies: List[Tuple[float, float]] = []
+        self.pos_history: List[Tuple[float, float]] = []
+        self.episode_reward_total = 0.0
+        self.episode_reward_parts: Dict[str, float] = {}
+        self.episode_reward_parts_steps = 0
+        self.frontier_min_x: Optional[float] = None
+        self.frontier_max_x: Optional[float] = None
+        self.frontier_min_y: Optional[float] = None
+        self.frontier_max_y: Optional[float] = None
+        self.reward_parts_history: Dict[str, List[float]] = {}
 
     def _init_comet(self) -> None:
         try:
@@ -526,25 +547,35 @@ class FuzzyDQNAgent:
         ext = ext or ".pt"
         return f"{root}_final{ext}"
 
-    def _epsilon(self) -> float:
-        ratio = min(1.0, self.total_steps / max(1, self.config.epsilon_decay_steps))
-        return self.config.epsilon_start + ratio * (self.config.epsilon_final - self.config.epsilon_start)
+    def _scale_action_tensor(self, action: torch.Tensor) -> torch.Tensor:
+        move = action[:, 0] * MAX_MOVE_SPEED
+        heading = action[:, 1] * MAX_HEADING_DELTA
+        barrel = action[:, 2] * MAX_BARREL_DELTA
+        fire = (action[:, 3] + 1.0) * 0.5
+        return torch.stack([move, heading, barrel, fire], dim=1)
 
-    def _select_action(self, state_vector: np.ndarray) -> int:
+    def _current_action_noise_std(self) -> float:
+        decay_steps = max(1, int(self.config.action_noise_decay_steps))
+        t = min(max(self.total_steps, 0), decay_steps)
+        frac = 1.0 - (t / float(decay_steps))
+        return float(self.config.action_noise_end + (self.config.action_noise_start - self.config.action_noise_end) * frac)
+
+    def _select_action(self, state_vector: np.ndarray, training: bool) -> np.ndarray:
         state = torch.from_numpy(state_vector).unsqueeze(0).to(self.device)
-
-        if not self.training_enabled:
-            with torch.no_grad():
-                q_values = self.policy_net(state)
-                return int(q_values.argmax(dim=1).item())
-
-        self.current_epsilon = self._epsilon()
-        if random.random() < self.current_epsilon:
-            return random.randrange(len(ACTION_SPACE))
-
         with torch.no_grad():
-            q_values = self.policy_net(state)
-            return int(q_values.argmax(dim=1).item())
+            raw = self.actor(state)
+            action = torch.tanh(raw)
+            if training:
+                noise_std = self._current_action_noise_std()
+                noise = torch.normal(
+                    mean=0.0,
+                    std=noise_std,
+                    size=action.shape,
+                    device=action.device,
+                )
+                action = torch.clamp(action + noise, -1.0, 1.0)
+            scaled = self._scale_action_tensor(action)
+        return scaled.squeeze(0).cpu().numpy()
 
     @staticmethod
     def _ammo_counts(my_status: Dict[str, Any]) -> Dict[str, int]:
@@ -598,16 +629,29 @@ class FuzzyDQNAgent:
 
     def _to_command(
         self,
-        action: ActionSpec,
+        action_vec: np.ndarray,
         my_status: Dict[str, Any],
         obs: Observation,
     ) -> ActionCommand:
-        ammo_to_load = self._select_ammo_for_action(my_status, obs, action)
+        move_speed = float(action_vec[0])
+        heading_rotation = float(action_vec[1])
+        barrel_rotation = float(action_vec[2])
+        fire_prob = float(action_vec[3])
+        should_fire = fire_prob > 0.5
+
+        action_stub = ActionSpec(
+            name="ddpg",
+            move_speed=move_speed,
+            heading_rotation_angle=heading_rotation,
+            barrel_rotation_angle=barrel_rotation,
+            should_fire=should_fire,
+        )
+        ammo_to_load = self._select_ammo_for_action(my_status, obs, action_stub)
         return ActionCommand(
-            barrel_rotation_angle=action.barrel_rotation_angle,
-            heading_rotation_angle=action.heading_rotation_angle,
-            move_speed=action.move_speed,
-            should_fire=action.should_fire,
+            barrel_rotation_angle=barrel_rotation,
+            heading_rotation_angle=heading_rotation,
+            move_speed=move_speed,
+            should_fire=should_fire,
             ammo_to_load=ammo_to_load,
         )
 
@@ -615,70 +659,102 @@ class FuzzyDQNAgent:
         self,
         prev_obs: Observation,
         current_obs: Observation,
-        action_index: int,
+        action: ActionCommand,
         enemies_remaining: int,
         current_tick: int,
-    ) -> float:
-        action = ACTION_SPACE[action_index]
-        reward = 0.1  # time pressure
-
+        current_pos: Tuple[float, float],
+    ) -> float:         # Exploration is all you need
+        parts: Dict[str, float] = {}
         # Damage avoidance (biggest issue: entering danger zone).
-        hp_delta = current_obs.hp_ratio - prev_obs.hp_ratio
-        reward += hp_delta * 10
-        
-        shield_delta = current_obs.shield_ratio - prev_obs.shield_ratio
-        reward += shield_delta * 2
+        parts["hp_delta"] = (current_obs.hp_ratio - prev_obs.hp_ratio) * 10.0
+        parts["shield_delta"] = (current_obs.shield_ratio - prev_obs.shield_ratio) * 2.0
 
         # Danger/obstacle penalties (angles already normalized).
-        if current_obs.danger_ahead:
-            reward -= 1
-            if action.move_speed > 1e-2:
-                reward -= 7.5           # glownie przez to gina
-        if not prev_obs.danger_ahead and current_obs.danger_ahead:
-            reward -= 1.0
-        if prev_obs.danger_ahead and not current_obs.danger_ahead:
-            reward += 0.5
-
-        if current_obs.obstacle_ahead and action.move_speed > 0.0:
-            reward -= 0.2
+        parts["danger_ahead"] = -1.0 if current_obs.danger_ahead else 0.0
+        parts["danger_move"] = -7.5 if current_obs.danger_ahead and action.move_speed > 1e-2 else 0.0
+        parts["danger_enter"] = -1.0 if (not prev_obs.danger_ahead and current_obs.danger_ahead) else 0.0
+        parts["danger_exit"] = 0.5 if (prev_obs.danger_ahead and not current_obs.danger_ahead) else 0.0
+        parts["obstacle_move"] = -0.2 if current_obs.obstacle_ahead and action.move_speed > 0.0 else 0.0
 
         # Enemy tracking/aiming.
         if current_obs.enemy_visible:
-            reward += 0.1
-
+            parts["enemy_visible"] = 0.1
             barrel_improve = abs(prev_obs.enemy_barrel_error - 0.5) - abs(current_obs.enemy_barrel_error - 0.5)
             hull_improve = abs(prev_obs.enemy_hull_error - 0.5) - abs(current_obs.enemy_hull_error - 0.5)
-            reward += barrel_improve * 3.0  # bardzo wazne zeby ustawial wieze w jego kierunku
-            reward += hull_improve * 0.2
+            parts["barrel_improve"] = barrel_improve * 3.0
+            parts["hull_improve"] = hull_improve * 0.2
         else:
-            reward -= 0.05
+            parts["enemy_visible"] = -0.05
+            parts["barrel_improve"] = 0.0
+            parts["hull_improve"] = 0.0
 
         # Ally safety.
-        if current_obs.ally_fire_risk:
-            reward -= 0.2
+        parts["ally_fire_risk"] = -0.2 if current_obs.ally_fire_risk else 0.0
 
         # Firing quality based on previous state (action chosen there).
+        parts["fire_no_ammo"] = 0.0
+        parts["fire_no_enemy"] = 0.0
+        parts["fire_ally_risk"] = 0.0
+        parts["fire_aim_error"] = 0.0
         if action.should_fire:
             if not prev_obs.can_fire:
-                reward -= 0.4
+                parts["fire_no_ammo"] = -0.4
             elif not prev_obs.enemy_visible:
-                reward -= 2.0 # marnuje amunicje
+                parts["fire_no_enemy"] = -2.0
             elif prev_obs.ally_fire_risk:
-                reward -= 3.5
+                parts["fire_ally_risk"] = -3.5
             else:
-                aim_error = abs(prev_obs.enemy_barrel_error - 0.5)      # -0.5 bo jest znormalizowane
-                reward -= aim_error + 0.25
+                aim_error = abs(prev_obs.enemy_barrel_error - 0.5)
+                parts["fire_aim_error"] = -(aim_error + 0.25)
 
         # Powerup pursuit.
-        if current_obs.powerup_visible:
-            reward += (prev_obs.powerup_dist - current_obs.powerup_dist) * 0.1
+        parts["powerup_pursuit"] = (
+            (prev_obs.powerup_dist - current_obs.powerup_dist) * 0.1
+            if current_obs.powerup_visible
+            else 0.0
+        )
 
         # Small penalty for idling while enemy is visible.
-        if action.name == "idle" and current_obs.enemy_visible:
-            reward -= 0.05
+        parts["idle_visible"] = -0.05 if abs(action.move_speed) < 1e-3 and current_obs.enemy_visible else 0.0
 
-        speed_ratio = current_obs.vector[15]
-        reward += abs(speed_ratio - 0.5) / 4  # centered -> 0.5 ->> stands still; no reward for standing still
+        recent = self.pos_history[-200:] or [current_pos]
+        prev = self.pos_history[-400:-200] or recent
+        rcx = sum(p[0] for p in recent) / float(len(recent))
+        rcy = sum(p[1] for p in recent) / float(len(recent))
+        pcx = sum(p[0] for p in prev) / float(len(prev))
+        pcy = sum(p[1] for p in prev) / float(len(prev))
+        var_r = sum((p[0] - rcx) ** 2 + (p[1] - rcy) ** 2 for p in recent) / float(len(recent))
+        var_p = sum((p[0] - pcx) ** 2 + (p[1] - pcy) ** 2 for p in prev) / float(len(prev))
+        parts["variance_recent"] = var_r / 10
+        parts["variance_prev"] = var_p / 10
+        parts["centroid_bonus"] = parts["variance_recent"] + parts["variance_prev"]
+
+        frontier_bonus = 0.0
+        if self.frontier_min_x is None:
+            self.frontier_min_x = current_pos[0]
+            self.frontier_max_x = current_pos[0]
+            self.frontier_min_y = current_pos[1]
+            self.frontier_max_y = current_pos[1]
+        else:                                       # wyjezdza w nieznane
+            if current_pos[0] < self.frontier_min_x:
+                frontier_bonus += (self.frontier_min_x - current_pos[0]) / 50.0
+                self.frontier_min_x = current_pos[0]
+            if current_pos[0] > self.frontier_max_x:
+                frontier_bonus += (current_pos[0] - self.frontier_max_x) / 50.0
+                self.frontier_max_x = current_pos[0]
+            if current_pos[1] < self.frontier_min_y:
+                frontier_bonus += (self.frontier_min_y - current_pos[1]) / 50.0
+                self.frontier_min_y = current_pos[1]
+            if current_pos[1] > self.frontier_max_y:
+                frontier_bonus += (current_pos[1] - self.frontier_max_y) / 50.0
+                self.frontier_max_y = current_pos[1]
+        parts["frontier_bonus"] = frontier_bonus
+
+        reward = sum(parts.values())
+        self.episode_reward_total += reward
+        for key, value in parts.items():
+            self.episode_reward_parts[key] = self.episode_reward_parts.get(key, 0.0) + value
+        self.episode_reward_parts_steps += 1
 
         return reward
 
@@ -699,35 +775,54 @@ class FuzzyDQNAgent:
             self.device,
         )
 
-        q_values = self.policy_net(states).gather(1, actions.unsqueeze(1)).squeeze(1)
-
         with torch.no_grad():
-            next_actions = self.policy_net(next_states).argmax(dim=1, keepdim=True)
-            next_q_values = self.target_net(next_states).gather(1, next_actions).squeeze(1)
-            target_q = rewards + (1.0 - dones) * self.config.gamma * next_q_values
+            next_raw = self.actor_target(next_states)
+            next_action = torch.tanh(next_raw)
+            next_action = self._scale_action_tensor(next_action)
+            next_q = self.critic_target(torch.cat([next_states, next_action], dim=1)).squeeze(1)
+            target_q = rewards + (1.0 - dones) * self.config.gamma * next_q
 
-        loss = F.smooth_l1_loss(q_values, target_q)
-        self.last_loss = float(loss.item())
+        current_q = self.critic(torch.cat([states, actions], dim=1)).squeeze(1)
+        critic_loss = F.mse_loss(current_q, target_q)
+        self.last_loss = float(critic_loss.item())
+
+        self.critic_optimizer.zero_grad(set_to_none=True)
+        critic_loss.backward()
+        torch.nn.utils.clip_grad_norm_(self.critic.parameters(), max_norm=1.0)
+        self.critic_optimizer.step()
+
+        actor_raw = self.actor(states)
+        actor_action = torch.tanh(actor_raw)
+        actor_action = self._scale_action_tensor(actor_action)
+        actor_loss = -self.critic(torch.cat([states, actor_action], dim=1)).mean()
+
+        self.actor_optimizer.zero_grad(set_to_none=True)
+        actor_loss.backward()
+        torch.nn.utils.clip_grad_norm_(self.actor.parameters(), max_norm=2.0)
+        self.actor_optimizer.step()
+
+        tau = float(self.config.tau)
+        for target_param, param in zip(self.actor_target.parameters(), self.actor.parameters()):
+            target_param.data.copy_(tau * param.data + (1.0 - tau) * target_param.data)
+        for target_param, param in zip(self.critic_target.parameters(), self.critic.parameters()):
+            target_param.data.copy_(tau * param.data + (1.0 - tau) * target_param.data)
 
         if self.experiment and (self.train_steps % COMET_LOG_EVERY == 0):
-            self.experiment.log_metric("loss", self.last_loss, step=self.train_steps)
-            self.experiment.log_metric("epsilon", self.current_epsilon, step=self.train_steps)
-            self.experiment.log_metric("q_mean", q_values.mean().item(), step=self.train_steps)
-
-        self.optimizer.zero_grad(set_to_none=True)
-        loss.backward()
-        torch.nn.utils.clip_grad_norm_(self.policy_net.parameters(), max_norm=1.0)
-        self.optimizer.step()
+            self.experiment.log_metric("critic_loss", self.last_loss, step=self.train_steps)
+            self.experiment.log_metric("actor_loss", float(actor_loss.item()), step=self.train_steps)
+            self.experiment.log_metric("q_mean", current_q.mean().item(), step=self.train_steps)
+            self.experiment.log_metric("action_noise_std", self._current_action_noise_std(), step=self.train_steps)
 
         self.train_steps += 1
-        if self.train_steps % self.config.target_sync_every == 0:
-            self.target_net.load_state_dict(self.policy_net.state_dict())
 
     def _checkpoint_payload(self) -> Dict[str, Any]:
         return {
-            "model_state_dict": self.policy_net.state_dict(),
-            "target_state_dict": self.target_net.state_dict(),
-            "optimizer_state_dict": self.optimizer.state_dict(),
+            "actor_state_dict": self.actor.state_dict(),
+            "critic_state_dict": self.critic.state_dict(),
+            "actor_target_state_dict": self.actor_target.state_dict(),
+            "critic_target_state_dict": self.critic_target.state_dict(),
+            "actor_optimizer_state_dict": self.actor_optimizer.state_dict(),
+            "critic_optimizer_state_dict": self.critic_optimizer.state_dict(),
             "total_steps": self.total_steps,
             "train_steps": self.train_steps,
             "games_played": self.games_played,
@@ -758,8 +853,7 @@ class FuzzyDQNAgent:
 
         try:
             checkpoint = torch.load(path, map_location=self.device)
-            if isinstance(checkpoint, dict) and "model_state_dict" in checkpoint:
-                # Weryfikacja konfiguracji (jeśli dostępna w pliku)
+            if isinstance(checkpoint, dict) and "actor_state_dict" in checkpoint:
                 saved_conf = checkpoint.get("config", {})
                 if saved_conf:
                     if saved_conf.get("n_rules") != self.config.n_rules:
@@ -767,26 +861,25 @@ class FuzzyDQNAgent:
                     if saved_conf.get("mf_type") != self.config.mf_type:
                         print(f"[{self.name}] WARNING: MF type mismatch! Saved: {saved_conf.get('mf_type')}, Current: {self.config.mf_type}")
 
-                self.policy_net.load_state_dict(checkpoint["model_state_dict"], strict=True)
+                self.actor.load_state_dict(checkpoint["actor_state_dict"], strict=True)
+                self.critic.load_state_dict(checkpoint["critic_state_dict"], strict=True)
 
-                target_state = checkpoint.get("target_state_dict")
-                if target_state:
-                    self.target_net.load_state_dict(target_state, strict=True)
-                else:
-                    self.target_net.load_state_dict(self.policy_net.state_dict())
+                self.actor_target.load_state_dict(checkpoint.get("actor_target_state_dict", checkpoint["actor_state_dict"]), strict=True)
+                self.critic_target.load_state_dict(checkpoint.get("critic_target_state_dict", checkpoint["critic_state_dict"]), strict=True)
 
-                optimizer_state = checkpoint.get("optimizer_state_dict")
-                if optimizer_state:
-                    self.optimizer.load_state_dict(optimizer_state)
+                actor_opt = checkpoint.get("actor_optimizer_state_dict")
+                critic_opt = checkpoint.get("critic_optimizer_state_dict")
+                if actor_opt:
+                    self.actor_optimizer.load_state_dict(actor_opt)
+                if critic_opt:
+                    self.critic_optimizer.load_state_dict(critic_opt)
 
                 self.total_steps = int(checkpoint.get("total_steps", 0) or 0)
                 self.train_steps = int(checkpoint.get("train_steps", 0) or 0)
                 self.games_played = int(checkpoint.get("games_played", 0) or 0)
                 self.best_score = float(checkpoint.get("best_score", float("-inf")))
             else:
-                # Compatibility with plain state_dict files.
-                self.policy_net.load_state_dict(checkpoint, strict=False)
-                self.target_net.load_state_dict(self.policy_net.state_dict())
+                print(f"[{self.name}] checkpoint format not recognized; starting fresh.")
 
             print(f"[{self.name}] checkpoint loaded: {path}")
         except Exception as exc:
@@ -794,7 +887,7 @@ class FuzzyDQNAgent:
 
     def _reset_episode_state(self) -> None:
         self.last_observation = None
-        self.last_action_index = None
+        self.last_action_vector = None
         self.last_command = ActionCommand()
         self.prev_enemies_remaining = None
         self.current_episode_score = 0.0
@@ -804,6 +897,14 @@ class FuzzyDQNAgent:
         self.trace_shots.clear()
         self.trace_allies.clear()
         self.trace_enemies.clear()
+        self.pos_history.clear()
+        self.episode_reward_total = 0.0
+        self.episode_reward_parts = {}
+        self.episode_reward_parts_steps = 0
+        self.frontier_min_x = None
+        self.frontier_max_x = None
+        self.frontier_min_y = None
+        self.frontier_max_y = None
 
     def _record_trace(
         self,
@@ -923,51 +1024,76 @@ class FuzzyDQNAgent:
         enemies_remaining: int,
     ) -> ActionCommand:
         with self.lock:
+            pos = my_tank_status.get("position")
+            if not pos or "x" not in pos or "y" not in pos:
+                raise ValueError(f"Missing position in my_tank_status: {pos}")
+            current_pos = (float(pos["x"]), float(pos["y"]))
+            current_obs = self.encoder.encode(my_tank_status, sensor_data, enemies_remaining)
+            x_norm = current_pos[0] / 50.0
+            y_norm = current_pos[1] / 50.0
+
+            recent = self.pos_history[-200:] or [current_pos]
+            prev = self.pos_history[-400:-200] or recent
+            rcx = sum(p[0] for p in recent) / float(len(recent))
+            rcy = sum(p[1] for p in recent) / float(len(recent))
+            pcx = sum(p[0] for p in prev) / float(len(prev))
+            pcy = sum(p[1] for p in prev) / float(len(prev))
+
+            dx_recent = (current_pos[0] - rcx) / 50.0
+            dy_recent = (current_pos[1] - rcy) / 50.0
+            dx_prev = (current_pos[0] - pcx) / 50.0
+            dy_prev = (current_pos[1] - pcy) / 50.0
+            current_obs.vector = np.concatenate(
+                [current_obs.vector, np.array([x_norm, y_norm, dx_recent, dy_recent, dx_prev, dy_prev], dtype=np.float32)]
+            )
+
+            self.pos_history.append(current_pos)
+
             if (
                 self.config.frame_skip > 1
-                and self.last_action_index is not None
+                and self.last_action_vector is not None
                 and current_tick % self.config.frame_skip != 0
             ):
-                action = ACTION_SPACE[self.last_action_index]
-                current_obs = self.encoder.encode(my_tank_status, sensor_data, enemies_remaining)
-                self._record_trace(my_tank_status, sensor_data, current_obs, action)
+                self._record_trace(
+                    my_tank_status,
+                    sensor_data,
+                    current_obs,
+                    ActionSpec("ddpg", self.last_command.move_speed, self.last_command.heading_rotation_angle, self.last_command.barrel_rotation_angle, self.last_command.should_fire),
+                )
                 return self.last_command
 
-            current_obs = self.encoder.encode(my_tank_status, sensor_data, enemies_remaining)
-
-            if self.last_observation is not None and self.last_action_index is not None:
+            if self.last_observation is not None and self.last_action_vector is not None:
                 reward = self._compute_step_reward(
                     prev_obs=self.last_observation,
                     current_obs=current_obs,
-                    action_index=self.last_action_index,
+                    action=self.last_command,
                     enemies_remaining=enemies_remaining,
                     current_tick=current_tick,
+                    current_pos=current_pos,
                 )
                 self.current_episode_score += reward
                 self.replay.add(
                     state=self.last_observation.vector,
-                    action=self.last_action_index,
+                    action=self.last_action_vector,
                     reward=reward,
                     next_state=current_obs.vector,
                     done=0.0,
                 )
                 self._maybe_train()
 
-            action_index = self._select_action(current_obs.vector)
-
-            action = ACTION_SPACE[action_index]
-            command = self._to_command(action, my_tank_status, current_obs)
+            action_vec = self._select_action(current_obs.vector, training=self.training_enabled)
+            command = self._to_command(action_vec, my_tank_status, current_obs)
 
             if command.should_fire:
                 self.last_fire_tick = current_tick
 
             self.last_observation = current_obs
-            self.last_action_index = action_index
+            self.last_action_vector = action_vec
             self.last_command = command
             self.prev_enemies_remaining = enemies_remaining
             self.total_steps += 1
             self.last_status = my_tank_status
-            self._record_trace(my_tank_status, sensor_data, current_obs, action)
+            self._record_trace(my_tank_status, sensor_data, current_obs, ActionSpec("ddpg", action_vec[0], action_vec[1], action_vec[2], command.should_fire))
 
             return command
 
@@ -991,11 +1117,11 @@ class FuzzyDQNAgent:
             print(f"[{self.name}] destroy_state: hp={status.get('hp')} shield={status.get('shield')}")
             if payload:
                 print(f"[{self.name}] destroy_reason: {payload.get('cause')} damage_events={payload.get('damage_events')}")
-            if self.last_observation is not None and self.last_action_index is not None:
+            if self.last_observation is not None and self.last_action_vector is not None:
                 self.current_episode_score -= 8.0
                 self.replay.add(
                     state=self.last_observation.vector,
-                    action=self.last_action_index,
+                    action=self.last_action_vector,
                     reward=-8.0,
                     next_state=self.last_observation.vector,
                     done=1.0,
@@ -1014,10 +1140,11 @@ class FuzzyDQNAgent:
                 final_reward += 1.5
 
             self.current_episode_score += final_reward
-            if self.last_observation is not None and self.last_action_index is not None:
+            self.episode_reward_total += final_reward
+            if self.last_observation is not None and self.last_action_vector is not None:
                 self.replay.add(
                     state=self.last_observation.vector,
-                    action=self.last_action_index,
+                    action=self.last_action_vector,
                     reward=final_reward,
                     next_state=self.last_observation.vector,
                     done=1.0,
@@ -1030,8 +1157,7 @@ class FuzzyDQNAgent:
             print(
                 f"[{self.name}] end | games={self.games_played} "
                 f"damage={damage_dealt:.1f} kills={tanks_killed} "
-                f"epsilon={self.current_epsilon:.3f} replay={len(self.replay)} "
-                f"train_steps={self.train_steps}"
+                f"replay={len(self.replay)} train_steps={self.train_steps}"
             )
 
             if self.experiment and (self.train_steps % COMET_LOG_EVERY == 0):
@@ -1050,12 +1176,65 @@ class FuzzyDQNAgent:
 
                 # Save latest and final after potential best-score update, so
                 # best_score persists across process restarts.
+                self.save_checkpoint(self.config.model_path, label="latest")
                 self.save_checkpoint(self.final_model_path, label="final")
 
             self._save_episode_plot()
+            steps = max(1, self.episode_reward_parts_steps)
+            episode_parts = {k: v / steps for k, v in self.episode_reward_parts.items()}
+            episode_parts["total_reward_avg"] = self.episode_reward_total / steps
+            all_keys = set(self.reward_parts_history) | set(episode_parts)
+            for key in all_keys:
+                self.reward_parts_history.setdefault(key, [])
+                self.reward_parts_history[key].append(episode_parts.get(key, 0.0))
+            self._save_reward_plot()
             
             self.was_destroyed = False
             self._reset_episode_state()
+
+    def _save_reward_plot(self) -> None:
+        if not self.reward_parts_history:
+            return
+        import matplotlib.pyplot as plt
+        fig, ax = plt.subplots(figsize=(10, 5))
+        first_key = next(iter(self.reward_parts_history))
+        xs = list(range(1, len(self.reward_parts_history[first_key]) + 1))
+        colors = list(plt.cm.tab20.colors)
+        for idx, (label, ys) in enumerate(self.reward_parts_history.items()):
+            ax.plot(
+                xs,
+                ys,
+                label=label,
+                marker="o",
+                markersize=4,
+                linewidth=1.4,
+                color=colors[idx % len(colors)],
+            )
+        ax.set_xlabel("Game")
+        ax.set_ylabel("Reward")
+        ax.set_title(f"{self.name} reward history")
+        ax.grid(True, alpha=0.3)
+        ax.legend(
+            loc="upper center",
+            bbox_to_anchor=(0.5, -0.12),
+            ncol=3,
+            fontsize=7,
+            frameon=False,
+            handlelength=1.5,
+            columnspacing=0.8,
+            borderaxespad=0.2,
+        )
+        fig.subplots_adjust(bottom=0.25)
+        out_dir = os.path.join(current_dir, "training_reports")
+        os.makedirs(out_dir, exist_ok=True)
+        out_path = os.path.join(out_dir, f"rewards_{self.name}.png")
+        fig.savefig(out_path, dpi=150, bbox_inches="tight")
+        plt.close(fig)
+        last_total = None
+        if "total_reward_avg" in self.reward_parts_history and self.reward_parts_history["total_reward_avg"]:
+            last_total = self.reward_parts_history["total_reward_avg"][-1]
+        suffix = f" last_total={last_total:.3f}" if last_total is not None else ""
+        print(f"[{self.name}] reward plot saved: {out_path}{suffix}")
 
     def status(self) -> Dict[str, Any]:
         return {
@@ -1064,7 +1243,6 @@ class FuzzyDQNAgent:
             "steps": self.total_steps,
             "train_steps": self.train_steps,
             "games_played": self.games_played,
-            "epsilon": round(self.current_epsilon, 5),
             "replay_size": len(self.replay),
             "last_loss": self.last_loss,
             "model_path": self.config.model_path,
@@ -1142,7 +1320,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--train-every", type=int, default=2)
     parser.add_argument("--target-sync-every", type=int, default=500)
-    parser.add_argument("--epsilon-decay-steps", type=int, default=120000)
 
     return parser.parse_args()
 
@@ -1163,7 +1340,6 @@ if __name__ == "__main__":
         batch_size=max(16, int(args.batch_size)),
         train_every=max(1, int(args.train_every)),
         target_sync_every=max(1, int(args.target_sync_every)),
-        epsilon_decay_steps=max(1000, int(args.epsilon_decay_steps)),
     )
 
     agent_name = args.name or f"FuzzyDQN_{args.port}"

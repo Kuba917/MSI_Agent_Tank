@@ -146,12 +146,6 @@ class ANFISDQN(nn.Module):
         input_min: Lower bound of normalized inputs.
         input_max: Upper bound of normalized inputs.
     """
-    _shared_membership: Optional[BaseMembership] = None
-    _shared_value_weights: Optional[nn.Parameter] = None
-    _shared_value_bias: Optional[nn.Parameter] = None
-    _shared_adv_weights: Optional[nn.Parameter] = None
-    _shared_adv_bias: Optional[nn.Parameter] = None
-
     def __init__(
         self,
         n_inputs: int,
@@ -175,32 +169,19 @@ class ANFISDQN(nn.Module):
         self.n_inputs = n_inputs
         self.n_rules = n_rules
         self.n_actions = n_actions
-        if ANFISDQN._shared_membership is None:
-            try:
-                membership_cls = MEMBERSHIP_MAP[mf_type]
-                ANFISDQN._shared_membership = membership_cls(
-                    n_rules, n_inputs, input_min, input_max
-                )
 
-                ANFISDQN._shared_value_weights = nn.Parameter(torch.empty(n_rules, 1, n_inputs))
-                ANFISDQN._shared_value_bias = nn.Parameter(torch.zeros(n_rules, 1))
-                ANFISDQN._shared_adv_weights = nn.Parameter(torch.empty(n_rules, n_actions, n_inputs))
-                ANFISDQN._shared_adv_bias = nn.Parameter(torch.zeros(n_rules, n_actions))
+        membership_cls = MEMBERSHIP_MAP[mf_type]
+        self.membership = membership_cls(n_rules, n_inputs, input_min, input_max)
 
-                nn.init.xavier_uniform_(ANFISDQN._shared_value_weights)
-                nn.init.zeros_(ANFISDQN._shared_value_bias)
-                nn.init.xavier_uniform_(ANFISDQN._shared_adv_weights)
-                nn.init.zeros_(ANFISDQN._shared_adv_bias)
-            except Exception as exc:
-                print(f"[ANFISDQN] ERROR: failed to initialize shared weights: {exc}")
-                raise
+        self.value_weights = nn.Parameter(torch.empty(n_rules, 1, n_inputs))
+        self.value_bias = nn.Parameter(torch.zeros(n_rules, 1))
+        self.adv_weights = nn.Parameter(torch.empty(n_rules, n_actions, n_inputs))
+        self.adv_bias = nn.Parameter(torch.zeros(n_rules, n_actions))
 
-        # Bind shared modules/parameters to this instance so they are registered.
-        self.membership = ANFISDQN._shared_membership
-        self.value_weights = ANFISDQN._shared_value_weights
-        self.value_bias = ANFISDQN._shared_value_bias
-        self.adv_weights = ANFISDQN._shared_adv_weights
-        self.adv_bias = ANFISDQN._shared_adv_bias
+        nn.init.xavier_uniform_(self.value_weights)
+        nn.init.zeros_(self.value_bias)
+        nn.init.xavier_uniform_(self.adv_weights)
+        nn.init.zeros_(self.adv_bias)
 
     def _rule_strengths(self, x: torch.Tensor) -> torch.Tensor:
         # log_mu: [batch, rules, inputs]

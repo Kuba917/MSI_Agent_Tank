@@ -73,7 +73,6 @@ def build_args() -> argparse.Namespace:
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--train-every", type=int, default=2)
     parser.add_argument("--target-sync-every", type=int, default=500)
-    parser.add_argument("--epsilon-decay-steps", type=int, default=120000)
     parser.add_argument("--save-every-games", type=int, default=1)
     parser.add_argument("--seed", type=int, default=1)
 
@@ -359,8 +358,6 @@ def launch_agents(args: argparse.Namespace, episode: int) -> Tuple[List[subproce
                 str(max(1, int(args.train_every))),
                 "--target-sync-every",
                 str(max(1, int(args.target_sync_every))),
-                "--epsilon-decay-steps",
-                str(max(1000, int(args.epsilon_decay_steps))),
                 "--save-every-games",
                 str(max(1, int(args.save_every_games))),
                 "--seed",
