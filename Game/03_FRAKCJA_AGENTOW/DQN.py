@@ -536,7 +536,7 @@ class FuzzyDQNAgent:
         return f"{root}_best{ext}"
 
     def _scale_action_tensor(self, action: torch.Tensor) -> torch.Tensor:
-        move = (action[:, 0] + 1.0) * 0.5 * MAX_MOVE_SPEED
+        move = action[:, 0] * MAX_MOVE_SPEED
         heading = action[:, 1] * MAX_HEADING_DELTA
         barrel = action[:, 2] * MAX_BARREL_DELTA
         fire = (action[:, 3] + 1.0) * 0.5
@@ -1168,7 +1168,7 @@ class FuzzyDQNAgent:
                 f"replay={len(self.replay)} train_steps={self.train_steps}"
             )
 
-            if self.experiment and (self.train_steps % COMET_LOG_EVERY == 0):
+            if self.experiment:
                 step = self.train_steps
                 self.experiment.log_metric("total_episode_reward", self.current_episode_score, step=step)
                 self.experiment.log_metric("damage_dealt", damage_dealt, step=step)
