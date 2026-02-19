@@ -252,7 +252,7 @@ class StateEncoder:
         for item in objects:
             pos = item.get("position")
             if not pos:
-                continue
+                raise ValueError(f"Missing position for object in sensor data: {item}")
 
             distance = self._distance(my_pos, pos)
             if distance > max_dist:
@@ -308,7 +308,7 @@ class StateEncoder:
             enemy_pos = nearest_enemy.get("position", {"x": 0.0, "y": 0.0})
             distance_raw = nearest_enemy.get("distance")
             if distance_raw is None:
-                distance_raw = self._distance(my_pos, enemy_pos)
+                raise ValueError(f"Missing enemy distance in sensor data: {nearest_enemy}")
 
             vision_range = float(my_status.get("_vision_range", 25.0) or 25.0)
             enemy_dist = self._clamp(float(distance_raw) / max(vision_range, 1.0), 0.0, 1.0)
@@ -410,9 +410,9 @@ class AgentConfig:
     mf_type: str = "gaussian"
 
     gamma: float = 0.95
-    actor_lr: float = 1e-2
-    critic_lr: float = 1e-2
-    tau: float = 0.005
+    actor_lr: float = 1e-3
+    critic_lr: float = 1e-3
+    tau: float = 0.01
     action_noise_start: float = 0.3
     action_noise_end: float = 0.05
     action_noise_decay_steps: int = 50_000
@@ -428,7 +428,6 @@ class AgentConfig:
 
     model_path: str = DEFAULT_MODEL_PATH
     best_model_path: Optional[str] = None
-    final_model_path: Optional[str] = None
     seed: int = 1
 
 
@@ -492,8 +491,6 @@ class FuzzyDQNAgent:
         self.lock = threading.Lock()
 
         self.best_model_path = self._resolve_best_model_path()
-        self.final_model_path = self._resolve_final_model_path()
-
         self._load_checkpoint_if_available()
         print(
             f"[{self.name}] ready | training={self.training_enabled} "
@@ -538,17 +535,8 @@ class FuzzyDQNAgent:
         ext = ext or ".pt"
         return f"{root}_best{ext}"
 
-    def _resolve_final_model_path(self) -> Optional[str]:
-        if self.config.final_model_path:
-            return self.config.final_model_path
-        if not self.config.model_path:
-            return None
-        root, ext = os.path.splitext(self.config.model_path)
-        ext = ext or ".pt"
-        return f"{root}_final{ext}"
-
     def _scale_action_tensor(self, action: torch.Tensor) -> torch.Tensor:
-        move = action[:, 0] * MAX_MOVE_SPEED
+        move = (action[:, 0] + 1.0) * 0.5 * MAX_MOVE_SPEED
         heading = action[:, 1] * MAX_HEADING_DELTA
         barrel = action[:, 2] * MAX_BARREL_DELTA
         fire = (action[:, 3] + 1.0) * 0.5
@@ -666,56 +654,56 @@ class FuzzyDQNAgent:
     ) -> float:         # Exploration is all you need
         parts: Dict[str, float] = {}
         # Damage avoidance (biggest issue: entering danger zone).
-        parts["hp_delta"] = (current_obs.hp_ratio - prev_obs.hp_ratio) * 10.0
-        parts["shield_delta"] = (current_obs.shield_ratio - prev_obs.shield_ratio) * 2.0
+        # parts["hp_delta"] = (current_obs.hp_ratio - prev_obs.hp_ratio) * 10.0
+        # parts["shield_delta"] = (current_obs.shield_ratio - prev_obs.shield_ratio) * 2.0
 
         # Danger/obstacle penalties (angles already normalized).
-        parts["danger_ahead"] = -1.0 if current_obs.danger_ahead else 0.0
-        parts["danger_move"] = -7.5 if current_obs.danger_ahead and action.move_speed > 1e-2 else 0.0
-        parts["danger_enter"] = -1.0 if (not prev_obs.danger_ahead and current_obs.danger_ahead) else 0.0
-        parts["danger_exit"] = 0.5 if (prev_obs.danger_ahead and not current_obs.danger_ahead) else 0.0
-        parts["obstacle_move"] = -0.2 if current_obs.obstacle_ahead and action.move_speed > 0.0 else 0.0
+        # parts["danger_ahead"] = -1.0 if current_obs.danger_ahead else 0.0
+        # parts["danger_move"] = -7.5 if current_obs.danger_ahead and action.move_speed > 1e-2 else 0.0
+        # parts["danger_enter"] = -1.0 if (not prev_obs.danger_ahead and current_obs.danger_ahead) else 0.0
+        # parts["danger_exit"] = 0.5 if (prev_obs.danger_ahead and not current_obs.danger_ahead) else 0.0
+        # parts["obstacle_move"] = -0.2 if current_obs.obstacle_ahead and action.move_speed > 0.0 else 0.0
 
         # Enemy tracking/aiming.
-        if current_obs.enemy_visible:
-            parts["enemy_visible"] = 0.1
-            barrel_improve = abs(prev_obs.enemy_barrel_error - 0.5) - abs(current_obs.enemy_barrel_error - 0.5)
-            hull_improve = abs(prev_obs.enemy_hull_error - 0.5) - abs(current_obs.enemy_hull_error - 0.5)
-            parts["barrel_improve"] = barrel_improve * 3.0
-            parts["hull_improve"] = hull_improve * 0.2
-        else:
-            parts["enemy_visible"] = -0.05
-            parts["barrel_improve"] = 0.0
-            parts["hull_improve"] = 0.0
+        # if current_obs.enemy_visible:
+        #     parts["enemy_visible"] = 0.1
+        #     barrel_improve = abs(prev_obs.enemy_barrel_error - 0.5) - abs(current_obs.enemy_barrel_error - 0.5)
+        #     hull_improve = abs(prev_obs.enemy_hull_error - 0.5) - abs(current_obs.enemy_hull_error - 0.5)
+        #     parts["barrel_improve"] = barrel_improve * 3.0
+        #     parts["hull_improve"] = hull_improve * 0.2
+        # else:
+        #     parts["enemy_visible"] = -0.05
+        #     parts["barrel_improve"] = 0.0
+        #     parts["hull_improve"] = 0.0
 
         # Ally safety.
-        parts["ally_fire_risk"] = -0.2 if current_obs.ally_fire_risk else 0.0
+        # parts["ally_fire_risk"] = -0.2 if current_obs.ally_fire_risk else 0.0
 
         # Firing quality based on previous state (action chosen there).
-        parts["fire_no_ammo"] = 0.0
-        parts["fire_no_enemy"] = 0.0
-        parts["fire_ally_risk"] = 0.0
-        parts["fire_aim_error"] = 0.0
-        if action.should_fire:
-            if not prev_obs.can_fire:
-                parts["fire_no_ammo"] = -0.4
-            elif not prev_obs.enemy_visible:
-                parts["fire_no_enemy"] = -2.0
-            elif prev_obs.ally_fire_risk:
-                parts["fire_ally_risk"] = -3.5
-            else:
-                aim_error = abs(prev_obs.enemy_barrel_error - 0.5)
-                parts["fire_aim_error"] = -(aim_error + 0.25)
+        # parts["fire_no_ammo"] = 0.0
+        # parts["fire_no_enemy"] = 0.0
+        # parts["fire_ally_risk"] = 0.0
+        # parts["fire_aim_error"] = 0.0
+        # if action.should_fire:
+        #     if not prev_obs.can_fire:
+        #         parts["fire_no_ammo"] = -0.4
+        #     elif not prev_obs.enemy_visible:
+        #         parts["fire_no_enemy"] = -2.0
+        #     elif prev_obs.ally_fire_risk:
+        #         parts["fire_ally_risk"] = -3.5
+        #     else:
+        #         aim_error = abs(prev_obs.enemy_barrel_error - 0.5)
+        #         parts["fire_aim_error"] = -(aim_error + 0.25)
 
         # Powerup pursuit.
-        parts["powerup_pursuit"] = (
-            (prev_obs.powerup_dist - current_obs.powerup_dist) * 0.1
-            if current_obs.powerup_visible
-            else 0.0
-        )
+        # parts["powerup_pursuit"] = (
+        #     (prev_obs.powerup_dist - current_obs.powerup_dist) * 0.1
+        #     if current_obs.powerup_visible
+        #     else 0.0
+        # )
 
         # Small penalty for idling while enemy is visible.
-        parts["idle_visible"] = -0.05 if abs(action.move_speed) < 1e-3 and current_obs.enemy_visible else 0.0
+        # parts["idle_visible"] = -0.05 if abs(action.move_speed) < 1e-3 and current_obs.enemy_visible else 0.0
 
         recent = self.pos_history[-200:] or [current_pos]
         prev = self.pos_history[-400:-200] or recent
@@ -760,15 +748,15 @@ class FuzzyDQNAgent:
 
 
     def _maybe_train(self) -> None:
-        if not self.training_enabled:
+        # if not self.training_enabled:
+        #     return
+
+        # min_required = max(self.config.batch_size, self.config.warmup_steps)
+        if len(self.replay) < self.config.batch_size:
             return
 
-        min_required = max(self.config.batch_size, self.config.warmup_steps)
-        if len(self.replay) < min_required:
-            return
-
-        if self.total_steps % self.config.train_every != 0:
-            return
+        # if self.total_steps % self.config.train_every != 0:
+        #     return
 
         states, actions, rewards, next_states, dones = self.replay.sample(
             self.config.batch_size,
@@ -779,9 +767,11 @@ class FuzzyDQNAgent:
             next_raw = self.actor_target(next_states)
             next_action = torch.tanh(next_raw)
             next_action = self._scale_action_tensor(next_action)
+            next_action = F.hardsigmoid(next_action)
             next_q = self.critic_target(torch.cat([next_states, next_action], dim=1)).squeeze(1)
             target_q = rewards + (1.0 - dones) * self.config.gamma * next_q
 
+        actions = F.hardsigmoid(actions)
         current_q = self.critic(torch.cat([states, actions], dim=1)).squeeze(1)
         critic_loss = F.mse_loss(current_q, target_q)
         self.last_loss = float(critic_loss.item())
@@ -794,6 +784,7 @@ class FuzzyDQNAgent:
         actor_raw = self.actor(states)
         actor_action = torch.tanh(actor_raw)
         actor_action = self._scale_action_tensor(actor_action)
+        actor_action = F.hardsigmoid(actor_action)
         actor_loss = -self.critic(torch.cat([states, actor_action], dim=1)).mean()
 
         self.actor_optimizer.zero_grad(set_to_none=True)
@@ -955,15 +946,14 @@ class FuzzyDQNAgent:
 
         hps = self.trace_hp
         fig, ax = plt.subplots(figsize=(8, 8))
-        if len(self.trace_positions) >= 2:
-            segments = []
-            colors = []
-            for i in range(len(self.trace_positions) - 1):
-                segments.append([self.trace_positions[i], self.trace_positions[i + 1]])
-                colors.append((hps[i] + hps[i + 1]) * 0.5)
-            lc = LineCollection(segments, cmap="RdYlGn", linewidths=2.0)
-            lc.set_array(np.array(colors, dtype=np.float32))
-            ax.add_collection(lc)
+        segments = []
+        colors = []
+        for i in range(len(self.trace_positions) - 1):
+            segments.append([self.trace_positions[i], self.trace_positions[i + 1]])
+            colors.append((hps[i] + hps[i + 1]) * 0.5)
+        lc = LineCollection(segments, cmap="RdYlGn", linewidths=2.0)
+        lc.set_array(np.array(colors, dtype=np.float32))
+        ax.add_collection(lc)
 
         xs = [p[0] for p in self.trace_positions]
         ys = [p[1] for p in self.trace_positions]
@@ -1023,14 +1013,16 @@ class FuzzyDQNAgent:
         sensor_data: Dict[str, Any],
         enemies_remaining: int,
     ) -> ActionCommand:
-        with self.lock:
+        if not self.lock.acquire(blocking=False):
+            raise RuntimeError("Concurrent get_action call detected")
+        try:
             pos = my_tank_status.get("position")
             if not pos or "x" not in pos or "y" not in pos:
                 raise ValueError(f"Missing position in my_tank_status: {pos}")
             current_pos = (float(pos["x"]), float(pos["y"]))
             current_obs = self.encoder.encode(my_tank_status, sensor_data, enemies_remaining)
-            x_norm = current_pos[0] / 50.0
-            y_norm = current_pos[1] / 50.0
+            x_norm = current_pos[0] / MAP_WIDTH
+            y_norm = current_pos[1] / MAP_HEIGHT
 
             recent = self.pos_history[-200:] or [current_pos]
             prev = self.pos_history[-400:-200] or recent
@@ -1039,14 +1031,18 @@ class FuzzyDQNAgent:
             pcx = sum(p[0] for p in prev) / float(len(prev))
             pcy = sum(p[1] for p in prev) / float(len(prev))
 
-            dx_recent = (current_pos[0] - rcx) / 50.0
-            dy_recent = (current_pos[1] - rcy) / 50.0
-            dx_prev = (current_pos[0] - pcx) / 50.0
-            dy_prev = (current_pos[1] - pcy) / 50.0
+            dx_recent = (current_pos[0] - rcx) / MAP_WIDTH
+            dy_recent = (current_pos[1] - rcy) / MAP_HEIGHT
+            dx_prev = (current_pos[0] - pcx) / MAP_WIDTH
+            dy_prev = (current_pos[1] - pcy) / MAP_HEIGHT
+            dx_recent = (dx_recent + 1.0) * 0.5
+            dy_recent = (dy_recent + 1.0) * 0.5
+            dx_prev = (dx_prev + 1.0) * 0.5
+            dy_prev = (dy_prev + 1.0) * 0.5
             current_obs.vector = np.concatenate(
                 [current_obs.vector, np.array([x_norm, y_norm, dx_recent, dy_recent, dx_prev, dy_prev], dtype=np.float32)]
             )
-
+            # 19 - 22 
             self.pos_history.append(current_pos)
 
             if (
@@ -1062,24 +1058,34 @@ class FuzzyDQNAgent:
                 )
                 return self.last_command
 
-            if self.last_observation is not None and self.last_action_vector is not None:
-                reward = self._compute_step_reward(
-                    prev_obs=self.last_observation,
-                    current_obs=current_obs,
-                    action=self.last_command,
-                    enemies_remaining=enemies_remaining,
-                    current_tick=current_tick,
-                    current_pos=current_pos,
-                )
-                self.current_episode_score += reward
-                self.replay.add(
-                    state=self.last_observation.vector,
-                    action=self.last_action_vector,
-                    reward=reward,
-                    next_state=current_obs.vector,
-                    done=0.0,
-                )
-                self._maybe_train()
+            if current_tick > 0:
+                if self.last_observation is None or self.last_action_vector is None:
+                    if current_tick <= 1:
+                        pass
+                    elif current_tick > 10:
+                        print(
+                            f"[{self.name}] WARNING: missing previous state/action at tick={current_tick}"
+                        )
+                    else:
+                        raise ValueError("Missing previous state/action at tick > 0")
+                else:
+                    reward = self._compute_step_reward(
+                        prev_obs=self.last_observation,
+                        current_obs=current_obs,
+                        action=self.last_command,
+                        enemies_remaining=enemies_remaining,
+                        current_tick=current_tick,
+                        current_pos=current_pos,
+                    )
+                    self.current_episode_score += reward
+                    self.replay.add(
+                        state=self.last_observation.vector,
+                        action=self.last_action_vector,
+                        reward=reward,
+                        next_state=current_obs.vector,
+                        done=0.0,
+                    )
+                    self._maybe_train()
 
             action_vec = self._select_action(current_obs.vector, training=self.training_enabled)
             command = self._to_command(action_vec, my_tank_status, current_obs)
@@ -1096,6 +1102,8 @@ class FuzzyDQNAgent:
             self._record_trace(my_tank_status, sensor_data, current_obs, ActionSpec("ddpg", action_vec[0], action_vec[1], action_vec[2], command.should_fire))
 
             return command
+        finally:
+            self.lock.release()
 
     def destroy(self, payload: Optional[Dict[str, Any]] = None) -> None:
         with self.lock:
@@ -1174,10 +1182,9 @@ class FuzzyDQNAgent:
                     self.best_score = episode_score
                     self.save_checkpoint(self.best_model_path, label="best")
 
-                # Save latest and final after potential best-score update, so
+                # Save latest after potential best-score update, so
                 # best_score persists across process restarts.
                 self.save_checkpoint(self.config.model_path, label="latest")
-                self.save_checkpoint(self.final_model_path, label="final")
 
             self._save_episode_plot()
             steps = max(1, self.episode_reward_parts_steps)
@@ -1247,7 +1254,6 @@ class FuzzyDQNAgent:
             "last_loss": self.last_loss,
             "model_path": self.config.model_path,
             "best_model_path": self.best_model_path,
-            "final_model_path": self.final_model_path,
             "best_score": self.best_score,
         }
 
@@ -1310,7 +1316,6 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument("--model-path", type=str, default=DEFAULT_MODEL_PATH)
     parser.add_argument("--best-model-path", type=str, default=None)
-    parser.add_argument("--final-model-path", type=str, default=None)
     parser.add_argument("--rules", type=int, default=32)
     parser.add_argument("--mf-type", choices=["gaussian", "bell", "triangular"], default="gaussian")
     parser.add_argument("--frame-skip", type=int, default=1)
@@ -1333,7 +1338,6 @@ if __name__ == "__main__":
         frame_skip=max(1, int(args.frame_skip)),
         model_path=args.model_path,
         best_model_path=args.best_model_path,
-        final_model_path=args.final_model_path,
         seed=int(args.seed),
         save_every_games=max(1, int(args.save_every_games)),
         warmup_steps=max(0, int(args.warmup_steps)),

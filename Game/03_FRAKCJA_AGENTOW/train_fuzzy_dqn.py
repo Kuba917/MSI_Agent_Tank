@@ -313,6 +313,7 @@ def launch_agents(args: argparse.Namespace, episode: int) -> Tuple[List[subproce
     selfplay_enabled = selfplay_requested > 0 and selfplay_model_path.exists()
 
     processes: List[subprocess.Popen] = []
+    dqn_processes: List[subprocess.Popen] = []
     launch_info: Dict[str, Any] = {
         "learners": learner_count,
         "selfplay_requested": selfplay_requested,
@@ -329,7 +330,6 @@ def launch_agents(args: argparse.Namespace, episode: int) -> Tuple[List[subproce
         if idx < learner_count:
             model_for_agent = learner_model_path(model_path, idx, learner_count)
             best_for_agent = model_path_with_tag(model_for_agent, "best")
-            final_for_agent = model_path_with_tag(model_for_agent, "final")
             cmd = [
                 sys.executable,
                 "DQN.py",
@@ -344,8 +344,6 @@ def launch_agents(args: argparse.Namespace, episode: int) -> Tuple[List[subproce
                 str(model_for_agent),
                 "--best-model-path",
                 str(best_for_agent),
-                "--final-model-path",
-                str(final_for_agent),
                 "--rules",
                 str(args.rules),
                 "--mf-type",
@@ -409,7 +407,10 @@ def launch_agents(args: argparse.Namespace, episode: int) -> Tuple[List[subproce
             stderr=stderr,
         )
         processes.append(proc)
+        if cmd[1] == "DQN.py":
+            dqn_processes.append(proc)
 
+    launch_info["dqn_processes"] = dqn_processes
     return processes, launch_info
 
 
@@ -669,7 +670,17 @@ def main() -> int:
             non_learner_count = total_agents - learner_count
             desired_selfplay = planned_selfplay_opponents(args, episode, non_learner_count)
 
-            processes_dead = any(proc.poll() is not None for proc in processes)
+            dqn_processes = list(launch_info.get("dqn_processes", [])) if launch_info else []
+            dqn_dead = [proc for proc in dqn_processes if proc.poll() is not None]
+            if dqn_dead:
+                for proc in dqn_dead:
+                    print(f"DQN.py exited with code {proc.returncode}. Stopping training.")
+                if processes:
+                    terminate_processes(processes)
+                exit_code = 1
+                break
+
+            processes_dead = any(proc.poll() is not None for proc in dqn_processes)
             role_change = bool(
                 launch_info
                 and desired_selfplay != int(launch_info.get("selfplay_requested", 0))

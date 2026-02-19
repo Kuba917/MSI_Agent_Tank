@@ -30,8 +30,21 @@ class BaseMembership(nn.Module):
         super().__init__()
         self.n_rules = n_rules
         self.n_inputs = n_inputs
-        self.input_min = input_min
+        self.input_min = input_min - 1e-1
         self.input_max = input_max
+
+    def _assert_in_range(self, x: torch.Tensor) -> None:
+        if torch.any(x < self.input_min) or torch.any(x > self.input_max):
+            x_min = float(x.min().item())
+            x_max = float(x.max().item())
+            bad_mask = (x < self.input_min) | (x > self.input_max)
+            bad_idx = torch.nonzero(bad_mask, as_tuple=False)
+            bad_idx_list = bad_idx.tolist()
+            raise ValueError(
+                f"Input out of range [{self.input_min}, {self.input_max}]: "
+                f"observed min={x_min:.6f}, max={x_max:.6f}, "
+                f"bad_indices={bad_idx_list}"
+            )
 
     def log_membership(self, x: torch.Tensor) -> torch.Tensor:
         raise NotImplementedError
@@ -58,6 +71,7 @@ class GaussianMembership(BaseMembership):
         self.raw_sigma = nn.Parameter(torch.full((n_rules, n_inputs), init_sigma))
 
     def log_membership(self, x: torch.Tensor) -> torch.Tensor:
+        self._assert_in_range(x)
         x_expanded = x.unsqueeze(1)
         sigma = F.softplus(self.raw_sigma) + 1e-3
         z = (x_expanded - self.centers) / sigma
@@ -86,6 +100,7 @@ class BellMembership(BaseMembership):
         self.raw_b = nn.Parameter(torch.full((n_rules, n_inputs), 1.5))
 
     def log_membership(self, x: torch.Tensor) -> torch.Tensor:
+        self._assert_in_range(x)
         x_expanded = x.unsqueeze(1)
         a = F.softplus(self.raw_a) + 1e-3
         b = F.softplus(self.raw_b) + 0.1
@@ -114,6 +129,7 @@ class TriangularMembership(BaseMembership):
         self.raw_right_gap = nn.Parameter(torch.full((n_rules, n_inputs), spacing))
 
     def log_membership(self, x: torch.Tensor) -> torch.Tensor:
+        self._assert_in_range(x)
         x_expanded = x.unsqueeze(1)
 
         left = self.left
