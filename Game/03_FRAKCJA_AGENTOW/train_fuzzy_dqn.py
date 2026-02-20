@@ -75,10 +75,21 @@ def build_args() -> argparse.Namespace:
     parser.add_argument("--target-sync-every", type=int, default=500)
     parser.add_argument("--save-every-games", type=int, default=1)
     parser.add_argument("--seed", type=int, default=1)
+    parser.add_argument("--gamma", type=float, default=0.95)
+    parser.add_argument("--actor-lr", type=float, default=1e-3)
+    parser.add_argument("--critic-lr", type=float, default=1e-3)
+    parser.add_argument("--tau", type=float, default=0.01)
+    parser.add_argument("--action-noise-start", type=float, default=0.3)
+    parser.add_argument("--action-noise-end", type=float, default=0.05)
+    parser.add_argument("--action-noise-decay-steps", type=int, default=50_000)
+    parser.add_argument("--no-load", action="store_true", help="Do not load checkpoints in agents.")
+    parser.add_argument("--tune-trials", type=int, default=None, help="Number of Optuna trials to run.")
+    parser.add_argument("--tune-episodes", type=int, default=None, help="Episodes per Optuna trial.")
 
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--continue-on-error", action="store_true")
     parser.add_argument("--render", action="store_true", help="Show game window (disable headless mode)")
+    parser.add_argument("--tune-bayes", action="store_true", help="Run Bayesian optimization (Optuna).")
 
     return parser.parse_args()
 
@@ -121,6 +132,32 @@ def wait_for_agents_ready(
             time.sleep(0.2)
 
     return sorted(pending)
+
+
+def fetch_agent_status(port: int) -> Optional[Dict[str, Any]]:
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/", timeout=2.0) as resp:
+            payload = resp.read()
+        return json.loads(payload.decode("utf-8"))
+    except Exception:
+        return None
+
+
+def fetch_avg_episode_reward(base_port: int, learner_count: int) -> Optional[float]:
+    if learner_count <= 0:
+        raise ValueError("learner_count must be > 0")
+    rewards: List[float] = []
+    for idx in range(learner_count):
+        status = fetch_agent_status(base_port + idx)
+        if status is None:
+            continue
+        score = status.get("last_episode_score")
+        if not isinstance(score, (int, float)):
+            raise ValueError(f"Missing or invalid last_episode_score for agent on port {base_port + idx}")
+        rewards.append(float(score))
+    if not rewards:
+        return None
+    return float(sum(rewards) / len(rewards))
 
 
 def learner_model_path(base_path: Path, learner_idx: int, total_learners: int) -> Path:
@@ -360,7 +397,23 @@ def launch_agents(args: argparse.Namespace, episode: int) -> Tuple[List[subproce
                 str(max(1, int(args.save_every_games))),
                 "--seed",
                 str(seed_for_agent),
+                "--gamma",
+                str(float(args.gamma)),
+                "--actor-lr",
+                str(float(args.actor_lr)),
+                "--critic-lr",
+                str(float(args.critic_lr)),
+                "--tau",
+                str(float(args.tau)),
+                "--action-noise-start",
+                str(float(args.action_noise_start)),
+                "--action-noise-end",
+                str(float(args.action_noise_end)),
+                "--action-noise-decay-steps",
+                str(max(1, int(args.action_noise_decay_steps))),
             ]
+            if args.no_load:
+                cmd.append("--no-load")
         else:
             non_learner_idx = idx - learner_count
             use_selfplay = selfplay_enabled and non_learner_idx < selfplay_requested
@@ -383,7 +436,23 @@ def launch_agents(args: argparse.Namespace, episode: int) -> Tuple[List[subproce
                     args.mf_type,
                     "--seed",
                     str(seed_for_agent),
+                    "--gamma",
+                    str(float(args.gamma)),
+                    "--actor-lr",
+                    str(float(args.actor_lr)),
+                    "--critic-lr",
+                    str(float(args.critic_lr)),
+                    "--tau",
+                    str(float(args.tau)),
+                    "--action-noise-start",
+                    str(float(args.action_noise_start)),
+                    "--action-noise-end",
+                    str(float(args.action_noise_end)),
+                    "--action-noise-decay-steps",
+                    str(max(1, int(args.action_noise_decay_steps))),
                 ]
+                if args.no_load:
+                    cmd.append("--no-load")
             else:
                 launch_info["baselines"] += 1
                 cmd = [
@@ -492,6 +561,7 @@ def summarize_episode_reports(episode_reports: List[Dict[str, Any]]) -> Dict[str
     move_ratios: List[float] = []
     idle_ratios: List[float] = []
     movement_success_ratios: List[float] = []
+    episode_rewards: List[float] = []
 
     for row in episode_reports:
         winner_key = str(row.get("winner_team")) if row.get("winner_team") is not None else "unknown"
@@ -518,6 +588,7 @@ def summarize_episode_reports(episode_reports: List[Dict[str, Any]]) -> Dict[str
         mr = _to_float(row.get("move_command_ratio"))
         ir = _to_float(row.get("idle_ratio"))
         msr = _to_float(row.get("movement_success_ratio"))
+        er = _to_float(row.get("avg_episode_reward"))
         if tr is not None:
             turn_ratios.append(tr)
         if mr is not None:
@@ -526,6 +597,8 @@ def summarize_episode_reports(episode_reports: List[Dict[str, Any]]) -> Dict[str
             idle_ratios.append(ir)
         if msr is not None:
             movement_success_ratios.append(msr)
+        if er is not None:
+            episode_rewards.append(er)
 
     total_deaths = projectile_deaths_total + non_projectile_deaths_total
     projectile_share = (projectile_deaths_total / total_deaths) if total_deaths > 0 else 0.0
@@ -555,6 +628,7 @@ def summarize_episode_reports(episode_reports: List[Dict[str, Any]]) -> Dict[str
         "avg_move_command_ratio": _mean(move_ratios),
         "avg_idle_ratio": _mean(idle_ratios),
         "avg_movement_success_ratio": _mean(movement_success_ratios),
+        "avg_episode_reward": _mean(episode_rewards),
     }
 
 
@@ -610,6 +684,7 @@ def save_training_report(
         "movement_success_ratio",
         "reason",
         "sudden_death_reached",
+        "avg_episode_reward",
     ]
     with open(csv_path, "w", newline="", encoding="utf-8") as fh:
         writer = csv.DictWriter(fh, fieldnames=csv_fields)
@@ -620,8 +695,135 @@ def save_training_report(
     return json_path, csv_path
 
 
+def build_cmd(args: argparse.Namespace, overrides: Dict[str, Any]) -> List[str]:
+    cmd = [sys.executable, str(THIS_DIR / "train_fuzzy_dqn.py")]
+
+    def add(flag: str, value: Any, is_bool: bool = False) -> None:
+        if is_bool:
+            if value:
+                cmd.append(flag)
+            return
+        cmd.extend([flag, str(value)])
+
+    add("--episodes", overrides.get("episodes", args.episodes))
+    add("--team-size", args.team_size)
+    add("--learning-agents", args.learning_agents)
+    add("--base-port", args.base_port)
+    add("--model-path", overrides.get("model_path", args.model_path))
+    add("--rules", overrides.get("rules", args.rules))
+    add("--mf-type", args.mf_type)
+    add("--map-seed", args.map_seed)
+    add("--map-curriculum", args.map_curriculum)
+    add("--max-ticks", args.max_ticks)
+    add("--log-level", args.log_level)
+    add("--restart-agents-every", args.restart_agents_every)
+    add("--start-delay", args.start_delay)
+    add("--ready-timeout", args.ready_timeout)
+    add("--episode-delay", args.episode_delay)
+    add("--selfplay-start-episode", args.selfplay_start_episode)
+    add("--selfplay-opponents", args.selfplay_opponents)
+    add("--selfplay-model-path", args.selfplay_model_path)
+    add("--warmup-steps", args.warmup_steps)
+    add("--batch-size", overrides.get("batch_size", args.batch_size))
+    add("--train-every", args.train_every)
+    add("--target-sync-every", args.target_sync_every)
+    add("--save-every-games", args.save_every_games)
+    add("--seed", overrides.get("seed", args.seed))
+    add("--gamma", overrides.get("gamma", args.gamma))
+    add("--actor-lr", overrides.get("actor_lr", args.actor_lr))
+    add("--critic-lr", overrides.get("critic_lr", args.critic_lr))
+    add("--tau", overrides.get("tau", args.tau))
+    add("--action-noise-start", overrides.get("action_noise_start", args.action_noise_start))
+    add("--action-noise-end", overrides.get("action_noise_end", args.action_noise_end))
+    add("--action-noise-decay-steps", overrides.get("action_noise_decay_steps", args.action_noise_decay_steps))
+    add("--no-load", overrides.get("no_load", False), is_bool=True)
+    add("--verbose", args.verbose, is_bool=True)
+    add("--continue-on-error", args.continue_on_error, is_bool=True)
+    add("--render", args.render, is_bool=True)
+    return cmd
+
+
+def run_bayes_tuning(args: argparse.Namespace) -> int:
+    try:
+        import optuna
+    except Exception as exc:
+        print(f"Optuna not available: {exc}")
+        print("Install with: pip install optuna")
+        return 1
+
+    trials = max(1, int(args.tune_trials))
+    episodes = max(1, int(args.tune_episodes))
+    reports_dir = AGENT_DIR / "training_reports"
+    reports_dir.mkdir(parents=True, exist_ok=True)
+
+    sampler = optuna.samplers.TPESampler(seed=int(args.seed))
+    study = optuna.create_study(direction="maximize", sampler=sampler)
+
+    def objective(trial: "optuna.Trial") -> float:
+        hparams = {
+            "gamma": trial.suggest_float("gamma", 0.9, 0.999),
+            "actor_lr": trial.suggest_float("actor_lr", 1e-5, 1e-2, log=True),
+            "critic_lr": trial.suggest_float("critic_lr", 1e-5, 1e-2, log=True),
+            "tau": trial.suggest_float("tau", 0.001, 0.05),
+            "action_noise_start": trial.suggest_float("action_noise_start", 0.0, 0.8),
+            "action_noise_end": trial.suggest_float("action_noise_end", 0.0, 0.2),
+            "action_noise_decay_steps": trial.suggest_int("action_noise_decay_steps", 5_000, 200_000),
+            "rules": trial.suggest_categorical("rules", [8, 16, 24, 32, 48, 64, 96]),
+            "batch_size": trial.suggest_categorical("batch_size", [32, 64, 128, 256, 512]),
+        }
+
+        model_path = str(reports_dir / f"tune_trial_{trial.number + 1}_{int(time.time())}.pt")
+        overrides = dict(hparams)
+        overrides["episodes"] = episodes
+        overrides["model_path"] = model_path
+        overrides["seed"] = int(args.seed) + trial.number + 1
+        overrides["no_load"] = True
+
+        cmd = build_cmd(args, overrides)
+        print(
+            f"[Bayes {trial.number + 1}/{trials}] gamma={hparams['gamma']:.4f} "
+            f"actor_lr={hparams['actor_lr']:.2e} critic_lr={hparams['critic_lr']:.2e} "
+            f"tau={hparams['tau']:.4f} rules={hparams['rules']} batch={hparams['batch_size']}"
+        )
+        result = subprocess.run(cmd, cwd=str(AGENT_DIR), text=True, capture_output=True)
+        stdout = result.stdout or ""
+        match = re.search(r"Training report JSON:\s*(.+)", stdout)
+        if not match:
+            return float("-inf")
+        report_path = Path(match.group(1).strip())
+        if not report_path.exists():
+            return float("-inf")
+        try:
+            payload = json.loads(report_path.read_text(encoding="utf-8"))
+            aggregate = payload.get("aggregate", {})
+            score = aggregate.get("avg_episode_reward")
+            if score is None:
+                score = aggregate.get("tanks_killed_total", 0.0)
+            return float(score)
+        except Exception:
+            return float("-inf")
+
+    study.optimize(objective, n_trials=trials)
+
+    if study.best_trial is None:
+        print("Bayes tuning finished: no successful trials.")
+        return 1
+
+    print("Bayes tuning finished. Best config:")
+    for key, value in study.best_trial.params.items():
+        print(f"  {key}={value}")
+    print(f"Best score: {study.best_value:.4f}")
+    return 0
+
+
 def main() -> int:
     args = build_args()
+    if int(args.learning_agents) <= 0:
+        raise ValueError("--learning-agents must be > 0 for training runs")
+    if args.tune_bayes:
+        if args.tune_trials is None or args.tune_episodes is None:
+            raise ValueError("--tune-trials and --tune-episodes are required when using --tune-bayes")
+        return run_bayes_tuning(args)
 
     if not ENGINE_DIR.exists():
         print(f"Engine directory not found: {ENGINE_DIR}")
@@ -827,6 +1029,7 @@ def main() -> int:
                     float(episode_metrics.get("heading_turn_ratio") or 0.0)
                     + float(episode_metrics.get("barrel_turn_ratio") or 0.0)
                 )
+            avg_episode_reward = fetch_avg_episode_reward(args.base_port, learner_count)
 
             episode_report: Dict[str, Any] = {
                 "episode": episode,
@@ -852,6 +1055,7 @@ def main() -> int:
                 "movement_success_ratio": _to_float((episode_metrics or {}).get("movement_success_ratio")),
                 "reason": (episode_metrics or {}).get("reason"),
                 "sudden_death_reached": (episode_metrics or {}).get("sudden_death_reached"),
+                "avg_episode_reward": avg_episode_reward,
             }
 
             # In this project run_game.py may return code 1 even after a completed match

@@ -406,22 +406,21 @@ class StateEncoder:
 @dataclass
 class AgentConfig:
     state_dim: int = STATE_DIM
-    n_rules: int = 32
-    mf_type: str = "gaussian"
+    n_rules: int = 2 * STATE_DIM
+    mf_type: str = "triangular"
 
-    gamma: float = 0.95
-    actor_lr: float = 1e-3
-    critic_lr: float = 1e-3
-    tau: float = 0.01
-    action_noise_start: float = 0.3
+    gamma: float = 0.97
+    actor_lr: float = 4e-5
+    critic_lr: float = 0.004
+    tau: float = 0.04
+    action_noise_start: float = 0.0003
     action_noise_end: float = 0.05
-    action_noise_decay_steps: int = 50_000
-    batch_size: int = 128
+    action_noise_decay_steps: int = 16_177
+    batch_size: int = 512
     replay_capacity: int = 50_000
-    warmup_steps: int = 2_000
+    warmup_steps: int = 512
     train_every: int = 2
     target_sync_every: int = 1
-
 
     frame_skip: int = 1
     save_every_games: int = 1
@@ -432,7 +431,7 @@ class AgentConfig:
 
 
 class FuzzyDQNAgent:
-    def __init__(self, name: str, config: AgentConfig, training_enabled: bool):
+    def __init__(self, name: str, config: AgentConfig, training_enabled: bool, load_checkpoint: bool = True):
         self.name = name
         self.config = config
         self.training_enabled = training_enabled
@@ -471,6 +470,7 @@ class FuzzyDQNAgent:
         self.games_played = 0
         self.last_loss: Optional[float] = None
         self.current_episode_score = 0.0
+        self.last_episode_score = 0.0
 
         self.experiment = None
         if self.training_enabled:
@@ -491,7 +491,8 @@ class FuzzyDQNAgent:
         self.lock = threading.Lock()
 
         self.best_model_path = self._resolve_best_model_path()
-        self._load_checkpoint_if_available()
+        if load_checkpoint:
+            self._load_checkpoint_if_available()
         print(
             f"[{self.name}] ready | training={self.training_enabled} "
             f"device={self.device} rules={self.config.n_rules} mf={self.config.mf_type} "
@@ -504,6 +505,8 @@ class FuzzyDQNAgent:
         self.trace_allies: List[Tuple[float, float]] = []
         self.trace_enemies: List[Tuple[float, float]] = []
         self.pos_history: List[Tuple[float, float]] = []
+        self.trace_actor_raw: List[np.ndarray] = []
+        self.last_actor_raw: Optional[np.ndarray] = None
         self.episode_reward_total = 0.0
         self.episode_reward_parts: Dict[str, float] = {}
         self.episode_reward_parts_steps = 0
@@ -552,6 +555,7 @@ class FuzzyDQNAgent:
         state = torch.from_numpy(state_vector).unsqueeze(0).to(self.device)
         with torch.no_grad():
             raw = self.actor(state)
+            self.last_actor_raw = raw.squeeze(0).detach().cpu().numpy()
             action = torch.tanh(raw)
             if training:
                 noise_std = self._current_action_noise_std()
@@ -717,6 +721,10 @@ class FuzzyDQNAgent:
         parts["variance_prev"] = var_p / 10
         parts["centroid_bonus"] = parts["variance_recent"] + parts["variance_prev"]
 
+        heading_mag = abs(float(action.heading_rotation_angle))
+        if heading_mag > 1.0:
+            parts["heading_penalty"] = -0.1 * (heading_mag - 1.0)
+
         frontier_bonus = 0.0
         if self.frontier_min_x is None:
             self.frontier_min_x = current_pos[0]
@@ -767,11 +775,11 @@ class FuzzyDQNAgent:
             next_raw = self.actor_target(next_states)
             next_action = torch.tanh(next_raw)
             next_action = self._scale_action_tensor(next_action)
-            next_action = F.hardsigmoid(next_action)
+            next_action = torch.sigmoid(next_action)
             next_q = self.critic_target(torch.cat([next_states, next_action], dim=1)).squeeze(1)
             target_q = rewards + (1.0 - dones) * self.config.gamma * next_q
 
-        actions = F.hardsigmoid(actions)
+        actions = torch.sigmoid(actions)
         current_q = self.critic(torch.cat([states, actions], dim=1)).squeeze(1)
         critic_loss = F.mse_loss(current_q, target_q)
         self.last_loss = float(critic_loss.item())
@@ -784,8 +792,9 @@ class FuzzyDQNAgent:
         actor_raw = self.actor(states)
         actor_action = torch.tanh(actor_raw)
         actor_action = self._scale_action_tensor(actor_action)
-        actor_action = F.hardsigmoid(actor_action)
-        actor_loss = -self.critic(torch.cat([states, actor_action], dim=1)).mean()
+        actor_action = torch.sigmoid(actor_action)
+        raw_penalty = 5e-2 * actor_raw.pow(2).mean()
+        actor_loss = -self.critic(torch.cat([states, actor_action], dim=1)).mean() + raw_penalty
 
         self.actor_optimizer.zero_grad(set_to_none=True)
         actor_loss.backward()
@@ -889,6 +898,8 @@ class FuzzyDQNAgent:
         self.trace_allies.clear()
         self.trace_enemies.clear()
         self.pos_history.clear()
+        self.trace_actor_raw.clear()
+        self.last_actor_raw = None
         self.episode_reward_total = 0.0
         self.episode_reward_parts = {}
         self.episode_reward_parts_steps = 0
@@ -1100,6 +1111,8 @@ class FuzzyDQNAgent:
             self.total_steps += 1
             self.last_status = my_tank_status
             self._record_trace(my_tank_status, sensor_data, current_obs, ActionSpec("ddpg", action_vec[0], action_vec[1], action_vec[2], command.should_fire))
+            if self.last_actor_raw is not None:
+                self.trace_actor_raw.append(self.last_actor_raw.copy())
 
             return command
         finally:
@@ -1160,6 +1173,7 @@ class FuzzyDQNAgent:
                 for _ in range(5):
                     self._maybe_train()
 
+            self.last_episode_score = self.current_episode_score
             self.games_played += 1
 
             print(
@@ -1187,6 +1201,7 @@ class FuzzyDQNAgent:
                 self.save_checkpoint(self.config.model_path, label="latest")
 
             self._save_episode_plot()
+            self._save_actor_raw_plot()
             steps = max(1, self.episode_reward_parts_steps)
             episode_parts = {k: v / steps for k, v in self.episode_reward_parts.items()}
             episode_parts["total_reward_avg"] = self.episode_reward_total / steps
@@ -1243,6 +1258,26 @@ class FuzzyDQNAgent:
         suffix = f" last_total={last_total:.3f}" if last_total is not None else ""
         print(f"[{self.name}] reward plot saved: {out_path}{suffix}")
 
+    def _save_actor_raw_plot(self) -> None:
+        if not self.trace_actor_raw:
+            return
+        import matplotlib.pyplot as plt
+        data = np.stack(self.trace_actor_raw, axis=0)
+        fig, ax = plt.subplots(figsize=(10, 5))
+        for idx in range(data.shape[1]):
+            ax.plot(data[:, idx], label=f"raw_{idx}")
+        ax.set_title(f"{self.name} actor raw outputs (game {self.games_played})")
+        ax.set_xlabel("step")
+        ax.set_ylabel("raw value")
+        ax.legend(loc="upper right")
+        ax.grid(True, alpha=0.3)
+        out_dir = os.path.join(current_dir, "training_reports")
+        os.makedirs(out_dir, exist_ok=True)
+        out_path = os.path.join(out_dir, f"actor_raw_{self.games_played}_agent_{self.name}.png")
+        fig.savefig(out_path, dpi=150, bbox_inches="tight")
+        plt.close(fig)
+        print(f"[{self.name}] actor raw plot saved: {out_path}")
+
     def status(self) -> Dict[str, Any]:
         return {
             "name": self.name,
@@ -1255,6 +1290,7 @@ class FuzzyDQNAgent:
             "model_path": self.config.model_path,
             "best_model_path": self.best_model_path,
             "best_score": self.best_score,
+            "last_episode_score": self.last_episode_score,
         }
 
 
@@ -1270,11 +1306,11 @@ agent: Optional[FuzzyDQNAgent] = None
 def _get_agent() -> FuzzyDQNAgent:
     global agent
     if agent is None:
-        # Keep import-time initialization light; runtime __main__ overrides it.
         agent = FuzzyDQNAgent(
             name="FuzzyDQN",
             config=AgentConfig(model_path=""),
             training_enabled=False,
+            load_checkpoint=False,
         )
     return agent
 
@@ -1317,7 +1353,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model-path", type=str, default=DEFAULT_MODEL_PATH)
     parser.add_argument("--best-model-path", type=str, default=None)
     parser.add_argument("--rules", type=int, default=32)
-    parser.add_argument("--mf-type", choices=["gaussian", "bell", "triangular"], default="gaussian")
+    parser.add_argument("--mf-type", choices=["gaussian", "bell", "triangular"], default="triangular")
     parser.add_argument("--frame-skip", type=int, default=1)
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--save-every-games", type=int, default=1)
@@ -1325,6 +1361,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--train-every", type=int, default=2)
     parser.add_argument("--target-sync-every", type=int, default=500)
+    parser.add_argument("--gamma", type=float, default=0.95)
+    parser.add_argument("--actor-lr", type=float, default=1e-3)
+    parser.add_argument("--critic-lr", type=float, default=1e-3)
+    parser.add_argument("--tau", type=float, default=0.01)
+    parser.add_argument("--action-noise-start", type=float, default=0.3)
+    parser.add_argument("--action-noise-end", type=float, default=0.05)
+    parser.add_argument("--action-noise-decay-steps", type=int, default=50_000)
+    parser.add_argument("--no-load", action="store_true", help="Do not load checkpoints on startup.")
 
     return parser.parse_args()
 
@@ -1344,6 +1388,13 @@ if __name__ == "__main__":
         batch_size=max(16, int(args.batch_size)),
         train_every=max(1, int(args.train_every)),
         target_sync_every=max(1, int(args.target_sync_every)),
+        gamma=float(args.gamma),
+        actor_lr=float(args.actor_lr),
+        critic_lr=float(args.critic_lr),
+        tau=float(args.tau),
+        action_noise_start=float(args.action_noise_start),
+        action_noise_end=float(args.action_noise_end),
+        action_noise_decay_steps=max(1, int(args.action_noise_decay_steps)),
     )
 
     agent_name = args.name or f"FuzzyDQN_{args.port}"
@@ -1353,6 +1404,7 @@ if __name__ == "__main__":
         name=agent_name,
         config=config,
         training_enabled=bool(args.train),
+        load_checkpoint=not bool(args.no_load),
     )
 
     print(

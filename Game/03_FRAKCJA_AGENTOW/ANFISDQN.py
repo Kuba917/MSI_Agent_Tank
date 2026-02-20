@@ -11,6 +11,7 @@ This module provides a readable and numerically stable fuzzy network:
 from __future__ import annotations
 
 from typing import Literal, Optional
+import math
 
 import torch
 import torch.nn as nn
@@ -167,7 +168,7 @@ class ANFISDQN(nn.Module):
         n_inputs: int,
         n_rules: int,
         n_actions: int,
-        mf_type: Literal["gaussian", "bell", "triangular"] = "gaussian",
+        mf_type: Literal["gaussian", "bell", "triangular"] = "triangular",
         input_min: float = 0.0,
         input_max: float = 1.0,
     ):
@@ -185,6 +186,7 @@ class ANFISDQN(nn.Module):
         self.n_inputs = n_inputs
         self.n_rules = n_rules
         self.n_actions = n_actions
+        self.output_scale = 1.0 / math.sqrt(n_inputs)
 
         membership_cls = MEMBERSHIP_MAP[mf_type]
         self.membership = membership_cls(n_rules, n_inputs, input_min, input_max)
@@ -194,9 +196,10 @@ class ANFISDQN(nn.Module):
         self.adv_weights = nn.Parameter(torch.empty(n_rules, n_actions, n_inputs))
         self.adv_bias = nn.Parameter(torch.zeros(n_rules, n_actions))
 
-        nn.init.xavier_uniform_(self.value_weights)
+        init_scale = 0.05 * (1.0 / math.sqrt(max(1, n_inputs)))
+        nn.init.uniform_(self.value_weights, -init_scale, init_scale)
         nn.init.zeros_(self.value_bias)
-        nn.init.xavier_uniform_(self.adv_weights)
+        nn.init.uniform_(self.adv_weights, -init_scale, init_scale)
         nn.init.zeros_(self.adv_bias)
 
     def _rule_strengths(self, x: torch.Tensor) -> torch.Tensor:
@@ -224,7 +227,7 @@ class ANFISDQN(nn.Module):
         state_value = torch.einsum("br,brv->bv", strengths, value_outputs)  # [B, 1]
         advantages = torch.einsum("br,bra->ba", strengths, adv_outputs)  # [B, A]
         q_values = state_value + (advantages - advantages.mean(dim=1, keepdim=True))
-        return q_values
+        return q_values * self.output_scale
 
     def firing_strengths(self, x: torch.Tensor) -> torch.Tensor:
         """Return normalized rule activations [batch, n_rules]."""
