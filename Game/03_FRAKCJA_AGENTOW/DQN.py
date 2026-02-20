@@ -75,31 +75,6 @@ class ActionSpec:
     should_fire: bool
 
 
-ACTION_SPACE: List[ActionSpec] = [
-    ActionSpec("idle", 0.0, 0.0, 0.0, False),
-
-    # Movement.
-    ActionSpec("forward", 1.0, 0.0, 0.0, False),
-    ActionSpec("forward_left", 0.75, -1.5, 0.0, False),
-    ActionSpec("forward_right", 0.75, 1.5, 0.0, False),
-    ActionSpec("retreat", -0.5, 0.0, 0.0, False),
-
-    # Rotation
-    ActionSpec("turn_left", 0.0, -2.5, 0.0, False),
-    ActionSpec("turn_right", 0.0, 2.5, 0.0, False),
-
-    # Aiming (ONLY ONE SCALE) - serio boje sie ze nie beda mogly dobrze do siebie przymierzyc.
-    ActionSpec("aim_left", 0.0, 0.0, -1.0, False),
-    ActionSpec("aim_right", 0.0, 0.0, 1.0, False),
-    ActionSpec("aim_left_fast", 0.0, 0.0, -60.0, False),
-    ActionSpec("aim_right", 0.0, 0.0, 60.0, False),
-
-    # Fire
-    ActionSpec("fire", 0.0, 0.0, 0.0, True),
-    ActionSpec("fire_forward", 1.0, 0.0, 0.0, True),
-]
-
-
 class ReplayBuffer:
     """Simple ring buffer for off-policy learning."""
 
@@ -655,60 +630,58 @@ class FuzzyDQNAgent:
         enemies_remaining: int,
         current_tick: int,
         current_pos: Tuple[float, float],
-    ) -> float:         # Exploration is all you need
+    ) -> float:
         from collections import defaultdict
         parts: Dict[str, float] = defaultdict(float)
-        # Damage avoidance (biggest issue: entering danger zone).
-        # parts["hp_delta"] = (current_obs.hp_ratio - prev_obs.hp_ratio) * 10.0
-        # parts["shield_delta"] = (current_obs.shield_ratio - prev_obs.shield_ratio) * 2.0
+        # Observation fields:
+            # - vector
+                # - hp_ratio
+                # - shield_ratio
+                # - reload_norm
+                # - heavy_ratio
+                # - light_ratio
+                # - long_ratio
+                # - enemy_visible (1.0/0.0)
+                # - enemy_dist
+                # - enemy_barrel_error
+                # - enemy_hull_error
+                # - ally_fire_risk (1.0/0.0)
+                # - obstacle_ahead (1.0/0.0)
+                # - danger_ahead (1.0/0.0)
+                # - powerup_visible (1.0/0.0)
+                # - powerup_dist
+                # - speed_ratio
+                # - enemies_remaining_norm
+                # - x_norm
+                # - y_norm
+                # - dx_recent
+                # - dy_recent
+                # - dx_prev
+                # - dy_prev
+            # - enemy_visible: nearest enemy is visible
+            # - enemy_dist: normalized distance to nearest enemy (0..1)
+            # - enemy_barrel_error: normalized barrel angle error to enemy (0..1, 0.5=center)
+            # - enemy_hull_error: normalized hull angle error to enemy (0..1, 0.5=center)
+            # - ally_fire_risk: ally within firing line
+            # - obstacle_ahead: obstacle within forward cone
+            # - danger_ahead: dangerous terrain ahead
+            # - powerup_visible: any powerup visible
+            # - powerup_dist: normalized distance to nearest powerup (0..1)
+            # - hp_ratio: hp / max_hp (0..1)
+            # - shield_ratio: shield / max_shield (0..1)
+            # - can_fire: reloaded + ammo available
+            # - reload_norm: normalized reload timer (0..1)
+        # Action fields:
+            # barrel_rotation_angle: float = 0.0
+            # heading_rotation_angle: float = 0.0
+            # move_speed: float = 0.0
+            # ammo_to_load: Optional[str] = None
+            # should_fire: bool = False
 
-        # Danger/obstacle penalties (angles already normalized).
-        # parts["danger_ahead"] = -1.0 if current_obs.danger_ahead else 0.0
-        # parts["danger_move"] = -7.5 if current_obs.danger_ahead and action.move_speed > 1e-2 else 0.0
-        # parts["danger_enter"] = -1.0 if (not prev_obs.danger_ahead and current_obs.danger_ahead) else 0.0
-        # parts["danger_exit"] = 0.5 if (prev_obs.danger_ahead and not current_obs.danger_ahead) else 0.0
-        # parts["obstacle_move"] = -0.2 if current_obs.obstacle_ahead and action.move_speed > 0.0 else 0.0
-
-        # Enemy tracking/aiming.
-        # if current_obs.enemy_visible:
-        #     parts["enemy_visible"] = 0.1
-        #     barrel_improve = abs(prev_obs.enemy_barrel_error - 0.5) - abs(current_obs.enemy_barrel_error - 0.5)
-        #     hull_improve = abs(prev_obs.enemy_hull_error - 0.5) - abs(current_obs.enemy_hull_error - 0.5)
-        #     parts["barrel_improve"] = barrel_improve * 3.0
-        #     parts["hull_improve"] = hull_improve * 0.2
-        # else:
-        #     parts["enemy_visible"] = -0.05
-        #     parts["barrel_improve"] = 0.0
-        #     parts["hull_improve"] = 0.0
-
-        # Ally safety.
-        # parts["ally_fire_risk"] = -0.2 if current_obs.ally_fire_risk else 0.0
-
-        # Firing quality based on previous state (action chosen there).
-        # parts["fire_no_ammo"] = 0.0
-        # parts["fire_no_enemy"] = 0.0
-        # parts["fire_ally_risk"] = 0.0
-        # parts["fire_aim_error"] = 0.0
-        # if action.should_fire:
-        #     if not prev_obs.can_fire:
-        #         parts["fire_no_ammo"] = -0.4
-        #     elif not prev_obs.enemy_visible:
-        #         parts["fire_no_enemy"] = -2.0
-        #     elif prev_obs.ally_fire_risk:
-        #         parts["fire_ally_risk"] = -3.5
-        #     else:
-        #         aim_error = abs(prev_obs.enemy_barrel_error - 0.5)
-        #         parts["fire_aim_error"] = -(aim_error + 0.25)
-
-        # Powerup pursuit.
-        # parts["powerup_pursuit"] = (
-        #     (prev_obs.powerup_dist - current_obs.powerup_dist) * 0.1
-        #     if current_obs.powerup_visible
-        #     else 0.0
-        # )
-
-        # Small penalty for idling while enemy is visible.
-        # parts["idle_visible"] = -0.05 if abs(action.move_speed) < 1e-3 and current_obs.enemy_visible else 0.0
+        delta = action.heading_rotation_angle / MAX_HEADING_DELTA
+        if abs(delta) > 1:
+            raise ValueError("action.heading_rotation_angle not normalized in _compute_step_reward")
+        parts["rotation"] = -(delta) ** 2 / 10
 
         recent = self.pos_history[-200:] or [current_pos]
         prev = self.pos_history[-400:-200] or recent

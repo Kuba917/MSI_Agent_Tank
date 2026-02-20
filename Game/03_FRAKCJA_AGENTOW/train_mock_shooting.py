@@ -21,9 +21,9 @@ from mock_shooting import label_shot, rotate_barrel_mock, _normalize_angle
 
 MAP_WIDTH = 200.0
 MAP_HEIGHT = 200.0
-MAX_RANGE = 200.0
+MAX_RANGE = 100.0
 HALF_ANGLE = 5.0
-MAX_SPIN = 5.0  # degrees per step for mock
+MAX_SPIN = 90.0  # degrees per step for mock; align with engine barrel_spin_rate
 
 
 @dataclass
