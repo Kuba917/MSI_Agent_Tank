@@ -656,7 +656,8 @@ class FuzzyDQNAgent:
         current_tick: int,
         current_pos: Tuple[float, float],
     ) -> float:         # Exploration is all you need
-        parts: Dict[str, float] = {}
+        from collections import defaultdict
+        parts: Dict[str, float] = defaultdict(float)
         # Damage avoidance (biggest issue: entering danger zone).
         # parts["hp_delta"] = (current_obs.hp_ratio - prev_obs.hp_ratio) * 10.0
         # parts["shield_delta"] = (current_obs.shield_ratio - prev_obs.shield_ratio) * 2.0
@@ -717,13 +718,9 @@ class FuzzyDQNAgent:
         pcy = sum(p[1] for p in prev) / float(len(prev))
         var_r = sum((p[0] - rcx) ** 2 + (p[1] - rcy) ** 2 for p in recent) / float(len(recent))
         var_p = sum((p[0] - pcx) ** 2 + (p[1] - pcy) ** 2 for p in prev) / float(len(prev))
-        parts["variance_recent"] = var_r / 10
-        parts["variance_prev"] = var_p / 10
+        parts["variance_recent"] = var_r / 50
+        parts["variance_prev"] = var_p / 50
         parts["centroid_bonus"] = parts["variance_recent"] + parts["variance_prev"]
-
-        heading_mag = abs(float(action.heading_rotation_angle))
-        if heading_mag > 1.0:
-            parts["heading_penalty"] = -0.1 * (heading_mag - 1.0)
 
         frontier_bonus = 0.0
         if self.frontier_min_x is None:
@@ -733,16 +730,16 @@ class FuzzyDQNAgent:
             self.frontier_max_y = current_pos[1]
         else:                                       # wyjezdza w nieznane
             if current_pos[0] < self.frontier_min_x:
-                frontier_bonus += (self.frontier_min_x - current_pos[0]) / 50.0
+                frontier_bonus += (self.frontier_min_x - current_pos[0]) / MAP_WIDTH
                 self.frontier_min_x = current_pos[0]
             if current_pos[0] > self.frontier_max_x:
-                frontier_bonus += (current_pos[0] - self.frontier_max_x) / 50.0
+                frontier_bonus += (current_pos[0] - self.frontier_max_x) / MAP_WIDTH
                 self.frontier_max_x = current_pos[0]
             if current_pos[1] < self.frontier_min_y:
-                frontier_bonus += (self.frontier_min_y - current_pos[1]) / 50.0
+                frontier_bonus += (self.frontier_min_y - current_pos[1]) / MAP_HEIGHT
                 self.frontier_min_y = current_pos[1]
             if current_pos[1] > self.frontier_max_y:
-                frontier_bonus += (current_pos[1] - self.frontier_max_y) / 50.0
+                frontier_bonus += (current_pos[1] - self.frontier_max_y) / MAP_HEIGHT
                 self.frontier_max_y = current_pos[1]
         parts["frontier_bonus"] = frontier_bonus
 
