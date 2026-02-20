@@ -810,10 +810,12 @@ class GameLoop:
                 self.logger.log_agent_interaction(connection.base_url, "request", tank_id=tank_id)
 
                 # Build payload for agent
+                sensor_payload = self._sensor_data_to_dict(sensor_data)
+                sensor_payload["recent_combat"] = self._recent_combat_feedback(tank_id)
                 payload = {
                     "current_tick": current_tick,
                     "my_tank_status": self._tank_to_dict(tank),
-                    "sensor_data": self._sensor_data_to_dict(sensor_data),
+                    "sensor_data": sensor_payload,
                     "enemies_remaining": self._count_enemies(tank_id)
                 }
 
@@ -850,6 +852,51 @@ class GameLoop:
                 )
 
         return agent_actions
+
+    def _recent_combat_feedback(self, tank_id: str) -> Dict[str, Any]:
+        """
+        Build per-tank combat feedback from previous physics tick.
+
+        This gives agents immediate signal about confirmed hits landed one tick earlier.
+        """
+        feedback: Dict[str, Any] = {
+            "hits_landed_last_tick": 0,
+            "enemy_hits_last_tick": 0,
+            "ally_hits_last_tick": 0,
+            "damage_dealt_last_tick": 0.0,
+            "enemy_damage_last_tick": 0.0,
+            "ally_damage_last_tick": 0.0,
+        }
+        physics = self.last_physics_results or {}
+        projectile_hits = physics.get("projectile_hits", []) or []
+        shooter_tank = self.tanks.get(tank_id)
+        shooter_team = getattr(shooter_tank, "_team", None)
+
+        for hit in projectile_hits:
+            shooter_id = getattr(hit, "shooter_id", None)
+            target_id = getattr(hit, "hit_tank_id", None)
+            if shooter_id != tank_id or not target_id:
+                continue
+
+            damage = float(getattr(hit, "damage_dealt", 0.0) or 0.0)
+            feedback["hits_landed_last_tick"] += 1
+            feedback["damage_dealt_last_tick"] += damage
+
+            target_tank = self.tanks.get(target_id)
+            target_team = getattr(target_tank, "_team", None)
+            same_team = (
+                shooter_team is not None
+                and target_team is not None
+                and int(shooter_team) == int(target_team)
+            )
+            if same_team:
+                feedback["ally_hits_last_tick"] += 1
+                feedback["ally_damage_last_tick"] += damage
+            else:
+                feedback["enemy_hits_last_tick"] += 1
+                feedback["enemy_damage_last_tick"] += damage
+
+        return feedback
 
     def _tank_to_dict(self, tank: TankUnion) -> Dict[str, Any]:
         """Convert tank object to dictionary for API."""

@@ -57,6 +57,12 @@ MAX_MOVE_SPEED = 5.0
 MAX_HEADING_DELTA = 5.0
 MAX_BARREL_DELTA = 5.0
 
+# Immediate hit feedback shaping (kept small so match outcome still dominates reward).
+INSTANT_ENEMY_HIT_REWARD = 0.45
+INSTANT_ENEMY_DAMAGE_REWARD_SCALE = 0.0125
+INSTANT_ALLY_HIT_PENALTY = 1.10
+INSTANT_ALLY_DAMAGE_PENALTY_SCALE = 0.0200
+
 
 class ActionCommand(BaseModel):
     barrel_rotation_angle: float = 0.0
@@ -515,6 +521,66 @@ class FuzzyDQNAgent:
         self.frontier_min_y: Optional[float] = None
         self.frontier_max_y: Optional[float] = None
         self.reward_parts_history: Dict[str, List[float]] = {}
+        self.pending_combat_feedback: Dict[str, float] = self._empty_combat_feedback()
+
+    @staticmethod
+    def _empty_combat_feedback() -> Dict[str, float]:
+        return {
+            "enemy_hits_last_tick": 0.0,
+            "ally_hits_last_tick": 0.0,
+            "enemy_damage_last_tick": 0.0,
+            "ally_damage_last_tick": 0.0,
+        }
+
+    @staticmethod
+    def _to_non_negative_int(value: Any) -> int:
+        try:
+            return max(0, int(value))
+        except (TypeError, ValueError):
+            return 0
+
+    @staticmethod
+    def _to_non_negative_float(value: Any) -> float:
+        try:
+            return max(0.0, float(value))
+        except (TypeError, ValueError):
+            return 0.0
+
+    def _extract_recent_combat_feedback(self, sensor_data: Dict[str, Any]) -> Dict[str, float]:
+        combat = sensor_data.get("recent_combat", {})
+        if not isinstance(combat, dict):
+            return self._empty_combat_feedback()
+
+        has_enemy_hits = "enemy_hits_last_tick" in combat
+        has_enemy_damage = "enemy_damage_last_tick" in combat
+
+        enemy_hits = self._to_non_negative_int(combat.get("enemy_hits_last_tick", 0))
+        ally_hits = self._to_non_negative_int(combat.get("ally_hits_last_tick", 0))
+        enemy_damage = self._to_non_negative_float(combat.get("enemy_damage_last_tick", 0.0))
+        ally_damage = self._to_non_negative_float(combat.get("ally_damage_last_tick", 0.0))
+
+        # Fallback compatibility when only aggregate hit/damage values are available.
+        if not has_enemy_hits:
+            enemy_hits = max(
+                0,
+                self._to_non_negative_int(combat.get("hits_landed_last_tick", 0)) - ally_hits,
+            )
+        if not has_enemy_damage:
+            enemy_damage = max(
+                0.0,
+                self._to_non_negative_float(combat.get("damage_dealt_last_tick", 0.0)) - ally_damage,
+            )
+
+        return {
+            "enemy_hits_last_tick": float(enemy_hits),
+            "ally_hits_last_tick": float(ally_hits),
+            "enemy_damage_last_tick": float(enemy_damage),
+            "ally_damage_last_tick": float(ally_damage),
+        }
+
+    def _accumulate_recent_combat_feedback(self, delta: Dict[str, float]) -> None:
+        for key, value in delta.items():
+            self.pending_combat_feedback[key] = self.pending_combat_feedback.get(key, 0.0) + float(value)
 
     def _init_comet(self) -> None:
         try:
@@ -754,6 +820,7 @@ class FuzzyDQNAgent:
         current_tick: int,
         current_pos: Tuple[float, float],
         my_team: Optional[int],
+        recent_combat: Optional[Dict[str, float]] = None,
     ) -> float:         # Exploration is all you need
         parts: Dict[str, float] = {}
         # Damage avoidance (biggest issue: entering danger zone).
@@ -809,6 +876,19 @@ class FuzzyDQNAgent:
             else:
                 aim_error = abs(prev_obs.enemy_barrel_error - 0.5)
                 parts["fire_aim_quality"] = max(0.0, 0.06 - aim_error) * 16.0
+
+        # Immediate hit confirmation from previous physics tick.
+        feedback = recent_combat if isinstance(recent_combat, dict) else {}
+        enemy_hits = self._to_non_negative_int(feedback.get("enemy_hits_last_tick", 0))
+        ally_hits = self._to_non_negative_int(feedback.get("ally_hits_last_tick", 0))
+        enemy_damage = self._to_non_negative_float(feedback.get("enemy_damage_last_tick", 0.0))
+        ally_damage = self._to_non_negative_float(feedback.get("ally_damage_last_tick", 0.0))
+        parts["enemy_hit_confirm"] = min(2.0, float(enemy_hits) * INSTANT_ENEMY_HIT_REWARD)
+        parts["enemy_hit_damage"] = min(2.5, enemy_damage * INSTANT_ENEMY_DAMAGE_REWARD_SCALE)
+        parts["ally_hit_penalty"] = -min(
+            3.0,
+            (float(ally_hits) * INSTANT_ALLY_HIT_PENALTY) + (ally_damage * INSTANT_ALLY_DAMAGE_PENALTY_SCALE),
+        )
 
         # Powerup pursuit.
         parts["powerup_pursuit"] = (
@@ -1067,6 +1147,7 @@ class FuzzyDQNAgent:
         self.frontier_max_x = None
         self.frontier_min_y = None
         self.frontier_max_y = None
+        self.pending_combat_feedback = self._empty_combat_feedback()
 
     def _record_trace(
         self,
@@ -1186,6 +1267,7 @@ class FuzzyDQNAgent:
         enemies_remaining: int,
     ) -> ActionCommand:
         with self.lock:
+            self._accumulate_recent_combat_feedback(self._extract_recent_combat_feedback(sensor_data))
             pos = my_tank_status.get("position")
             if not pos or "x" not in pos or "y" not in pos:
                 raise ValueError(f"Missing position in my_tank_status: {pos}")
@@ -1233,6 +1315,7 @@ class FuzzyDQNAgent:
                     current_tick=current_tick,
                     current_pos=current_pos,
                     my_team=my_tank_status.get("_team"),
+                    recent_combat=self.pending_combat_feedback,
                 )
                 self.current_episode_score += reward
                 self.replay.add(
@@ -1242,6 +1325,7 @@ class FuzzyDQNAgent:
                     next_state=current_obs.vector,
                     done=0.0,
                 )
+                self.pending_combat_feedback = self._empty_combat_feedback()
                 self._maybe_train()
 
             action_vec = self._select_action(current_obs.vector, training=self.training_enabled)

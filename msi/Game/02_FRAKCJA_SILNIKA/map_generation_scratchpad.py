@@ -138,11 +138,23 @@ def main():
     # --- Generowanie lub wybór mapy do wczytania ---
     if GENERATE_NEW_MAP:
         print(f"--- Generowanie nowej mapy: {GENERATED_MAP_FILENAME} ---")
-        # Proste, równe proporcje dla wszystkich typów kafelków
-        all_tile_types = OBSTACLE_TYPES + TERRAIN_TYPES
-        tile_ratios = {tile: 1.0 / len(all_tile_types) for tile in all_tile_types}
-        
-        generate_map(MAP_WIDTH, MAP_HEIGHT, GENERATED_MAP_FILENAME, tile_ratios)
+        # Kompatybilność z nową sygnaturą generate_map():
+        # zachowujemy równy udział każdego typu kafelka jak wcześniej.
+        total_types = len(OBSTACLE_TYPES) + len(TERRAIN_TYPES)
+        obstacle_ratio = float(len(OBSTACLE_TYPES)) / float(max(1, total_types))
+        terrain_ratio = 1.0 - obstacle_ratio
+        obstacle_type_weights = [(tile, 1.0) for tile in OBSTACLE_TYPES]
+        terrain_type_weights = [(tile, 1.0) for tile in TERRAIN_TYPES]
+
+        generate_map(
+            MAP_WIDTH,
+            MAP_HEIGHT,
+            GENERATED_MAP_FILENAME,
+            obstacle_ratio,
+            terrain_ratio,
+            obstacle_type_weights,
+            terrain_type_weights,
+        )
         map_to_load = GENERATED_MAP_FILENAME
     else:
         map_to_load = FALLBACK_MAP_FILENAME

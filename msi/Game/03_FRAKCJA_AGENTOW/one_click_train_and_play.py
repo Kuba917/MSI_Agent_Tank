@@ -25,7 +25,7 @@ class LauncherConfig:
     # -------------------------
     # Training config
     # -------------------------
-    episodes: int = 80
+    episodes: int = 50
     team_size: int = 5
     learning_agents: int = 1
     shared_team1_policy: bool = True
@@ -33,7 +33,7 @@ class LauncherConfig:
     rotate_learner_slot: bool = False
     learner_slot: int = 0
     model_path: Path = THIS_DIR / "fuzzy_dqn_model.pt"
-    map_curriculum: str = "open.csv*20,semi-open.csv*20,road_trees.csv*40"
+    map_curriculum: str = "road_trees.csv"
     max_ticks: int = 2600
     log_level: str = "INFO"
     base_port: int = 8001
