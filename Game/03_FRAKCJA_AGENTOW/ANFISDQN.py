@@ -1,179 +1,236 @@
 """
-Layers:
-    1. Fuzzification   — Gaussian MFs with linspace-initialized centers
-    2. Rule firing      — product T-norm
-    3. Normalization    — normalized firing strengths
-    4. Consequent       — first-order Sugeno (linear per rule)
-    5. Aggregation      — weighted sum → (batch, n_outputs)
+ANFIS-style network for Q-value approximation.
+
+This module provides a readable and numerically stable fuzzy network:
+- learnable membership functions,
+- rule firing strengths,
+- first-order Sugeno consequents,
+- weighted aggregation to Q-values.
 """
+
+from __future__ import annotations
+
+from typing import Literal, Optional
+import math
 
 import torch
 import torch.nn as nn
-from typing import Literal
+import torch.nn.functional as F
 
 
-class GaussianMF(nn.Module):
-    """μ(x) = exp(-(x - c)² / (2σ²)), centers initialized via linspace."""
+class BaseMembership(nn.Module):
+    """Base class for membership functions used by fuzzy rules."""
 
-    def __init__(self, n_rules: int, n_inputs: int):
+    def __init__(
+        self,
+        n_rules: int,
+        n_inputs: int,
+        input_min: float,
+        input_max: float,
+    ):
         super().__init__()
-        # Uniform spread across [0, 1] — normalize your inputs!
-        centers = torch.linspace(0, 1, n_rules).unsqueeze(1).expand(n_rules, n_inputs).clone()
+        self.n_rules = n_rules
+        self.n_inputs = n_inputs
+        self.input_min = input_min - 1e-1
+        self.input_max = input_max
+
+    def _assert_in_range(self, x: torch.Tensor) -> None:
+        if torch.any(x < self.input_min) or torch.any(x > self.input_max):
+            x_min = float(x.min().item())
+            x_max = float(x.max().item())
+            bad_mask = (x < self.input_min) | (x > self.input_max)
+            bad_idx = torch.nonzero(bad_mask, as_tuple=False)
+            bad_idx_list = bad_idx.tolist()
+            raise ValueError(
+                f"Input out of range [{self.input_min}, {self.input_max}]: "
+                f"observed min={x_min:.6f}, max={x_max:.6f}, "
+                f"bad_indices={bad_idx_list}"
+            )
+
+    def log_membership(self, x: torch.Tensor) -> torch.Tensor:
+        raise NotImplementedError
+
+
+class GaussianMembership(BaseMembership):
+    """Gaussian membership: mu(x) = exp(-0.5 * ((x - c) / sigma)^2)."""
+
+    def __init__(
+        self,
+        n_rules: int,
+        n_inputs: int,
+        input_min: float,
+        input_max: float,
+    ):
+        super().__init__(n_rules, n_inputs, input_min, input_max)
+
+        centers = torch.linspace(input_min, input_max, n_rules)
+        centers = centers.unsqueeze(1).repeat(1, n_inputs)
+
+        init_sigma = max((input_max - input_min) * 0.35, 0.15)
+
         self.centers = nn.Parameter(centers)
-        self.sigmas = nn.Parameter(torch.full((n_rules, n_inputs), 1.0 / n_rules))
+        self.raw_sigma = nn.Parameter(torch.full((n_rules, n_inputs), init_sigma))
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # x: (batch, n_inputs) → (batch, n_rules, n_inputs)
-        x = x.unsqueeze(1)
-        sigma = self.sigmas.abs().clamp(min=1e-4)
-        return torch.exp(-((x - self.centers) ** 2) / (2 * sigma ** 2))
+    def log_membership(self, x: torch.Tensor) -> torch.Tensor:
+        self._assert_in_range(x)
+        x_expanded = x.unsqueeze(1)
+        sigma = F.softplus(self.raw_sigma) + 1e-3
+        z = (x_expanded - self.centers) / sigma
+        return -0.5 * z.pow(2)
 
 
-class BellMF(nn.Module):
-    """Generalized bell: 1 / (1 + |(x-c)/a|^(2b))"""
+class BellMembership(BaseMembership):
+    """Generalized bell membership."""
 
-    def __init__(self, n_rules: int, n_inputs: int):
-        super().__init__()
-        centers = torch.linspace(0, 1, n_rules).unsqueeze(1).expand(n_rules, n_inputs).clone()
+    def __init__(
+        self,
+        n_rules: int,
+        n_inputs: int,
+        input_min: float,
+        input_max: float,
+    ):
+        super().__init__(n_rules, n_inputs, input_min, input_max)
+
+        centers = torch.linspace(input_min, input_max, n_rules)
+        centers = centers.unsqueeze(1).repeat(1, n_inputs)
+
+        init_a = max((input_max - input_min) * 0.25, 0.1)
+
         self.c = nn.Parameter(centers)
-        self.a = nn.Parameter(torch.full((n_rules, n_inputs), 1.0 / n_rules))
-        self.b = nn.Parameter(torch.full((n_rules, n_inputs), 2.0))
+        self.raw_a = nn.Parameter(torch.full((n_rules, n_inputs), init_a))
+        self.raw_b = nn.Parameter(torch.full((n_rules, n_inputs), 1.5))
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = x.unsqueeze(1)
-        a = self.a.abs().clamp(min=1e-4)
-        b = self.b.abs().clamp(min=0.5)
-        return 1.0 / (1.0 + ((x - self.c) / a).abs().pow(2 * b) + 1e-8)
+    def log_membership(self, x: torch.Tensor) -> torch.Tensor:
+        self._assert_in_range(x)
+        x_expanded = x.unsqueeze(1)
+        a = F.softplus(self.raw_a) + 1e-3
+        b = F.softplus(self.raw_b) + 0.1
+        scaled = ((x_expanded - self.c) / a).abs().pow(2.0 * b)
+        return -torch.log1p(scaled + 1e-8)
 
 
-class TriangularMF(nn.Module):
-    """Triangular MF defined by left/center/right."""
+class TriangularMembership(BaseMembership):
+    """Triangular membership function with learnable ordered vertices."""
 
-    def __init__(self, n_rules: int, n_inputs: int):
-        super().__init__()
-        spacing = 1.0 / max(n_rules - 1, 1)
-        centers = torch.linspace(0, 1, n_rules).unsqueeze(1).expand(n_rules, n_inputs).clone()
+    def __init__(
+        self,
+        n_rules: int,
+        n_inputs: int,
+        input_min: float,
+        input_max: float,
+    ):
+        super().__init__(n_rules, n_inputs, input_min, input_max)
+
+        centers = torch.linspace(input_min, input_max, n_rules)
+        centers = centers.unsqueeze(1).repeat(1, n_inputs)
+
+        spacing = max((input_max - input_min) / max(n_rules - 1, 1), 0.05)
         self.left = nn.Parameter(centers - spacing)
-        self.center = nn.Parameter(centers)
-        self.right = nn.Parameter(centers + spacing)
+        self.raw_center_gap = nn.Parameter(torch.full((n_rules, n_inputs), spacing))
+        self.raw_right_gap = nn.Parameter(torch.full((n_rules, n_inputs), spacing))
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = x.unsqueeze(1)
-        l, c, r = self.left, self.center, self.right
-        # Ensure l < c < r via softplus offsets
-        c_safe = l + (c - l).abs() + 1e-6
-        r_safe = c_safe + (r - c_safe).abs() + 1e-6
-        left_slope = (x - l) / (c_safe - l + 1e-8)
-        right_slope = (r_safe - x) / (r_safe - c_safe + 1e-8)
-        return torch.clamp(torch.min(left_slope, right_slope), 0.0, 1.0)
+    def log_membership(self, x: torch.Tensor) -> torch.Tensor:
+        self._assert_in_range(x)
+        x_expanded = x.unsqueeze(1)
+
+        left = self.left
+        center = left + F.softplus(self.raw_center_gap) + 1e-4
+        right = center + F.softplus(self.raw_right_gap) + 1e-4
+
+        left_slope = (x_expanded - left) / (center - left + 1e-8)
+        right_slope = (right - x_expanded) / (right - center + 1e-8)
+
+        mu = torch.clamp(torch.minimum(left_slope, right_slope), 0.0, 1.0)
+        return torch.log(mu + 1e-8)
 
 
-MF_TYPES = {
-    "gaussian": GaussianMF,
-    "bell": BellMF,
-    "triangular": TriangularMF,
+MEMBERSHIP_MAP = {
+    "gaussian": GaussianMembership,
+    "bell": BellMembership,
+    "triangular": TriangularMembership,
 }
 
-"""
-Dobra no i co inna logika dla ciezkiego inna dla lekkiego - moze pierw niech kazdy ma taka sama to by wysoka gamma musiala byc zeby bylo inaczej
-Inde Input Semantic	Normalized Value Range	Calculation / Logic
-    0	My HP	0.0 to 1.0	Raw HP / 100.0
-    1	Has Heavy Ammo	0.0 or 1.0	1.0 if count > 0, else 0.0
-    2	Enemy Distance	0.0 to 1.0	min(Distance / 500.0, 1.0)
-    3	Enemy Angle	-1.0 to 1.0	Relative Degrees / 180.0
-    4	Enemy HP	0.0 to 1.0	Enemy HP / 100.0
-    5	Powerup Distance	0.0 to 1.0	min(Distance / 500.0, 1.0)
-    6	Powerup Angle	-1.0 to 1.0	Relative Degrees / 180.0
-    7	Aimed at Friend	0.0 or 1.0	1.0 if aiming at teammate, else 0.0
-    8	Obstacle Distance	0.0 to 1.0	min(Distance / 500.0, 1.0)
-    9	Obstacle Angle	-1.0 to 1.0	Relative Degrees / 180.0
-    10	Danger Distance	0.0 to 1.0	min(Distance / 500.0, 1.0)
-    11	Danger Angle	-1.0 to 1.0	Relative Degrees / 180.0
-"""
-
-"""
-Poki co ANFIS bedzie uzywac ANDa:
-    1. Ale w przyszlosci mozna byc skierowac uwage na ORa -> Wg. Ai moze zostac AND jest bardziej flexible podobno
-    2. Czy dac anfisa oddzielnie na kazda akcje
-"""
 
 class ANFISDQN(nn.Module):
     """
-    Args:
-        n_inputs:  Number of input features.
-        n_rules:   Number of fuzzy rules.
-        n_outputs: Number of outputs (53 for your classification).
-        mf_type:   "gaussian", "bell", or "triangular".
-    """
+    ANFIS-style Q-network.
 
-    def __init__(self,
-            n_inputs: int,
-            n_rules: int, 
-            n_outputs: int = 1,
-            mf_type: Literal["gaussian", "triangular", "bell"] = "gaussian", 
-        ):
+    Args:
+        n_inputs: Number of input features.
+        n_rules: Number of fuzzy rules.
+        n_actions: Number of discrete actions.
+        mf_type: Type of membership function.
+        input_min: Lower bound of normalized inputs.
+        input_max: Upper bound of normalized inputs.
+    """
+    def __init__(
+        self,
+        n_inputs: int,
+        n_rules: int,
+        n_actions: int,
+        mf_type: Literal["gaussian", "bell", "triangular"] = "triangular",
+        input_min: float = 0.0,
+        input_max: float = 1.0,
+    ):
         super().__init__()
-        print('ANFISDQN initialized')
+
+        if n_inputs <= 0:
+            raise ValueError("n_inputs must be > 0")
+        if n_rules <= 0:
+            raise ValueError("n_rules must be > 0")
+        if n_actions <= 0:
+            raise ValueError("n_actions must be > 0")
+        if mf_type not in MEMBERSHIP_MAP:
+            raise ValueError(f"Unsupported mf_type: {mf_type}")
+
         self.n_inputs = n_inputs
         self.n_rules = n_rules
-        self.n_outputs = n_outputs
-        self.mf = MF_TYPES[mf_type](n_rules, n_inputs)
+        self.n_actions = n_actions
+        self.output_scale = 1.0 / math.sqrt(n_inputs)
 
-        # Layer 4: Consequent
-        # (n_rules, n_outputs, n_inputs + 1) — linear per rule per output
-        self.consequent = nn.Parameter(torch.randn(n_rules, n_outputs, n_inputs + 1) * 0.1)
-        
+        membership_cls = MEMBERSHIP_MAP[mf_type]
+        self.membership = membership_cls(n_rules, n_inputs, input_min, input_max)
+
+        self.value_weights = nn.Parameter(torch.empty(n_rules, 1, n_inputs))
+        self.value_bias = nn.Parameter(torch.zeros(n_rules, 1))
+        self.adv_weights = nn.Parameter(torch.empty(n_rules, n_actions, n_inputs))
+        self.adv_bias = nn.Parameter(torch.zeros(n_rules, n_actions))
+
+        init_scale = 0.05 * (1.0 / math.sqrt(max(1, n_inputs)))
+        nn.init.uniform_(self.value_weights, -init_scale, init_scale)
+        nn.init.zeros_(self.value_bias)
+        nn.init.uniform_(self.adv_weights, -init_scale, init_scale)
+        nn.init.zeros_(self.adv_bias)
+
+    def _rule_strengths(self, x: torch.Tensor) -> torch.Tensor:
+        # log_mu: [batch, rules, inputs]
+        log_mu = self.membership.log_membership(x)
+
+        # Mean instead of product to avoid numerical underflow with many inputs.
+        rule_logits = log_mu.mean(dim=2)
+        return torch.softmax(rule_logits, dim=1)
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """x: (batch, n_inputs) → (batch, n_outputs)"""
-        assert (x.abs() <= 1.0).all(), "Input values must be normalized to [-1, 1] range"
+        """Return Q-values with shape [batch, n_actions]."""
+        if x.dim() == 1:
+            x = x.unsqueeze(0)
+        x = x.float()
 
-        batch = x.size(0)
+        strengths = self._rule_strengths(x)  # [B, R]
+        value_outputs = (
+            torch.einsum("bi,rvi->brv", x, self.value_weights) + self.value_bias
+        )  # [B, R, 1]
+        adv_outputs = (
+            torch.einsum("bi,rai->bra", x, self.adv_weights) + self.adv_bias
+        )  # [B, R, A]
 
-        # Layer 1: Fuzzify → (batch, n_rules, n_inputs).
-        mu = self.mf(x)
-
-        # Layer 2: Rule strengths → (batch, n_rules) -> Poki co jest algebraiczny AND, raczej ORa nie bedziemy za bardzo potrzebowac podobno
-        w = mu.prod(dim=2)
-
-        # Layer 3: Normalize -> BarchNorm
-        w_norm = w / (w.sum(dim=1, keepdim=True) + 1e-8)
-
-        # Layer 4 + 5: Consequent & aggregate
-        x_aug = torch.cat([x, x.new_ones(batch, 1)], dim=1)          # (batch, n_inputs+1)
-        f = torch.einsum("bi, roi -> bro", x_aug, self.consequent)    # (batch, n_rules, n_outputs) -> Tu sobie wymnaza tak naprawde tu dochodzi do ANDa
-        unnormalized_output = torch.einsum("br, bro -> bo", w_norm, f)               # (batch, n_outputs) -> tu srednia
-        return unnormalized_output # tutaj funkcje przynaleznosci I guess
+        state_value = torch.einsum("br,brv->bv", strengths, value_outputs)  # [B, 1]
+        advantages = torch.einsum("br,bra->ba", strengths, adv_outputs)  # [B, A]
+        q_values = state_value + (advantages - advantages.mean(dim=1, keepdim=True))
+        return q_values * self.output_scale
 
     def firing_strengths(self, x: torch.Tensor) -> torch.Tensor:
-        """Returns normalized rule activations — useful for debugging."""
-        mu = self.mf(x)
-        w = mu.prod(dim=2)
-        return w / (w.sum(dim=1, keepdim=True) + 1e-8)
-
-
-"""
-    While you can send any float value, the engine clamps these values based on the specific tank type you are controlling; - te 5 akcji mozemy wykonac
-
-    1. barrel_rotation_angle (float) purpose: Rotates the turret relative to the hull.
-        Engine Limits (per tick):
-        LIGHT: +/- 90.0 degrees
-        HEAVY: +/- 70.0 degrees
-        SNIPER: +/- 100.0 degrees
-    2. heading_rotation_angle (float)
-        Purpose: Rotates the entire tank hull.
-        Engine Limits (per tick):
-        LIGHT: +/- 70.0 degrees
-        HEAVY: +/- 30.0 degrees
-        SNIPER: +/- 45.0 degrees
-    3. move_speed (float)
-        Purpose: Forward (+) or Backward (-) movement.
-        Engine Limits (units per tick):
-        LIGHT: +/- 5.0
-        HEAVY: +/- 1.0
-        SNIPER: +/- 3.0
-        Note: Agents like your DQN.py often use a +/- 100.0 scale for convenience, but the physics engine will cap the actual movement at the values above.
-    4. ammo_to_load (str)
-        Possible Values: "HEAVY", "LIGHT", "LONG_DISTANCE", or None.
-    5. should_fire (bool)
-        Possible Values: True or False.
-"""
+        """Return normalized rule activations [batch, n_rules]."""
+        if x.dim() == 1:
+            x = x.unsqueeze(0)
+        return self._rule_strengths(x.float())

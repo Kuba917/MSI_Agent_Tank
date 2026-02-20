@@ -1,2 +1,0 @@
-Komenda odpowiedzialna za uruchomienie treningu DQN
-python train_runner.py --agent-team1 DQN.py --agent-team2 random_agent.py --episodes 100 --team-a 3 --team-b 3 --set-agent-names --verbose-team1 --startup-timeout 60

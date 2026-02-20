@@ -1,0 +1,21 @@
+
+=== GAME SUMMARY ===
+Session ID: 20260218_190530
+Total Game Time: 188.81 seconds
+Total Ticks: 5104
+Average Tick Time: 0.0370 seconds
+
+=== STATISTICS ===
+Tanks Spawned: 10
+Tanks Killed: 8
+Projectile Deaths: 0
+Non-Projectile Deaths: 8
+Shots Fired: 23
+Hits Landed: 5
+Hit Accuracy: 21.7%
+PowerUps Spawned: 25
+PowerUps Collected: 0
+Collisions: 0
+
+=== RESULTS ===
+{'session_id': '3d588fcc', 'total_ticks': 5104, 'winner_team': 2, 'reason': 'normal', 'sudden_death_reached': True, 'final_team_counts': {1: 0, 2: 2}, 'behavior': {'action_samples': 50817, 'move_commands': 50817, 'heading_turn_commands': 50817, 'barrel_turn_commands': 50817, 'fire_commands': 1095, 'idle_commands': 0, 'movement_attempts': 39887, 'movement_successes': 39887, 'move_command_ratio': 1.0, 'heading_turn_ratio': 1.0, 'barrel_turn_ratio': 1.0, 'idle_ratio': 0.0, 'fire_ratio': 0.0215, 'movement_success_ratio': 1.0, 'mobility_label': 'mostly_moving'}}

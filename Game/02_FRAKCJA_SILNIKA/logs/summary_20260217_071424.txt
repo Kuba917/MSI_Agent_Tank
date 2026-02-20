@@ -1,0 +1,21 @@
+
+=== GAME SUMMARY ===
+Session ID: 20260217_071424
+Total Game Time: 73.06 seconds
+Total Ticks: 2889
+Average Tick Time: 0.0252 seconds
+
+=== STATISTICS ===
+Tanks Spawned: 10
+Tanks Killed: 9
+Projectile Deaths: 4
+Non-Projectile Deaths: 5
+Shots Fired: 34
+Hits Landed: 29
+Hit Accuracy: 85.3%
+PowerUps Spawned: 28
+PowerUps Collected: 0
+Collisions: 0
+
+=== RESULTS ===
+{'session_id': 'f300aa02', 'total_ticks': 2889, 'winner_team': 1, 'reason': 'normal', 'sudden_death_reached': True, 'final_team_counts': {1: 1, 2: 0}, 'behavior': {'action_samples': 23023, 'move_commands': 15943, 'heading_turn_commands': 3500, 'barrel_turn_commands': 13714, 'fire_commands': 127, 'idle_commands': 4443, 'movement_attempts': 15940, 'movement_successes': 12737, 'move_command_ratio': 0.6925, 'heading_turn_ratio': 0.152, 'barrel_turn_ratio': 0.5957, 'idle_ratio': 0.193, 'fire_ratio': 0.0055, 'movement_success_ratio': 0.7991, 'mobility_label': 'mostly_moving'}}

@@ -1,0 +1,21 @@
+
+=== GAME SUMMARY ===
+Session ID: 20260219_214612
+Total Game Time: 21.33 seconds
+Total Ticks: 2174
+Average Tick Time: 0.0098 seconds
+
+=== STATISTICS ===
+Tanks Spawned: 10
+Tanks Killed: 9
+Projectile Deaths: 0
+Non-Projectile Deaths: 9
+Shots Fired: 3
+Hits Landed: 2
+Hit Accuracy: 66.7%
+PowerUps Spawned: 25
+PowerUps Collected: 0
+Collisions: 0
+
+=== RESULTS ===
+{'session_id': '2d223baf', 'total_ticks': 2174, 'winner_team': 1, 'reason': 'normal', 'sudden_death_reached': True, 'final_team_counts': {1: 1, 2: 0}, 'behavior': {'action_samples': 17025, 'move_commands': 15664, 'heading_turn_commands': 402, 'barrel_turn_commands': 12228, 'fire_commands': 16, 'idle_commands': 1325, 'movement_attempts': 2245, 'movement_successes': 2245, 'move_command_ratio': 0.9201, 'heading_turn_ratio': 0.0236, 'barrel_turn_ratio': 0.7182, 'idle_ratio': 0.0778, 'fire_ratio': 0.0009, 'movement_success_ratio': 1.0, 'mobility_label': 'mostly_moving'}}

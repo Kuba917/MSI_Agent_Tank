@@ -1,0 +1,1 @@
+episode,map_seed,return_code,episode_ok,has_new_summary,summary_file,winner_team,learners,selfplay,baselines,shots_fired,hits_landed,tanks_killed,projectile_deaths,non_projectile_deaths,elimination_source,mobility,move_command_ratio,idle_ratio,turn_ratio,movement_success_ratio,reason,sudden_death_reached

@@ -1,0 +1,21 @@
+
+=== GAME SUMMARY ===
+Session ID: 20260218_021742
+Total Game Time: 83.92 seconds
+Total Ticks: 2939
+Average Tick Time: 0.0284 seconds
+
+=== STATISTICS ===
+Tanks Spawned: 10
+Tanks Killed: 9
+Projectile Deaths: 4
+Non-Projectile Deaths: 5
+Shots Fired: 34
+Hits Landed: 25
+Hit Accuracy: 73.5%
+PowerUps Spawned: 27
+PowerUps Collected: 0
+Collisions: 0
+
+=== RESULTS ===
+{'session_id': 'dd5bab3d', 'total_ticks': 2939, 'winner_team': 2, 'reason': 'normal', 'sudden_death_reached': True, 'final_team_counts': {1: 0, 2: 1}, 'behavior': {'action_samples': 23483, 'move_commands': 19007, 'heading_turn_commands': 3888, 'barrel_turn_commands': 14412, 'fire_commands': 328, 'idle_commands': 3488, 'movement_attempts': 19004, 'movement_successes': 14921, 'move_command_ratio': 0.8094, 'heading_turn_ratio': 0.1656, 'barrel_turn_ratio': 0.6137, 'idle_ratio': 0.1485, 'fire_ratio': 0.014, 'movement_success_ratio': 0.7852, 'mobility_label': 'mostly_moving'}}
