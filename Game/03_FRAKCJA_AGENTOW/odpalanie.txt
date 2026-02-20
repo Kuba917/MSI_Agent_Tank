@@ -90,10 +90,6 @@ $p = Get-ChildItem Game/03_FRAKCJA_AGENTOW/training_reports/training_report_*.js
 py -3 -c "import json, pathlib; d=json.loads(pathlib.Path(r'''$p''').read_text(encoding='utf-8')); a=d['aggregate']; print('report=',r'''$p'''); print('episodes_ok=',a['episodes_ok'],'/',a['episodes_total']); print('elimination_counts=',a['elimination_counts']); print('projectile_death_share=',a['projectile_death_share']); print('mobility_counts=',a['mobility_counts'])"
 
 
+Ja odpalam po prostu:
 
-
-
-
-
-
-
+python train_fuzzy_dqn.py

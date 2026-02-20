@@ -7,7 +7,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 import math
 import random
-from typing import Iterable, Optional, Sequence, Tuple, List, Any, Callable
+import numpy as np
+from typing import Iterable, Optional, Sequence, Tuple, List, Any, Callable, Mapping
 
 
 @dataclass(frozen=True)
@@ -40,44 +41,59 @@ def _distance(a: Tuple[float, float], b: Tuple[float, float]) -> float:
 DEFAULT_MAX_RANGE = 100.0  # Align with engine LONG_DISTANCE ammo range.
 DEFAULT_HALF_ANGLE = 5.0   # Engine hit cone half-angle (degrees).
 DEFAULT_BARREL_SPIN = 90.0 # Typical engine barrel_spin_rate (deg/tick).
+MAP_WIDTH = 200.0
+MAP_HEIGHT = 200.0
+
+CASE_FRIENDLY_IN_CONE = "friendly_in_cone"
+CASE_ENEMY_IN_CONE = "enemy_in_cone"
+CASE_OUTSIDE_RANGE = "outside_range"
+CASE_NO_TANKS = "no_tanks"
+
+# Default mix: 60% "in cone" cases, with 1:2 friendly/enemy ratio.
+DEFAULT_SCENE_CASE_WEIGHTS = {
+    CASE_FRIENDLY_IN_CONE: 0.25,
+    CASE_ENEMY_IN_CONE: 0.25,
+    CASE_OUTSIDE_RANGE: 0.25,
+    CASE_NO_TANKS: 0.25,
+}
 
 
 def fire_projectile_mock(
     shooter_pos: Tuple[float, float],
     heading: float,
     barrel_angle: float,
-    targets: Sequence[Tuple[str, Tuple[float, float]]],
-    obstacles: Sequence[Tuple[str, Tuple[float, float]]],
+    targets: Sequence[Tuple[float, float]],
+    obstacles: Sequence[Tuple[float, float]],
     max_range: float = DEFAULT_MAX_RANGE,
     half_angle: float = DEFAULT_HALF_ANGLE,
 ) -> Optional[Hit]:
     """
     Returns closest hit in a cone (+/- half_angle degrees) within max_range.
 
-    targets: list of (id, (x, y))
-    obstacles: list of (id, (x, y))
+    targets: list of (x, y)
+    obstacles: list of (x, y)
     """
     shoot_dir = _normalize_angle(heading + barrel_angle)
     closest_dist = max_range
     best: Optional[Hit] = None
 
-    for tid, tpos in targets:
+    for tpos in targets:
         dist = _distance(shooter_pos, tpos)
         if dist >= closest_dist:
             continue
         ang = _angle_to(shooter_pos, tpos)
         if abs(_normalize_angle(ang - shoot_dir)) <= half_angle:
             closest_dist = dist
-            best = Hit("tank", tid, dist, tpos)
+            best = Hit("tank", None, dist, tpos)
 
-    for oid, opos in obstacles:
+    for opos in obstacles:
         dist = _distance(shooter_pos, opos)
         if dist >= closest_dist:
             continue
         ang = _angle_to(shooter_pos, opos)
         if abs(_normalize_angle(ang - shoot_dir)) <= half_angle:
             closest_dist = dist
-            best = Hit("obstacle", oid, dist, opos)
+            best = Hit("obstacle", None, dist, opos)
 
     return best
 
@@ -92,9 +108,9 @@ def label_shot(
     shooter_pos: Tuple[float, float],
     heading: float,
     barrel_angle: float,
-    enemies: Sequence[Tuple[str, Tuple[float, float]]],
-    allies: Sequence[Tuple[str, Tuple[float, float]]],
-    obstacles: Sequence[Tuple[str, Tuple[float, float]]],
+    enemies: Sequence[Tuple[float, float]],
+    allies: Sequence[Tuple[float, float]],
+    obstacles: Sequence[Tuple[float, float]],
     max_range: float = DEFAULT_MAX_RANGE,
     half_angle: float = DEFAULT_HALF_ANGLE,
 ) -> ShotLabel:
@@ -108,32 +124,32 @@ def label_shot(
     closest_dist = max_range
     best: Optional[Hit] = None
 
-    for tid, tpos in enemies:
+    for tpos in enemies:
         dist = _distance(shooter_pos, tpos)
         if dist >= closest_dist:
             continue
         ang = _angle_to(shooter_pos, tpos)
         if abs(_normalize_angle(ang - shoot_dir)) <= half_angle:
             closest_dist = dist
-            best = Hit("enemy", tid, dist, tpos)
+            best = Hit("enemy", None, dist, tpos)
 
-    for aid, apos in allies:
+    for apos in allies:
         dist = _distance(shooter_pos, apos)
         if dist >= closest_dist:
             continue
         ang = _angle_to(shooter_pos, apos)
         if abs(_normalize_angle(ang - shoot_dir)) <= half_angle:
             closest_dist = dist
-            best = Hit("ally", aid, dist, apos)
+            best = Hit("ally", None, dist, apos)
 
-    for oid, opos in obstacles:
+    for opos in obstacles:
         dist = _distance(shooter_pos, opos)
         if dist >= closest_dist:
             continue
         ang = _angle_to(shooter_pos, opos)
         if abs(_normalize_angle(ang - shoot_dir)) <= half_angle:
             closest_dist = dist
-            best = Hit("obstacle", oid, dist, opos)
+            best = Hit("obstacle", None, dist, opos)
 
     if best is None:
         return ShotLabel(0.0, "no_target", None)
@@ -156,9 +172,9 @@ class Scene:
     shooter_pos: Tuple[float, float]
     heading: float
     barrel_angle: float
-    enemies: List[Tuple[str, Tuple[float, float]]]
-    allies: List[Tuple[str, Tuple[float, float]]]
-    obstacles: List[Tuple[str, Tuple[float, float]]]
+    enemies: List[Tuple[float, float]]
+    allies: List[Tuple[float, float]]
+    obstacles: List[Tuple[float, float]]
 
 
 def _rand_pos(map_width: float, map_height: float) -> Tuple[float, float]:
@@ -166,18 +182,72 @@ def _rand_pos(map_width: float, map_height: float) -> Tuple[float, float]:
 
 
 def _rand_scene(
-    map_width: float,
-    map_height: float,
+    map_width: float = MAP_WIDTH,
+    map_height: float = MAP_HEIGHT,
     max_enemies: int = 3,
     max_allies: int = 2,
     max_obstacles: int = 3,
+    max_range: float = DEFAULT_MAX_RANGE,
+    half_angle: float = DEFAULT_HALF_ANGLE,
+    case_weights: Optional[Mapping[str, float]] = None,
 ) -> Scene:
+    def _weighted_choice(weights: Mapping[str, float]) -> str:
+        if any(w < 0.0 for w in weights.values()):
+            raise ValueError(f"Negative weight in case_weights: {weights}")
+        total = sum(weights.values())
+        if total <= 0.0:
+            raise ValueError(f"case_weights must sum to > 0.0: {weights}")
+        keys = list(weights.keys())
+        probs = np.array([weights[k] for k in keys], dtype=np.float64)
+        probs = probs / probs.sum()
+        return str(np.random.choice(keys, p=probs))
+
+    def _pos_in_cone(
+        origin: Tuple[float, float],
+        shoot_dir: float,
+        min_dist: float,
+        max_dist: float,
+        half_cone: float,
+    ) -> Tuple[float, float]:
+        ang = math.radians(shoot_dir + random.uniform(-half_cone, half_cone))
+        dist = random.uniform(min_dist, max_dist)
+        return (origin[0] + math.cos(ang) * dist, origin[1] + math.sin(ang) * dist)
+
     shooter_pos = _rand_pos(map_width, map_height)
     heading = random.uniform(-180.0, 180.0)
     barrel_angle = random.uniform(-180.0, 180.0)
-    enemies = [(f"e{i}", _rand_pos(map_width, map_height)) for i in range(random.randint(0, max_enemies))]
-    allies = [(f"a{i}", _rand_pos(map_width, map_height)) for i in range(random.randint(0, max_allies))]
-    obstacles = [(f"o{i}", _rand_pos(map_width, map_height)) for i in range(random.randint(0, max_obstacles))]
+    shoot_dir = _normalize_angle(heading + barrel_angle)
+
+    case = _weighted_choice(case_weights or DEFAULT_SCENE_CASE_WEIGHTS)
+
+    if case == CASE_FRIENDLY_IN_CONE:
+        ally_pos = _pos_in_cone(shooter_pos, shoot_dir, 5.0, max_range * 0.9, half_angle)
+        # Aim slightly off-center (within cone) so ally is still in line.
+        offset = min(half_angle * 0.9, 5.0)
+        offset *= 1.0 if np.random.rand() >= 0.5 else -1.0
+        barrel_angle = _normalize_angle(_angle_to(shooter_pos, ally_pos) - heading + offset)
+        return Scene(shooter_pos, heading, barrel_angle, [], [ally_pos], [])
+
+    if case == CASE_ENEMY_IN_CONE:
+        enemy_pos = _pos_in_cone(shooter_pos, shoot_dir, 5.0, max_range * 0.9, half_angle)
+        # Aim slightly off-center (within cone) so enemy is still in line.
+        offset = min(half_angle * 0.9, 5.0)
+        offset *= 1.0 if np.random.rand() >= 0.5 else -1.0
+        barrel_angle = _normalize_angle(_angle_to(shooter_pos, enemy_pos) - heading + offset)
+        return Scene(shooter_pos, heading, barrel_angle, [enemy_pos], [], [])
+
+    if case == CASE_OUTSIDE_RANGE:
+        # Place a tank beyond max_range so the shot should be a miss.
+        enemy_pos = _pos_in_cone(shooter_pos, shoot_dir, max_range * 1.2, max_range * 2.0, 180.0)
+        return Scene(shooter_pos, heading, barrel_angle, [enemy_pos], [], [])
+
+    if case == CASE_NO_TANKS:
+        return Scene(shooter_pos, heading, barrel_angle, [], [], [])
+
+    # Fallback to the original random scene if a custom case is provided.
+    enemies = [_rand_pos(map_width, map_height) for _ in range(random.randint(0, max_enemies))]
+    allies = [_rand_pos(map_width, map_height) for _ in range(random.randint(0, max_allies))]
+    obstacles = [_rand_pos(map_width, map_height) for _ in range(random.randint(0, max_obstacles))]
     return Scene(shooter_pos, heading, barrel_angle, enemies, allies, obstacles)
 
 
@@ -185,20 +255,18 @@ def _features_for_scene(
     scene: Scene,
     max_range: float,
     half_angle: float,
-) -> Tuple["np.ndarray", Optional[Tuple[str, Tuple[float, float]]]]:
+) -> Tuple[np.ndarray, Optional[Tuple[float, float]]]:
     """Return feature vector and nearest enemy (if any)."""
-    import numpy as np
-
     enemy_visible = 1.0 if scene.enemies else 0.0
     nearest_enemy = None
     enemy_dist = 1.0
-    angle_error = 0.0
+    angle_error = 0.5
     if scene.enemies:
-        nearest_enemy = min(scene.enemies, key=lambda t: _distance(scene.shooter_pos, t[1]))
-        enemy_dist = min(_distance(scene.shooter_pos, nearest_enemy[1]) / max(max_range, 1.0), 1.0)
-        enemy_angle = _angle_to(scene.shooter_pos, nearest_enemy[1])
+        nearest_enemy = min(scene.enemies, key=lambda pos: _distance(scene.shooter_pos, pos))
+        enemy_dist = min(_distance(scene.shooter_pos, nearest_enemy) / max(max_range, 1.0), 1.0)
+        enemy_angle = _angle_to(scene.shooter_pos, nearest_enemy)
         shoot_dir = _normalize_angle(scene.heading + scene.barrel_angle)
-        angle_error = _normalize_angle(enemy_angle - shoot_dir) / 180.0
+        angle_error = (_normalize_angle(enemy_angle - shoot_dir) / 180.0 + 1.0) * 0.5
     # Obstacle/ally checks based on current barrel direction
     shot = label_shot(
         scene.shooter_pos,
@@ -229,8 +297,8 @@ def _barrel_target(
     if not scene.enemies:
         return 0.0
 
-    candidates = sorted(scene.enemies, key=lambda t: _distance(scene.shooter_pos, t[1]))
-    for _, pos in candidates:
+    candidates = sorted(scene.enemies, key=lambda pos: _distance(scene.shooter_pos, pos))
+    for pos in candidates:
         target_angle = _angle_to(scene.shooter_pos, pos)
         target_barrel = _normalize_angle(target_angle - scene.heading)
         shot = label_shot(
@@ -280,8 +348,8 @@ def train_anfis_shooting_models(
 ) -> Tuple[Any, Any]:
     """
     Train two ANFIS models:
-    1) Barrel regressor: predicts normalized barrel delta in [-1, 1].
-    2) Shoot regressor: predicts label in {-1, 0, 1}.
+        1) Barrel regressor: predicts normalized barrel delta in [-1, 1].
+        2) Shoot regressor: predicts label in {-1, 0, 1}.
     """
     import numpy as np
     import torch

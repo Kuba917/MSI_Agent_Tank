@@ -16,6 +16,7 @@ try:
 except ImportError:
     Experiment = None
 
+import matplotlib.pyplot as plt
 import argparse
 import copy
 import math
@@ -51,7 +52,7 @@ DEFAULT_MODEL_PATH = os.path.join(current_dir, "fuzzy_dqn_model_agent1_final.pt"
 MAP_WIDTH = 200.0
 MAP_HEIGHT = 200.0
 COMET_LOG_EVERY = 20
-ACTION_DIM = 4
+ACTION_DIM = 2
 # TODO: Scale actions using per-tank limits from my_tank_status (_top_speed, _heading_spin_rate, _barrel_spin_rate)
 MAX_MOVE_SPEED = 5.0
 MAX_HEADING_DELTA = 5.0
@@ -245,6 +246,7 @@ class StateEncoder:
         my_status: Dict[str, Any],
         sensor_data: Dict[str, Any],
         enemies_remaining: int,
+        enemy_target_pos: Optional[Tuple[float, float]] = None,
     ) -> Observation:
         my_pos = my_status.get("position", {"x": 0.0, "y": 0.0})
         my_team = my_status.get("_team")
@@ -285,6 +287,15 @@ class StateEncoder:
             if distance_raw is None:
                 raise ValueError(f"Missing enemy distance in sensor data: {nearest_enemy}")
 
+            vision_range = float(my_status.get("_vision_range", 25.0) or 25.0)
+            enemy_dist = self._clamp(float(distance_raw) / max(vision_range, 1.0), 0.0, 1.0)
+
+            target_angle = self._angle_to(my_pos, enemy_pos)
+            enemy_hull_error = (self.normalize_angle(target_angle - my_heading) / 180.0 + 1.0) * 0.5
+            enemy_barrel_error = (self.normalize_angle(target_angle - barrel_abs) / 180.0 + 1.0) * 0.5
+        elif enemy_target_pos is not None:
+            enemy_pos = {"x": float(enemy_target_pos[0]), "y": float(enemy_target_pos[1])}
+            distance_raw = self._distance(my_pos, enemy_pos)
             vision_range = float(my_status.get("_vision_range", 25.0) or 25.0)
             enemy_dist = self._clamp(float(distance_raw) / max(vision_range, 1.0), 0.0, 1.0)
 
@@ -402,6 +413,8 @@ class AgentConfig:
 
     model_path: str = DEFAULT_MODEL_PATH
     best_model_path: Optional[str] = None
+    mock_barrel_model_path: Optional[str] = None
+    mock_shoot_model_path: Optional[str] = None
     seed: int = 1
 
 
@@ -435,6 +448,19 @@ class FuzzyDQNAgent:
         ).to(self.device)
         self.critic_target = copy.deepcopy(self.critic).to(self.device)
         self.critic_target.eval()
+
+        # Optional mock shooting models.
+        self.mock_barrel_model: Optional[ANFISDQN] = None
+        self.mock_shoot_model: Optional[ANFISDQN] = None
+        if (config.mock_barrel_model_path is None) != (config.mock_shoot_model_path is None):
+            raise ValueError("Both mock model paths must be provided (barrel and shoot).")
+        if config.mock_barrel_model_path is not None:
+            self.mock_barrel_model = ANFISDQN(n_inputs=5, n_rules=16, n_actions=1).to(self.device)
+            self.mock_barrel_model.load_state_dict(torch.load(config.mock_barrel_model_path, map_location=self.device))
+            self.mock_barrel_model.eval()
+            self.mock_shoot_model = ANFISDQN(n_inputs=5, n_rules=16, n_actions=1).to(self.device)
+            self.mock_shoot_model.load_state_dict(torch.load(config.mock_shoot_model_path, map_location=self.device))
+            self.mock_shoot_model.eval()
 
         self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=config.actor_lr)
         self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), lr=config.critic_lr)
@@ -479,9 +505,12 @@ class FuzzyDQNAgent:
         self.trace_shots: List[Tuple[float, float, float]] = []
         self.trace_allies: List[Tuple[float, float]] = []
         self.trace_enemies: List[Tuple[float, float]] = []
+        self.trace_labels: List[str] = []
         self.pos_history: List[Tuple[float, float]] = []
         self.trace_actor_raw: List[np.ndarray] = []
         self.last_actor_raw: Optional[np.ndarray] = None
+        self.trace_mock_actions: List[np.ndarray] = []
+        self.last_mock_action: Optional[np.ndarray] = None
         self.episode_reward_total = 0.0
         self.episode_reward_parts: Dict[str, float] = {}
         self.episode_reward_parts_steps = 0
@@ -490,6 +519,7 @@ class FuzzyDQNAgent:
         self.frontier_min_y: Optional[float] = None
         self.frontier_max_y: Optional[float] = None
         self.reward_parts_history: Dict[str, List[float]] = {}
+        self.enemy_target_pos: Optional[Tuple[float, float]] = None
 
     def _init_comet(self) -> None:
         try:
@@ -516,9 +546,7 @@ class FuzzyDQNAgent:
     def _scale_action_tensor(self, action: torch.Tensor) -> torch.Tensor:
         move = action[:, 0] * MAX_MOVE_SPEED
         heading = action[:, 1] * MAX_HEADING_DELTA
-        barrel = action[:, 2] * MAX_BARREL_DELTA
-        fire = (action[:, 3] + 1.0) * 0.5
-        return torch.stack([move, heading, barrel, fire], dim=1)
+        return torch.stack([move, heading], dim=1)
 
     def _current_action_noise_std(self) -> float:
         decay_steps = max(1, int(self.config.action_noise_decay_steps))
@@ -602,9 +630,34 @@ class FuzzyDQNAgent:
     ) -> ActionCommand:
         move_speed = float(action_vec[0])
         heading_rotation = float(action_vec[1])
-        barrel_rotation = float(action_vec[2])
-        fire_prob = float(action_vec[3])
-        should_fire = fire_prob > 0.5
+        # Actor no longer controls barrel rotation or firing directly.
+        if self.mock_barrel_model is None or self.mock_shoot_model is None:
+            raise ValueError("Mock barrel/shoot models are required to control barrel and fire.")
+        barrel_rotation = 0.0
+        should_fire = False
+
+        if self.mock_barrel_model is not None or self.mock_shoot_model is not None:
+            mock_feats = np.array(
+                [
+                    1.0 if obs.enemy_visible else 0.0,
+                    float(obs.enemy_dist),
+                    float(obs.enemy_barrel_error),
+                    1.0 if obs.obstacle_ahead else 0.0,
+                    1.0 if obs.ally_fire_risk else 0.0,
+                ],
+                dtype=np.float32,
+            )
+            mock_t = torch.from_numpy(mock_feats).unsqueeze(0).to(self.device)
+            with torch.no_grad():
+                if self.mock_barrel_model is None:
+                    raise ValueError('No mock barrel model')
+                barrel_norm = float(self.mock_barrel_model(mock_t).squeeze(0).squeeze(0).cpu().item())
+                barrel_rotation = barrel_norm * MAX_BARREL_DELTA
+                if self.mock_shoot_model is None:
+                    raise ValueError('No shooting model')
+                shoot_val = float(self.mock_shoot_model(mock_t).squeeze(0).squeeze(0).cpu().item())
+                should_fire = shoot_val > 0.5
+                self.last_mock_action = np.array([barrel_norm, shoot_val], dtype=np.float32)
 
         action_stub = ActionSpec(
             name="ddpg",
@@ -675,22 +728,36 @@ class FuzzyDQNAgent:
             # barrel_rotation_angle: float = 0.0
             # heading_rotation_angle: float = 0.0
             # move_speed: float = 0.0
-            # ammo_to_load: Optional[str] = None
             # should_fire: bool = False
 
+        #TODO if hp_ratio falls punish
+        #TODO tank shouldn't go backwards unless hp_ratio lost
+
+        # Reward closing distance to visible enemy.
+        parts["approaching_enemy"] = - 1.5 * abs(current_obs.enemy_hull_error - 0.5)
+
+        if not current_obs.enemy_visible:
+            move = action.move_speed
+            parts["retreating"] = move / 5 if move < 0.0 else 0.0
+
         delta = action.heading_rotation_angle / MAX_HEADING_DELTA
-        if abs(delta) > 1:
-            raise ValueError("action.heading_rotation_angle not normalized in _compute_step_reward")
-        parts["rotation"] = -(delta) ** 2 / 10
+        parts["rotation"] = -0.5 * (delta) ** 2
 
         recent = self.pos_history[-200:] or [current_pos]
         prev = self.pos_history[-400:-200] or recent
-        rcx = sum(p[0] for p in recent) / float(len(recent))
-        rcy = sum(p[1] for p in recent) / float(len(recent))
-        pcx = sum(p[0] for p in prev) / float(len(prev))
-        pcy = sum(p[1] for p in prev) / float(len(prev))
-        var_r = sum((p[0] - rcx) ** 2 + (p[1] - rcy) ** 2 for p in recent) / float(len(recent))
-        var_p = sum((p[0] - pcx) ** 2 + (p[1] - pcy) ** 2 for p in prev) / float(len(prev))
+        spawn = self.pos_history[0] if self.pos_history else current_pos
+        
+        centroid = lambda pts: (sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts))
+        
+        if current_tick < 200:
+            rc = pc = spawn
+        else:
+            rc = centroid(recent)
+            pc = spawn if current_tick < 400 else centroid(prev)
+
+        var_r = sum((p[0] - rc[0]) ** 2 + (p[1] - rc[1]) ** 2 for p in recent) / len(recent)
+        var_p = sum((p[0] - pc[0]) ** 2 + (p[1] - pc[1]) ** 2 for p in prev) / len(prev)
+
         parts["variance_recent"] = var_r / 50
         parts["variance_prev"] = var_p / 50
         parts["centroid_bonus"] = parts["variance_recent"] + parts["variance_prev"]
@@ -726,15 +793,9 @@ class FuzzyDQNAgent:
 
 
     def _maybe_train(self) -> None:
-        # if not self.training_enabled:
-        #     return
-
         # min_required = max(self.config.batch_size, self.config.warmup_steps)
         if len(self.replay) < self.config.batch_size:
             return
-
-        # if self.total_steps % self.config.train_every != 0:
-        #     return
 
         states, actions, rewards, next_states, dones = self.replay.sample(
             self.config.batch_size,
@@ -867,9 +928,12 @@ class FuzzyDQNAgent:
         self.trace_shots.clear()
         self.trace_allies.clear()
         self.trace_enemies.clear()
+        self.trace_labels.clear()
         self.pos_history.clear()
         self.trace_actor_raw.clear()
         self.last_actor_raw = None
+        self.trace_mock_actions.clear()
+        self.last_mock_action = None
         self.episode_reward_total = 0.0
         self.episode_reward_parts = {}
         self.episode_reward_parts_steps = 0
@@ -877,6 +941,7 @@ class FuzzyDQNAgent:
         self.frontier_max_x = None
         self.frontier_min_y = None
         self.frontier_max_y = None
+        self.enemy_target_pos = None
 
     def _record_trace(
         self,
@@ -897,6 +962,10 @@ class FuzzyDQNAgent:
             raise ValueError(f"Plotting non-finite hp={hp}")
         self.trace_positions.append((x, y))
         self.trace_hp.append(hp)
+        self.trace_labels.append(
+            f"actor: v={action.move_speed:.2f} h={action.heading_rotation_angle:.2f} "
+            f"mock: b={action.barrel_rotation_angle:.2f} f={int(action.should_fire)}"
+        )
 
         seen_tanks = sensor_data.get("seen_tanks", [])
         my_team = my_status.get("_team")
@@ -938,7 +1007,7 @@ class FuzzyDQNAgent:
 
         xs = [p[0] for p in self.trace_positions]
         ys = [p[1] for p in self.trace_positions]
-        ax.scatter(xs, ys, c=hps, cmap="RdYlGn", s=10, alpha=0.7)
+        sc_self = ax.scatter(xs, ys, c=hps, cmap="RdYlGn", s=10, alpha=0.7, label="self")
 
         if self.trace_allies:
             ax.scatter(
@@ -949,6 +1018,8 @@ class FuzzyDQNAgent:
                 alpha=0.6,
                 label="allies",
             )
+            ax_x, ax_y = self.trace_allies[0]
+            ax.text(ax_x, ax_y, "A", color="blue", fontsize=7, ha="left", va="bottom")
         if self.trace_enemies:
             ax.scatter(
                 [p[0] for p in self.trace_enemies],
@@ -958,10 +1029,12 @@ class FuzzyDQNAgent:
                 alpha=0.6,
                 label="enemies",
             )
+            ex, ey = self.trace_enemies[0]
+            ax.text(ex, ey, "E", color="black", fontsize=7, ha="left", va="bottom")
         if self.trace_shots:
             for sx, sy, ang in self.trace_shots:
-                dx = math.cos(math.radians(ang)) * 10.0
-                dy = math.sin(math.radians(ang)) * 10.0
+                dx = math.cos(math.radians(ang)) * 30.0
+                dy = math.sin(math.radians(ang)) * 30.0
                 ax.arrow(
                     sx,
                     sy,
@@ -978,7 +1051,12 @@ class FuzzyDQNAgent:
         ax.set_xlim(0.0, MAP_WIDTH)
         ax.set_ylim(0.0, MAP_HEIGHT)
         ax.autoscale(False)
-        ax.set_title(f"{self.name} trajectory (game {self.games_played})")
+        ax.set_title(f"{self.name} trajectory (game {self.games_played}) | mock barrel+shoot")
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
+        ax.legend(loc="upper right", frameon=True, fontsize=8)
+        cbar = fig.colorbar(sc_self, ax=ax, fraction=0.046, pad=0.04)
+        cbar.set_label("hp (normalized)")
         ax.grid(True, alpha=0.3)
 
         out_dir = os.path.join(current_dir, "training_reports")
@@ -1001,7 +1079,28 @@ class FuzzyDQNAgent:
             if not pos or "x" not in pos or "y" not in pos:
                 raise ValueError(f"Missing position in my_tank_status: {pos}")
             current_pos = (float(pos["x"]), float(pos["y"]))
-            current_obs = self.encoder.encode(my_tank_status, sensor_data, enemies_remaining)
+            my_team = my_tank_status.get("_team")
+            if self.enemy_target_pos is None and my_team in (1, 2):
+                self.enemy_target_pos = (25.0, 150.0) if my_team == 1 else (40.0, 25.0)
+            if self.enemy_target_pos is None:
+                raise ValueError("enemy_target_pos is None; spawn point not initialized")
+            seen_tanks = sensor_data.get("seen_tanks", [])
+            nearest_enemy = self.encoder._nearest_enemy(
+                {"x": current_pos[0], "y": current_pos[1]},
+                my_team,
+                seen_tanks,
+            )
+            if nearest_enemy is not None:
+                epos = nearest_enemy.get("position")
+                if not epos or "x" not in epos or "y" not in epos:
+                    raise ValueError(f"Missing enemy position in nearest_enemy: {nearest_enemy}")
+                self.enemy_target_pos = (float(epos["x"]), float(epos["y"]))
+            current_obs = self.encoder.encode(
+                my_tank_status,
+                sensor_data,
+                enemies_remaining,
+                enemy_target_pos=self.enemy_target_pos,
+            )
             x_norm = current_pos[0] / MAP_WIDTH
             y_norm = current_pos[1] / MAP_HEIGHT
 
@@ -1023,7 +1122,6 @@ class FuzzyDQNAgent:
             current_obs.vector = np.concatenate(
                 [current_obs.vector, np.array([x_norm, y_norm, dx_recent, dy_recent, dx_prev, dy_prev], dtype=np.float32)]
             )
-            # 19 - 22 
             self.pos_history.append(current_pos)
 
             if (
@@ -1080,9 +1178,16 @@ class FuzzyDQNAgent:
             self.prev_enemies_remaining = enemies_remaining
             self.total_steps += 1
             self.last_status = my_tank_status
-            self._record_trace(my_tank_status, sensor_data, current_obs, ActionSpec("ddpg", action_vec[0], action_vec[1], action_vec[2], command.should_fire))
+            self._record_trace(
+                my_tank_status,
+                sensor_data,
+                current_obs,
+                ActionSpec("ddpg", action_vec[0], action_vec[1], command.barrel_rotation_angle, command.should_fire),
+            )
             if self.last_actor_raw is not None:
                 self.trace_actor_raw.append(self.last_actor_raw.copy())
+            if self.last_mock_action is not None:
+                self.trace_mock_actions.append(self.last_mock_action.copy())
 
             return command
         finally:
@@ -1229,13 +1334,38 @@ class FuzzyDQNAgent:
         print(f"[{self.name}] reward plot saved: {out_path}{suffix}")
 
     def _save_actor_raw_plot(self) -> None:
-        if not self.trace_actor_raw:
+        if not self.trace_actor_raw and not self.trace_mock_actions:
             return
-        import matplotlib.pyplot as plt
-        data = np.stack(self.trace_actor_raw, axis=0)
         fig, ax = plt.subplots(figsize=(10, 5))
-        for idx in range(data.shape[1]):
-            ax.plot(data[:, idx], label=f"raw_{idx}")
+        window = 5
+        if self.trace_actor_raw:
+            data = np.stack(self.trace_actor_raw, axis=0)
+            labels = [
+                "actor_move_raw",
+                "actor_heading_raw",
+            ]
+            for idx in range(data.shape[1]):
+                label = labels[idx] if idx < len(labels) else f"raw_{idx}"
+                series = data[:, idx]
+                if len(series) >= window:
+                    kernel = np.ones(window, dtype=np.float32) / float(window)
+                    series = np.convolve(series, kernel, mode="same")
+                    label = f"{label} (ma{window})"
+                ax.plot(series, label=label)
+        if self.trace_mock_actions:
+            mock_data = np.stack(self.trace_mock_actions, axis=0)
+            mock_labels = [
+                "mock barrel norm",
+                "mock shoot val",
+            ]
+            for idx in range(mock_data.shape[1]):
+                label = mock_labels[idx] if idx < len(mock_labels) else f"mock_{idx}"
+                series = mock_data[:, idx]
+                if len(series) >= window:
+                    kernel = np.ones(window, dtype=np.float32) / float(window)
+                    series = np.convolve(series, kernel, mode="same")
+                    label = f"{label}"
+                ax.plot(series, label=label)
         ax.set_title(f"{self.name} actor raw outputs (game {self.games_played})")
         ax.set_xlabel("step")
         ax.set_ylabel("raw value")
@@ -1327,6 +1457,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--frame-skip", type=int, default=1)
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--save-every-games", type=int, default=1)
+    parser.add_argument("--mock-barrel-model-path", type=str, default="./anfis_barrel_model.pt")
+    parser.add_argument("--mock-shoot-model-path", type=str, default="./anfis_shoot_model.pt")
     parser.add_argument("--warmup-steps", type=int, default=2000)
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--train-every", type=int, default=2)
@@ -1352,6 +1484,8 @@ if __name__ == "__main__":
         frame_skip=max(1, int(args.frame_skip)),
         model_path=args.model_path,
         best_model_path=args.best_model_path,
+        mock_barrel_model_path=args.mock_barrel_model_path,
+        mock_shoot_model_path=args.mock_shoot_model_path,
         seed=int(args.seed),
         save_every_games=max(1, int(args.save_every_games)),
         warmup_steps=max(0, int(args.warmup_steps)),
