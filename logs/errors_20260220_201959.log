@@ -1,0 +1,1460 @@
+20:20:11 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:11 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:11 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:11 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:11 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:11 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:11 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:11 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:11 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:11 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:12 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:12 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:13 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:13 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:14 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:14 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:14 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:14 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:14 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:14 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:14 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:14 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:15 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:15 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:15 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:15 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:15 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:15 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:16 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:16 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:16 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:16 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:16 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:16 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:17 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:17 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:17 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:17 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:17 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:17 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:18 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:18 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:18 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:18 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:18 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:18 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:19 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:19 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:19 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:19 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:19 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:19 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:20 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:20 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:20 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:20 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:20 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:20 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:21 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:21 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:21 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:21 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:21 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:21 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:22 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:22 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:22 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:22 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:22 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:22 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:23 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:23 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:23 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:23 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:23 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:23 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:24 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:24 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:24 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:24 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:24 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:24 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:25 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:25 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:25 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:25 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:25 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:25 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:26 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:26 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:26 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:26 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:26 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:26 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:27 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:27 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:27 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:27 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:27 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:27 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:28 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:28 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:28 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:28 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:28 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:28 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:29 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:29 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:29 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:29 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:29 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:29 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:30 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:30 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:30 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:30 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:31 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:31 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:31 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:31 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:32 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:32 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:32 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:32 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:33 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:33 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:33 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:33 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:34 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:34 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:34 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:34 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:34 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:34 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:35 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:35 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:35 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:35 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:36 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:36 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:36 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:36 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:36 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:36 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:37 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:37 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:37 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:37 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:38 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:38 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:38 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:38 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:38 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:38 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:39 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:39 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:39 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:39 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:39 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:39 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:40 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:40 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:40 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:40 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:40 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:40 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:41 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:41 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:41 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:41 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:42 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:42 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:42 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:42 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:42 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:42 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:43 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:43 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:43 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:43 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:44 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:44 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:44 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:44 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:45 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:45 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+20:20:45 | ERROR    | logger.py:172 | Physics processing failed: TANK_TAK_MOVING
+20:20:45 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+

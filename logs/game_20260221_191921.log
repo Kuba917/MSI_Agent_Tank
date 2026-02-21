@@ -1,0 +1,2330 @@
+19:19:21 | INFO     | TICK:0000 | GameCore initialized with session ID: 34a69da1
+19:19:24 | INFO     | TICK:0000 | Starting game initialization...
+19:19:24 | INFO     | TICK:0000 | Game configuration: {'session_id': '34a69da1', 'map_size': (200, 200), 'team_count': 2, 'team_size': 5, 'total_tanks': 10, 'friendly_fire': True, 'sudden_death_tick': 100000, 'map_seed': 'road_trees.csv', 'spawn_positions': [(50, 50), (65, 70), (80, 90), (95, 110), (110, 130), (100, 50), (115, 70), (130, 90), (145, 110), (160, 130)]}
+19:19:24 | INFO     | TICK:0000 | Loading map with seed: road_trees.csv
+19:19:24 | INFO     | TICK:0000 | Loaded map from file: road_trees.csv
+19:19:24 | INFO     | TICK:0000 | Spawning tanks: Team A=5, Team B=5
+19:19:24 | WARNING  | TICK:0000 | Spawn position (20.0, 15.0) blocked, searching for clear spot
+19:19:24 | INFO     | TICK:0000 | Found clear spawn at (35.0, 15.0)
+19:19:24 | WARNING  | TICK:0000 | Spawn position (26.0, 19.0) blocked, searching for clear spot
+19:19:24 | INFO     | TICK:0000 | Found clear spawn at (52.0, 34.0)
+19:19:24 | WARNING  | TICK:0000 | Spawn position (32.0, 23.0) blocked, searching for clear spot
+19:19:24 | INFO     | TICK:0000 | Found clear spawn at (45.0, 15.5)
+19:19:24 | WARNING  | TICK:0000 | Spawn position (38.0, 27.0) blocked, searching for clear spot
+19:19:24 | INFO     | TICK:0000 | Found clear spawn at (64.0, 42.0)
+19:19:24 | WARNING  | TICK:0000 | Spawn position (44.0, 31.0) blocked, searching for clear spot
+19:19:24 | INFO     | TICK:0000 | Found clear spawn at (51.5, 44.0)
+19:19:24 | WARNING  | TICK:0000 | Spawn position (125.0, 15.0) blocked, searching for clear spot
+19:19:24 | INFO     | TICK:0000 | Found clear spawn at (140.0, 15.0)
+19:19:24 | WARNING  | TICK:0000 | Spawn position (131.0, 19.0) blocked, searching for clear spot
+19:19:24 | INFO     | TICK:0000 | Found clear spawn at (131.0, 49.0)
+19:19:24 | WARNING  | TICK:0000 | Spawn position (143.0, 27.0) blocked, searching for clear spot
+19:19:24 | INFO     | TICK:0000 | Found clear spawn at (140.0, 53.0)
+19:19:24 | WARNING  | TICK:0000 | Spawn position (145.0, 31.0) blocked, searching for clear spot
+19:19:24 | INFO     | TICK:0000 | Found clear spawn at (140.0, 61.0)
+19:19:24 | INFO     | TICK:0000 | Successfully spawned 10 tanks
+19:19:24 | INFO     | TICK:0000 | Connecting to agent servers...
+19:19:25 | WARNING  | TICK:0000 | Failed to connect to agent for tank_1_1: timed out
+19:19:25 | WARNING  | TICK:0000 | Failed to connect to agent for tank_1_2: timed out
+19:19:26 | WARNING  | TICK:0000 | Failed to connect to agent for tank_1_3: timed out
+19:19:26 | WARNING  | TICK:0000 | Failed to connect to agent for tank_1_4: timed out
+19:19:27 | WARNING  | TICK:0000 | Failed to connect to agent for tank_1_5: timed out
+19:19:27 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_1: timed out
+19:19:28 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_2: timed out
+19:19:28 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_3: timed out
+19:19:29 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_4: timed out
+19:19:29 | INFO     | TICK:0000 | Connected to agent for tank_2_5 at http://127.0.0.1:8010
+19:19:29 | INFO     | TICK:0000 | Connected to 1/10 agents
+19:19:29 | INFO     | TICK:0000 | Game initialization completed successfully
+19:19:33 | INFO     | TICK:0000 | Game loop started
+19:19:33 | DEBUG    | TICK:0001 | Tick 1 started
+19:19:33 | DEBUG    | TICK:0001 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0001 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0001 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0001 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0002 | Tick 2 started
+19:19:33 | DEBUG    | TICK:0002 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0002 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0002 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0002 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0003 | Tick 3 started
+19:19:33 | DEBUG    | TICK:0003 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0003 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0003 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0003 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0004 | Tick 4 started
+19:19:33 | DEBUG    | TICK:0004 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0004 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0004 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0004 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0005 | Tick 5 started
+19:19:33 | DEBUG    | TICK:0005 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0005 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0005 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0005 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0006 | Tick 6 started
+19:19:33 | DEBUG    | TICK:0006 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0006 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0006 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0006 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0007 | Tick 7 started
+19:19:33 | DEBUG    | TICK:0007 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0007 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0007 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0007 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0008 | Tick 8 started
+19:19:33 | DEBUG    | TICK:0008 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0008 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0008 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0008 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0009 | Tick 9 started
+19:19:33 | DEBUG    | TICK:0009 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0009 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0009 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0009 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0010 | Tick 10 started
+19:19:33 | DEBUG    | TICK:0010 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0010 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0010 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0010 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0011 | Tick 11 started
+19:19:33 | DEBUG    | TICK:0011 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0011 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0011 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0011 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0012 | Tick 12 started
+19:19:33 | DEBUG    | TICK:0012 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0012 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0012 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0012 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0013 | Tick 13 started
+19:19:33 | DEBUG    | TICK:0013 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0013 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0013 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0013 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0014 | Tick 14 started
+19:19:33 | DEBUG    | TICK:0014 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0014 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0014 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0014 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0015 | Tick 15 started
+19:19:33 | DEBUG    | TICK:0015 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0015 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0015 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0015 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0016 | Tick 16 started
+19:19:33 | DEBUG    | TICK:0016 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0016 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0016 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0016 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0017 | Tick 17 started
+19:19:33 | DEBUG    | TICK:0017 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0017 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0017 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0017 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0018 | Tick 18 started
+19:19:33 | DEBUG    | TICK:0018 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0018 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0018 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0018 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0019 | Tick 19 started
+19:19:33 | DEBUG    | TICK:0019 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0019 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0019 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0019 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0020 | Tick 20 started
+19:19:33 | DEBUG    | TICK:0020 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0020 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0020 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0020 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0021 | Tick 21 started
+19:19:33 | DEBUG    | TICK:0021 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0021 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0021 | Team 1 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0021 | Team 2 has 5 tanks alive
+19:19:33 | DEBUG    | TICK:0022 | Tick 22 started
+19:19:34 | DEBUG    | TICK:0022 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0022 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0022 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0022 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0023 | Tick 23 started
+19:19:34 | DEBUG    | TICK:0023 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0023 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0023 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0023 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0024 | Tick 24 started
+19:19:34 | DEBUG    | TICK:0024 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0024 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0024 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0024 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0025 | Tick 25 started
+19:19:34 | DEBUG    | TICK:0025 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0025 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0025 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0025 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0026 | Tick 26 started
+19:19:34 | DEBUG    | TICK:0026 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0026 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0026 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0026 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0027 | Tick 27 started
+19:19:34 | DEBUG    | TICK:0027 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0027 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0027 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0027 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0028 | Tick 28 started
+19:19:34 | DEBUG    | TICK:0028 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0028 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0028 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0028 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0029 | Tick 29 started
+19:19:34 | DEBUG    | TICK:0029 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0029 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0029 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0029 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0030 | Tick 30 started
+19:19:34 | DEBUG    | TICK:0030 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0030 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0030 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0030 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0031 | Tick 31 started
+19:19:34 | DEBUG    | TICK:0031 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0031 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0031 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0031 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0032 | Tick 32 started
+19:19:34 | DEBUG    | TICK:0032 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0032 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0032 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0032 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0033 | Tick 33 started
+19:19:34 | DEBUG    | TICK:0033 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0033 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0033 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0033 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0034 | Tick 34 started
+19:19:34 | DEBUG    | TICK:0034 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0034 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0034 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0034 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0035 | Tick 35 started
+19:19:34 | DEBUG    | TICK:0035 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0035 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0035 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0035 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0036 | Tick 36 started
+19:19:34 | DEBUG    | TICK:0036 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0036 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0036 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0036 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0037 | Tick 37 started
+19:19:34 | DEBUG    | TICK:0037 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0037 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0037 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0037 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0038 | Tick 38 started
+19:19:34 | DEBUG    | TICK:0038 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0038 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0038 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0038 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0039 | Tick 39 started
+19:19:34 | DEBUG    | TICK:0039 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0039 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0039 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0039 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0040 | Tick 40 started
+19:19:34 | DEBUG    | TICK:0040 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0040 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0040 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0040 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0041 | Tick 41 started
+19:19:34 | DEBUG    | TICK:0041 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0041 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0041 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0041 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0042 | Tick 42 started
+19:19:34 | DEBUG    | TICK:0042 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0042 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0042 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0042 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0043 | Tick 43 started
+19:19:34 | DEBUG    | TICK:0043 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0043 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0043 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0043 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0044 | Tick 44 started
+19:19:34 | DEBUG    | TICK:0044 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0044 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0044 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0044 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0045 | Tick 45 started
+19:19:34 | DEBUG    | TICK:0045 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0045 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0045 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0045 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0046 | Tick 46 started
+19:19:34 | DEBUG    | TICK:0046 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0046 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0046 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0046 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0047 | Tick 47 started
+19:19:34 | DEBUG    | TICK:0047 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0047 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0047 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0047 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0048 | Tick 48 started
+19:19:34 | DEBUG    | TICK:0048 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0048 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0048 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0048 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0049 | Tick 49 started
+19:19:34 | DEBUG    | TICK:0049 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0049 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0049 | Team 1 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0049 | Team 2 has 5 tanks alive
+19:19:34 | DEBUG    | TICK:0050 | Tick 50 started
+19:19:35 | DEBUG    | TICK:0050 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0050 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0050 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0050 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0051 | Tick 51 started
+19:19:35 | DEBUG    | TICK:0051 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0051 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0051 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0051 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0052 | Tick 52 started
+19:19:35 | DEBUG    | TICK:0052 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0052 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0052 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0052 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0053 | Tick 53 started
+19:19:35 | DEBUG    | TICK:0053 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0053 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0053 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0053 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0054 | Tick 54 started
+19:19:35 | DEBUG    | TICK:0054 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0054 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0054 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0054 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0055 | Tick 55 started
+19:19:35 | DEBUG    | TICK:0055 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0055 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0055 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0055 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0056 | Tick 56 started
+19:19:35 | DEBUG    | TICK:0056 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0056 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0056 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0056 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0057 | Tick 57 started
+19:19:35 | DEBUG    | TICK:0057 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0057 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0057 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0057 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0058 | Tick 58 started
+19:19:35 | DEBUG    | TICK:0058 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0058 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0058 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0058 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0059 | Tick 59 started
+19:19:35 | DEBUG    | TICK:0059 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0059 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0059 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0059 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0060 | Tick 60 started
+19:19:35 | DEBUG    | TICK:0060 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0060 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0060 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0060 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0061 | Tick 61 started
+19:19:35 | DEBUG    | TICK:0061 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0061 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0061 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0061 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0062 | Tick 62 started
+19:19:35 | DEBUG    | TICK:0062 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0062 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0062 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0062 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0063 | Tick 63 started
+19:19:35 | DEBUG    | TICK:0063 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0063 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0063 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0063 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0064 | Tick 64 started
+19:19:35 | DEBUG    | TICK:0064 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0064 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0064 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0064 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0065 | Tick 65 started
+19:19:35 | DEBUG    | TICK:0065 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0065 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0065 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0065 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0066 | Tick 66 started
+19:19:35 | DEBUG    | TICK:0066 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0066 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0066 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0066 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0067 | Tick 67 started
+19:19:35 | DEBUG    | TICK:0067 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0067 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0067 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0067 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0068 | Tick 68 started
+19:19:35 | ERROR    | TICK:0068 | Physics processing failed: TANK_TAK_MOVING
+19:19:35 | ERROR    | TICK:0068 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:35 | DEBUG    | TICK:0068 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0068 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0068 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0068 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0069 | Tick 69 started
+19:19:35 | ERROR    | TICK:0069 | Physics processing failed: TANK_TAK_MOVING
+19:19:35 | ERROR    | TICK:0069 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:35 | DEBUG    | TICK:0069 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0069 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0069 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0069 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0070 | Tick 70 started
+19:19:35 | ERROR    | TICK:0070 | Physics processing failed: TANK_TAK_MOVING
+19:19:35 | ERROR    | TICK:0070 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:35 | DEBUG    | TICK:0070 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0070 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0070 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0070 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0071 | Tick 71 started
+19:19:35 | ERROR    | TICK:0071 | Physics processing failed: TANK_TAK_MOVING
+19:19:35 | ERROR    | TICK:0071 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:35 | DEBUG    | TICK:0071 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0071 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0071 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0071 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0072 | Tick 72 started
+19:19:35 | ERROR    | TICK:0072 | Physics processing failed: TANK_TAK_MOVING
+19:19:35 | ERROR    | TICK:0072 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:35 | DEBUG    | TICK:0072 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0072 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0072 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0072 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0073 | Tick 73 started
+19:19:35 | ERROR    | TICK:0073 | Physics processing failed: TANK_TAK_MOVING
+19:19:35 | ERROR    | TICK:0073 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:35 | DEBUG    | TICK:0073 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0073 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0073 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0073 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0074 | Tick 74 started
+19:19:35 | ERROR    | TICK:0074 | Physics processing failed: TANK_TAK_MOVING
+19:19:35 | ERROR    | TICK:0074 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:35 | DEBUG    | TICK:0074 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0074 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0074 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0074 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0075 | Tick 75 started
+19:19:35 | ERROR    | TICK:0075 | Physics processing failed: TANK_TAK_MOVING
+19:19:35 | ERROR    | TICK:0075 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:35 | DEBUG    | TICK:0075 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0075 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0075 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0075 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0076 | Tick 76 started
+19:19:35 | ERROR    | TICK:0076 | Physics processing failed: TANK_TAK_MOVING
+19:19:35 | ERROR    | TICK:0076 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:35 | DEBUG    | TICK:0076 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0076 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0076 | Team 1 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0076 | Team 2 has 5 tanks alive
+19:19:35 | DEBUG    | TICK:0077 | Tick 77 started
+19:19:36 | ERROR    | TICK:0077 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0077 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0077 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0077 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0077 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0077 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0078 | Tick 78 started
+19:19:36 | ERROR    | TICK:0078 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0078 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0078 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0078 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0078 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0078 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0079 | Tick 79 started
+19:19:36 | ERROR    | TICK:0079 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0079 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0079 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0079 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0079 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0079 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0080 | Tick 80 started
+19:19:36 | ERROR    | TICK:0080 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0080 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0080 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0080 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0080 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0080 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0081 | Tick 81 started
+19:19:36 | ERROR    | TICK:0081 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0081 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0081 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0081 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0081 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0081 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0082 | Tick 82 started
+19:19:36 | ERROR    | TICK:0082 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0082 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0082 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0082 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0082 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0082 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0083 | Tick 83 started
+19:19:36 | ERROR    | TICK:0083 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0083 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0083 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0083 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0083 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0083 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0084 | Tick 84 started
+19:19:36 | ERROR    | TICK:0084 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0084 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0084 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0084 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0084 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0084 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0085 | Tick 85 started
+19:19:36 | ERROR    | TICK:0085 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0085 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0085 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0085 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0085 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0085 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0086 | Tick 86 started
+19:19:36 | ERROR    | TICK:0086 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0086 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0086 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0086 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0086 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0086 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0087 | Tick 87 started
+19:19:36 | ERROR    | TICK:0087 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0087 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0087 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0087 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0087 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0087 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0088 | Tick 88 started
+19:19:36 | ERROR    | TICK:0088 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0088 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0088 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0088 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0088 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0088 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0089 | Tick 89 started
+19:19:36 | ERROR    | TICK:0089 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0089 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0089 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0089 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0089 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0089 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0090 | Tick 90 started
+19:19:36 | ERROR    | TICK:0090 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0090 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0090 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0090 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0090 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0090 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0091 | Tick 91 started
+19:19:36 | ERROR    | TICK:0091 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0091 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0091 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0091 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0091 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0091 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0092 | Tick 92 started
+19:19:36 | ERROR    | TICK:0092 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0092 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0092 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0092 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0092 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0092 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0093 | Tick 93 started
+19:19:36 | ERROR    | TICK:0093 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0093 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0093 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0093 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0093 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0093 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0094 | Tick 94 started
+19:19:36 | ERROR    | TICK:0094 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0094 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0094 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0094 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0094 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0094 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0095 | Tick 95 started
+19:19:36 | ERROR    | TICK:0095 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0095 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0095 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0095 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0095 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0095 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0096 | Tick 96 started
+19:19:36 | ERROR    | TICK:0096 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0096 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0096 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0096 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0096 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0096 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0097 | Tick 97 started
+19:19:36 | ERROR    | TICK:0097 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0097 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0097 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0097 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0097 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0097 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0098 | Tick 98 started
+19:19:36 | ERROR    | TICK:0098 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0098 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0098 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0098 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0098 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0098 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0099 | Tick 99 started
+19:19:36 | ERROR    | TICK:0099 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0099 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0099 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0099 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0099 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0099 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0100 | Tick 100 started
+19:19:36 | ERROR    | TICK:0100 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0100 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0100 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0100 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0100 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0100 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0101 | Tick 101 started
+19:19:36 | ERROR    | TICK:0101 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0101 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0101 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0101 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0101 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0101 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0102 | Tick 102 started
+19:19:36 | ERROR    | TICK:0102 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0102 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0102 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0102 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0102 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0102 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0103 | Tick 103 started
+19:19:36 | ERROR    | TICK:0103 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0103 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0103 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0103 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0103 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0103 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0104 | Tick 104 started
+19:19:36 | ERROR    | TICK:0104 | Physics processing failed: TANK_TAK_MOVING
+19:19:36 | ERROR    | TICK:0104 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:36 | DEBUG    | TICK:0104 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0104 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0104 | Team 1 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0104 | Team 2 has 5 tanks alive
+19:19:36 | DEBUG    | TICK:0105 | Tick 105 started
+19:19:37 | ERROR    | TICK:0105 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0105 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0105 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0105 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0105 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0105 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0106 | Tick 106 started
+19:19:37 | ERROR    | TICK:0106 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0106 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0106 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0106 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0106 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0106 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0107 | Tick 107 started
+19:19:37 | ERROR    | TICK:0107 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0107 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0107 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0107 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0107 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0107 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0108 | Tick 108 started
+19:19:37 | ERROR    | TICK:0108 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0108 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0108 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0108 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0108 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0108 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0109 | Tick 109 started
+19:19:37 | ERROR    | TICK:0109 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0109 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0109 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0109 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0109 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0109 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0110 | Tick 110 started
+19:19:37 | ERROR    | TICK:0110 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0110 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0110 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0110 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0110 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0110 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0111 | Tick 111 started
+19:19:37 | ERROR    | TICK:0111 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0111 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0111 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0111 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0111 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0111 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0112 | Tick 112 started
+19:19:37 | ERROR    | TICK:0112 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0112 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0112 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0112 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0112 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0112 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0113 | Tick 113 started
+19:19:37 | ERROR    | TICK:0113 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0113 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0113 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0113 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0113 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0113 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0114 | Tick 114 started
+19:19:37 | ERROR    | TICK:0114 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0114 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0114 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0114 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0114 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0114 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0115 | Tick 115 started
+19:19:37 | ERROR    | TICK:0115 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0115 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0115 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0115 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0115 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0115 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0116 | Tick 116 started
+19:19:37 | ERROR    | TICK:0116 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0116 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0116 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0116 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0116 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0116 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0117 | Tick 117 started
+19:19:37 | ERROR    | TICK:0117 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0117 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0117 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0117 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0117 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0117 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0118 | Tick 118 started
+19:19:37 | ERROR    | TICK:0118 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0118 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0118 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0118 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0118 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0118 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0119 | Tick 119 started
+19:19:37 | ERROR    | TICK:0119 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0119 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0119 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0119 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0119 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0119 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0120 | Tick 120 started
+19:19:37 | ERROR    | TICK:0120 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0120 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0120 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0120 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0120 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0120 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0121 | Tick 121 started
+19:19:37 | ERROR    | TICK:0121 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0121 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0121 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0121 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0121 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0121 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0122 | Tick 122 started
+19:19:37 | ERROR    | TICK:0122 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0122 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0122 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0122 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0122 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0122 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0123 | Tick 123 started
+19:19:37 | ERROR    | TICK:0123 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0123 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0123 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0123 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0123 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0123 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0124 | Tick 124 started
+19:19:37 | ERROR    | TICK:0124 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0124 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0124 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0124 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0124 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0124 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0125 | Tick 125 started
+19:19:37 | ERROR    | TICK:0125 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0125 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0125 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0125 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0125 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0125 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0126 | Tick 126 started
+19:19:37 | ERROR    | TICK:0126 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0126 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0126 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0126 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0126 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0126 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0127 | Tick 127 started
+19:19:37 | ERROR    | TICK:0127 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0127 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0127 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0127 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0127 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0127 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0128 | Tick 128 started
+19:19:37 | ERROR    | TICK:0128 | Physics processing failed: TANK_TAK_MOVING
+19:19:37 | ERROR    | TICK:0128 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:37 | DEBUG    | TICK:0128 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0128 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0128 | Team 1 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0128 | Team 2 has 5 tanks alive
+19:19:37 | DEBUG    | TICK:0129 | Tick 129 started
+19:19:38 | ERROR    | TICK:0129 | Physics processing failed: TANK_TAK_MOVING
+19:19:38 | ERROR    | TICK:0129 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:38 | DEBUG    | TICK:0129 | Team 1 has 5 tanks alive
+19:19:38 | DEBUG    | TICK:0129 | Team 2 has 5 tanks alive
+19:19:38 | DEBUG    | TICK:0129 | Team 1 has 5 tanks alive
+19:19:38 | DEBUG    | TICK:0129 | Team 2 has 5 tanks alive
+19:19:38 | DEBUG    | TICK:0130 | Tick 130 started
+19:19:38 | ERROR    | TICK:0130 | Physics processing failed: TANK_TAK_MOVING
+19:19:38 | ERROR    | TICK:0130 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:38 | DEBUG    | TICK:0130 | Team 1 has 5 tanks alive
+19:19:38 | DEBUG    | TICK:0130 | Team 2 has 5 tanks alive
+19:19:38 | DEBUG    | TICK:0130 | Team 1 has 5 tanks alive
+19:19:38 | DEBUG    | TICK:0130 | Team 2 has 5 tanks alive
+19:19:38 | DEBUG    | TICK:0131 | Tick 131 started
+19:19:38 | ERROR    | TICK:0131 | Physics processing failed: TANK_TAK_MOVING
+19:19:38 | ERROR    | TICK:0131 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:38 | DEBUG    | TICK:0131 | Team 1 has 5 tanks alive
+19:19:38 | DEBUG    | TICK:0131 | Team 2 has 5 tanks alive
+19:19:38 | DEBUG    | TICK:0131 | Team 1 has 5 tanks alive
+19:19:38 | DEBUG    | TICK:0131 | Team 2 has 5 tanks alive
+19:19:38 | DEBUG    | TICK:0132 | Tick 132 started
+19:19:39 | ERROR    | TICK:0132 | Physics processing failed: TANK_TAK_MOVING
+19:19:39 | ERROR    | TICK:0132 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:39 | DEBUG    | TICK:0132 | Team 1 has 5 tanks alive
+19:19:39 | DEBUG    | TICK:0132 | Team 2 has 5 tanks alive
+19:19:39 | DEBUG    | TICK:0132 | Team 1 has 5 tanks alive
+19:19:39 | DEBUG    | TICK:0132 | Team 2 has 5 tanks alive
+19:19:39 | DEBUG    | TICK:0133 | Tick 133 started
+19:19:39 | ERROR    | TICK:0133 | Physics processing failed: TANK_TAK_MOVING
+19:19:39 | ERROR    | TICK:0133 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:39 | DEBUG    | TICK:0133 | Team 1 has 5 tanks alive
+19:19:39 | DEBUG    | TICK:0133 | Team 2 has 5 tanks alive
+19:19:39 | DEBUG    | TICK:0133 | Team 1 has 5 tanks alive
+19:19:39 | DEBUG    | TICK:0133 | Team 2 has 5 tanks alive
+19:19:39 | DEBUG    | TICK:0134 | Tick 134 started
+19:19:39 | ERROR    | TICK:0134 | Physics processing failed: TANK_TAK_MOVING
+19:19:39 | ERROR    | TICK:0134 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:39 | DEBUG    | TICK:0134 | Team 1 has 5 tanks alive
+19:19:39 | DEBUG    | TICK:0134 | Team 2 has 5 tanks alive
+19:19:39 | DEBUG    | TICK:0134 | Team 1 has 5 tanks alive
+19:19:39 | DEBUG    | TICK:0134 | Team 2 has 5 tanks alive
+19:19:39 | DEBUG    | TICK:0135 | Tick 135 started
+19:19:40 | ERROR    | TICK:0135 | Physics processing failed: TANK_TAK_MOVING
+19:19:40 | ERROR    | TICK:0135 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:40 | DEBUG    | TICK:0135 | Team 1 has 5 tanks alive
+19:19:40 | DEBUG    | TICK:0135 | Team 2 has 5 tanks alive
+19:19:40 | DEBUG    | TICK:0135 | Team 1 has 5 tanks alive
+19:19:40 | DEBUG    | TICK:0135 | Team 2 has 5 tanks alive
+19:19:40 | DEBUG    | TICK:0136 | Tick 136 started
+19:19:40 | ERROR    | TICK:0136 | Physics processing failed: TANK_TAK_MOVING
+19:19:40 | ERROR    | TICK:0136 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:40 | DEBUG    | TICK:0136 | Team 1 has 5 tanks alive
+19:19:40 | DEBUG    | TICK:0136 | Team 2 has 5 tanks alive
+19:19:40 | DEBUG    | TICK:0136 | Team 1 has 5 tanks alive
+19:19:40 | DEBUG    | TICK:0136 | Team 2 has 5 tanks alive
+19:19:40 | DEBUG    | TICK:0137 | Tick 137 started
+19:19:40 | ERROR    | TICK:0137 | Physics processing failed: TANK_TAK_MOVING
+19:19:40 | ERROR    | TICK:0137 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:40 | DEBUG    | TICK:0137 | Team 1 has 5 tanks alive
+19:19:40 | DEBUG    | TICK:0137 | Team 2 has 5 tanks alive
+19:19:40 | DEBUG    | TICK:0137 | Team 1 has 5 tanks alive
+19:19:40 | DEBUG    | TICK:0137 | Team 2 has 5 tanks alive
+19:19:40 | DEBUG    | TICK:0138 | Tick 138 started
+19:19:41 | ERROR    | TICK:0138 | Physics processing failed: TANK_TAK_MOVING
+19:19:41 | ERROR    | TICK:0138 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:41 | DEBUG    | TICK:0138 | Team 1 has 5 tanks alive
+19:19:41 | DEBUG    | TICK:0138 | Team 2 has 5 tanks alive
+19:19:41 | DEBUG    | TICK:0138 | Team 1 has 5 tanks alive
+19:19:41 | DEBUG    | TICK:0138 | Team 2 has 5 tanks alive
+19:19:41 | DEBUG    | TICK:0139 | Tick 139 started
+19:19:41 | ERROR    | TICK:0139 | Physics processing failed: TANK_TAK_MOVING
+19:19:41 | ERROR    | TICK:0139 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:41 | DEBUG    | TICK:0139 | Team 1 has 5 tanks alive
+19:19:41 | DEBUG    | TICK:0139 | Team 2 has 5 tanks alive
+19:19:41 | DEBUG    | TICK:0139 | Team 1 has 5 tanks alive
+19:19:41 | DEBUG    | TICK:0139 | Team 2 has 5 tanks alive
+19:19:41 | DEBUG    | TICK:0140 | Tick 140 started
+19:19:41 | ERROR    | TICK:0140 | Physics processing failed: TANK_TAK_MOVING
+19:19:41 | ERROR    | TICK:0140 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:41 | DEBUG    | TICK:0140 | Team 1 has 5 tanks alive
+19:19:41 | DEBUG    | TICK:0140 | Team 2 has 5 tanks alive
+19:19:41 | DEBUG    | TICK:0140 | Team 1 has 5 tanks alive
+19:19:41 | DEBUG    | TICK:0140 | Team 2 has 5 tanks alive
+19:19:41 | DEBUG    | TICK:0141 | Tick 141 started
+19:19:42 | ERROR    | TICK:0141 | Physics processing failed: TANK_TAK_MOVING
+19:19:42 | ERROR    | TICK:0141 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:42 | DEBUG    | TICK:0141 | Team 1 has 5 tanks alive
+19:19:42 | DEBUG    | TICK:0141 | Team 2 has 5 tanks alive
+19:19:42 | DEBUG    | TICK:0141 | Team 1 has 5 tanks alive
+19:19:42 | DEBUG    | TICK:0141 | Team 2 has 5 tanks alive
+19:19:42 | DEBUG    | TICK:0142 | Tick 142 started
+19:19:42 | ERROR    | TICK:0142 | Physics processing failed: TANK_TAK_MOVING
+19:19:42 | ERROR    | TICK:0142 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:42 | DEBUG    | TICK:0142 | Team 1 has 5 tanks alive
+19:19:42 | DEBUG    | TICK:0142 | Team 2 has 5 tanks alive
+19:19:42 | DEBUG    | TICK:0142 | Team 1 has 5 tanks alive
+19:19:42 | DEBUG    | TICK:0142 | Team 2 has 5 tanks alive
+19:19:42 | DEBUG    | TICK:0143 | Tick 143 started
+19:19:42 | ERROR    | TICK:0143 | Physics processing failed: TANK_TAK_MOVING
+19:19:42 | ERROR    | TICK:0143 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:42 | DEBUG    | TICK:0143 | Team 1 has 5 tanks alive
+19:19:42 | DEBUG    | TICK:0143 | Team 2 has 5 tanks alive
+19:19:42 | DEBUG    | TICK:0143 | Team 1 has 5 tanks alive
+19:19:42 | DEBUG    | TICK:0143 | Team 2 has 5 tanks alive
+19:19:42 | DEBUG    | TICK:0144 | Tick 144 started
+19:19:43 | ERROR    | TICK:0144 | Physics processing failed: TANK_TAK_MOVING
+19:19:43 | ERROR    | TICK:0144 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:43 | DEBUG    | TICK:0144 | Team 1 has 5 tanks alive
+19:19:43 | DEBUG    | TICK:0144 | Team 2 has 5 tanks alive
+19:19:43 | DEBUG    | TICK:0144 | Team 1 has 5 tanks alive
+19:19:43 | DEBUG    | TICK:0144 | Team 2 has 5 tanks alive
+19:19:43 | DEBUG    | TICK:0145 | Tick 145 started
+19:19:43 | ERROR    | TICK:0145 | Physics processing failed: TANK_TAK_MOVING
+19:19:43 | ERROR    | TICK:0145 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:43 | DEBUG    | TICK:0145 | Team 1 has 5 tanks alive
+19:19:43 | DEBUG    | TICK:0145 | Team 2 has 5 tanks alive
+19:19:43 | DEBUG    | TICK:0145 | Team 1 has 5 tanks alive
+19:19:43 | DEBUG    | TICK:0145 | Team 2 has 5 tanks alive
+19:19:43 | DEBUG    | TICK:0146 | Tick 146 started
+19:19:43 | ERROR    | TICK:0146 | Physics processing failed: TANK_TAK_MOVING
+19:19:43 | ERROR    | TICK:0146 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:43 | DEBUG    | TICK:0146 | Team 1 has 5 tanks alive
+19:19:43 | DEBUG    | TICK:0146 | Team 2 has 5 tanks alive
+19:19:43 | DEBUG    | TICK:0146 | Team 1 has 5 tanks alive
+19:19:43 | DEBUG    | TICK:0146 | Team 2 has 5 tanks alive
+19:19:43 | DEBUG    | TICK:0147 | Tick 147 started
+19:19:44 | ERROR    | TICK:0147 | Physics processing failed: TANK_TAK_MOVING
+19:19:44 | ERROR    | TICK:0147 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:44 | DEBUG    | TICK:0147 | Team 1 has 5 tanks alive
+19:19:44 | DEBUG    | TICK:0147 | Team 2 has 5 tanks alive
+19:19:44 | DEBUG    | TICK:0147 | Team 1 has 5 tanks alive
+19:19:44 | DEBUG    | TICK:0147 | Team 2 has 5 tanks alive
+19:19:44 | DEBUG    | TICK:0148 | Tick 148 started
+19:19:44 | ERROR    | TICK:0148 | Physics processing failed: TANK_TAK_MOVING
+19:19:44 | ERROR    | TICK:0148 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:44 | DEBUG    | TICK:0148 | Team 1 has 5 tanks alive
+19:19:44 | DEBUG    | TICK:0148 | Team 2 has 5 tanks alive
+19:19:44 | DEBUG    | TICK:0148 | Team 1 has 5 tanks alive
+19:19:44 | DEBUG    | TICK:0148 | Team 2 has 5 tanks alive
+19:19:44 | DEBUG    | TICK:0149 | Tick 149 started
+19:19:44 | ERROR    | TICK:0149 | Physics processing failed: TANK_TAK_MOVING
+19:19:44 | ERROR    | TICK:0149 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:44 | DEBUG    | TICK:0149 | Team 1 has 5 tanks alive
+19:19:44 | DEBUG    | TICK:0149 | Team 2 has 5 tanks alive
+19:19:44 | DEBUG    | TICK:0149 | Team 1 has 5 tanks alive
+19:19:44 | DEBUG    | TICK:0149 | Team 2 has 5 tanks alive
+19:19:44 | DEBUG    | TICK:0150 | Tick 150 started
+19:19:45 | ERROR    | TICK:0150 | Physics processing failed: TANK_TAK_MOVING
+19:19:45 | ERROR    | TICK:0150 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:45 | DEBUG    | TICK:0150 | Team 1 has 5 tanks alive
+19:19:45 | DEBUG    | TICK:0150 | Team 2 has 5 tanks alive
+19:19:45 | DEBUG    | TICK:0150 | Team 1 has 5 tanks alive
+19:19:45 | DEBUG    | TICK:0150 | Team 2 has 5 tanks alive
+19:19:45 | DEBUG    | TICK:0151 | Tick 151 started
+19:19:45 | ERROR    | TICK:0151 | Physics processing failed: TANK_TAK_MOVING
+19:19:45 | ERROR    | TICK:0151 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:45 | DEBUG    | TICK:0151 | Team 1 has 5 tanks alive
+19:19:45 | DEBUG    | TICK:0151 | Team 2 has 5 tanks alive
+19:19:45 | DEBUG    | TICK:0151 | Team 1 has 5 tanks alive
+19:19:45 | DEBUG    | TICK:0151 | Team 2 has 5 tanks alive
+19:19:45 | DEBUG    | TICK:0152 | Tick 152 started
+19:19:45 | ERROR    | TICK:0152 | Physics processing failed: TANK_TAK_MOVING
+19:19:45 | ERROR    | TICK:0152 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:45 | DEBUG    | TICK:0152 | Team 1 has 5 tanks alive
+19:19:45 | DEBUG    | TICK:0152 | Team 2 has 5 tanks alive
+19:19:45 | DEBUG    | TICK:0152 | Team 1 has 5 tanks alive
+19:19:45 | DEBUG    | TICK:0152 | Team 2 has 5 tanks alive
+19:19:45 | DEBUG    | TICK:0153 | Tick 153 started
+19:19:46 | ERROR    | TICK:0153 | Physics processing failed: TANK_TAK_MOVING
+19:19:46 | ERROR    | TICK:0153 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:46 | DEBUG    | TICK:0153 | Team 1 has 5 tanks alive
+19:19:46 | DEBUG    | TICK:0153 | Team 2 has 5 tanks alive
+19:19:46 | DEBUG    | TICK:0153 | Team 1 has 5 tanks alive
+19:19:46 | DEBUG    | TICK:0153 | Team 2 has 5 tanks alive
+19:19:46 | DEBUG    | TICK:0154 | Tick 154 started
+19:19:46 | ERROR    | TICK:0154 | Physics processing failed: TANK_TAK_MOVING
+19:19:46 | ERROR    | TICK:0154 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:46 | DEBUG    | TICK:0154 | Team 1 has 5 tanks alive
+19:19:46 | DEBUG    | TICK:0154 | Team 2 has 5 tanks alive
+19:19:46 | DEBUG    | TICK:0154 | Team 1 has 5 tanks alive
+19:19:46 | DEBUG    | TICK:0154 | Team 2 has 5 tanks alive
+19:19:46 | DEBUG    | TICK:0155 | Tick 155 started
+19:19:46 | ERROR    | TICK:0155 | Physics processing failed: TANK_TAK_MOVING
+19:19:46 | ERROR    | TICK:0155 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:46 | DEBUG    | TICK:0155 | Team 1 has 5 tanks alive
+19:19:46 | DEBUG    | TICK:0155 | Team 2 has 5 tanks alive
+19:19:46 | DEBUG    | TICK:0155 | Team 1 has 5 tanks alive
+19:19:46 | DEBUG    | TICK:0155 | Team 2 has 5 tanks alive
+19:19:46 | DEBUG    | TICK:0156 | Tick 156 started
+19:19:47 | ERROR    | TICK:0156 | Physics processing failed: TANK_TAK_MOVING
+19:19:47 | ERROR    | TICK:0156 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:47 | DEBUG    | TICK:0156 | Team 1 has 5 tanks alive
+19:19:47 | DEBUG    | TICK:0156 | Team 2 has 5 tanks alive
+19:19:47 | DEBUG    | TICK:0156 | Team 1 has 5 tanks alive
+19:19:47 | DEBUG    | TICK:0156 | Team 2 has 5 tanks alive
+19:19:47 | DEBUG    | TICK:0157 | Tick 157 started
+19:19:47 | ERROR    | TICK:0157 | Physics processing failed: TANK_TAK_MOVING
+19:19:47 | ERROR    | TICK:0157 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:47 | DEBUG    | TICK:0157 | Team 1 has 5 tanks alive
+19:19:47 | DEBUG    | TICK:0157 | Team 2 has 5 tanks alive
+19:19:47 | DEBUG    | TICK:0157 | Team 1 has 5 tanks alive
+19:19:47 | DEBUG    | TICK:0157 | Team 2 has 5 tanks alive
+19:19:47 | DEBUG    | TICK:0158 | Tick 158 started
+19:19:47 | ERROR    | TICK:0158 | Physics processing failed: TANK_TAK_MOVING
+19:19:47 | ERROR    | TICK:0158 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:47 | DEBUG    | TICK:0158 | Team 1 has 5 tanks alive
+19:19:47 | DEBUG    | TICK:0158 | Team 2 has 5 tanks alive
+19:19:47 | DEBUG    | TICK:0158 | Team 1 has 5 tanks alive
+19:19:47 | DEBUG    | TICK:0158 | Team 2 has 5 tanks alive
+19:19:47 | DEBUG    | TICK:0159 | Tick 159 started
+19:19:48 | ERROR    | TICK:0159 | Physics processing failed: TANK_TAK_MOVING
+19:19:48 | ERROR    | TICK:0159 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:48 | DEBUG    | TICK:0159 | Team 1 has 5 tanks alive
+19:19:48 | DEBUG    | TICK:0159 | Team 2 has 5 tanks alive
+19:19:48 | DEBUG    | TICK:0159 | Team 1 has 5 tanks alive
+19:19:48 | DEBUG    | TICK:0159 | Team 2 has 5 tanks alive
+19:19:48 | DEBUG    | TICK:0160 | Tick 160 started
+19:19:48 | ERROR    | TICK:0160 | Physics processing failed: TANK_TAK_MOVING
+19:19:48 | ERROR    | TICK:0160 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:48 | DEBUG    | TICK:0160 | Team 1 has 5 tanks alive
+19:19:48 | DEBUG    | TICK:0160 | Team 2 has 5 tanks alive
+19:19:48 | DEBUG    | TICK:0160 | Team 1 has 5 tanks alive
+19:19:48 | DEBUG    | TICK:0160 | Team 2 has 5 tanks alive
+19:19:48 | DEBUG    | TICK:0161 | Tick 161 started
+19:19:48 | ERROR    | TICK:0161 | Physics processing failed: TANK_TAK_MOVING
+19:19:48 | ERROR    | TICK:0161 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:48 | DEBUG    | TICK:0161 | Team 1 has 5 tanks alive
+19:19:48 | DEBUG    | TICK:0161 | Team 2 has 5 tanks alive
+19:19:48 | DEBUG    | TICK:0161 | Team 1 has 5 tanks alive
+19:19:48 | DEBUG    | TICK:0161 | Team 2 has 5 tanks alive
+19:19:48 | DEBUG    | TICK:0162 | Tick 162 started
+19:19:49 | ERROR    | TICK:0162 | Physics processing failed: TANK_TAK_MOVING
+19:19:49 | ERROR    | TICK:0162 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:49 | DEBUG    | TICK:0162 | Team 1 has 5 tanks alive
+19:19:49 | DEBUG    | TICK:0162 | Team 2 has 5 tanks alive
+19:19:49 | DEBUG    | TICK:0162 | Team 1 has 5 tanks alive
+19:19:49 | DEBUG    | TICK:0162 | Team 2 has 5 tanks alive
+19:19:49 | DEBUG    | TICK:0163 | Tick 163 started
+19:19:49 | ERROR    | TICK:0163 | Physics processing failed: TANK_TAK_MOVING
+19:19:49 | ERROR    | TICK:0163 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:49 | DEBUG    | TICK:0163 | Team 1 has 5 tanks alive
+19:19:49 | DEBUG    | TICK:0163 | Team 2 has 5 tanks alive
+19:19:49 | DEBUG    | TICK:0163 | Team 1 has 5 tanks alive
+19:19:49 | DEBUG    | TICK:0163 | Team 2 has 5 tanks alive
+19:19:49 | DEBUG    | TICK:0164 | Tick 164 started
+19:19:49 | ERROR    | TICK:0164 | Physics processing failed: TANK_TAK_MOVING
+19:19:49 | ERROR    | TICK:0164 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:49 | DEBUG    | TICK:0164 | Team 1 has 5 tanks alive
+19:19:49 | DEBUG    | TICK:0164 | Team 2 has 5 tanks alive
+19:19:49 | DEBUG    | TICK:0164 | Team 1 has 5 tanks alive
+19:19:49 | DEBUG    | TICK:0164 | Team 2 has 5 tanks alive
+19:19:49 | DEBUG    | TICK:0165 | Tick 165 started
+19:19:50 | ERROR    | TICK:0165 | Physics processing failed: TANK_TAK_MOVING
+19:19:50 | ERROR    | TICK:0165 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:50 | DEBUG    | TICK:0165 | Team 1 has 5 tanks alive
+19:19:50 | DEBUG    | TICK:0165 | Team 2 has 5 tanks alive
+19:19:50 | DEBUG    | TICK:0165 | Team 1 has 5 tanks alive
+19:19:50 | DEBUG    | TICK:0165 | Team 2 has 5 tanks alive
+19:19:50 | DEBUG    | TICK:0166 | Tick 166 started
+19:19:50 | ERROR    | TICK:0166 | Physics processing failed: TANK_TAK_MOVING
+19:19:50 | ERROR    | TICK:0166 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:50 | DEBUG    | TICK:0166 | Team 1 has 5 tanks alive
+19:19:50 | DEBUG    | TICK:0166 | Team 2 has 5 tanks alive
+19:19:50 | DEBUG    | TICK:0166 | Team 1 has 5 tanks alive
+19:19:50 | DEBUG    | TICK:0166 | Team 2 has 5 tanks alive
+19:19:50 | DEBUG    | TICK:0167 | Tick 167 started
+19:19:51 | ERROR    | TICK:0167 | Physics processing failed: TANK_TAK_MOVING
+19:19:51 | ERROR    | TICK:0167 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:51 | DEBUG    | TICK:0167 | Team 1 has 5 tanks alive
+19:19:51 | DEBUG    | TICK:0167 | Team 2 has 5 tanks alive
+19:19:51 | DEBUG    | TICK:0167 | Team 1 has 5 tanks alive
+19:19:51 | DEBUG    | TICK:0167 | Team 2 has 5 tanks alive
+19:19:51 | DEBUG    | TICK:0168 | Tick 168 started
+19:19:51 | ERROR    | TICK:0168 | Physics processing failed: TANK_TAK_MOVING
+19:19:51 | ERROR    | TICK:0168 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:51 | DEBUG    | TICK:0168 | Team 1 has 5 tanks alive
+19:19:51 | DEBUG    | TICK:0168 | Team 2 has 5 tanks alive
+19:19:51 | DEBUG    | TICK:0168 | Team 1 has 5 tanks alive
+19:19:51 | DEBUG    | TICK:0168 | Team 2 has 5 tanks alive
+19:19:51 | DEBUG    | TICK:0169 | Tick 169 started
+19:19:51 | ERROR    | TICK:0169 | Physics processing failed: TANK_TAK_MOVING
+19:19:51 | ERROR    | TICK:0169 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:51 | DEBUG    | TICK:0169 | Team 1 has 5 tanks alive
+19:19:51 | DEBUG    | TICK:0169 | Team 2 has 5 tanks alive
+19:19:51 | DEBUG    | TICK:0169 | Team 1 has 5 tanks alive
+19:19:51 | DEBUG    | TICK:0169 | Team 2 has 5 tanks alive
+19:19:51 | DEBUG    | TICK:0170 | Tick 170 started
+19:19:52 | ERROR    | TICK:0170 | Physics processing failed: TANK_TAK_MOVING
+19:19:52 | ERROR    | TICK:0170 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:52 | DEBUG    | TICK:0170 | Team 1 has 5 tanks alive
+19:19:52 | DEBUG    | TICK:0170 | Team 2 has 5 tanks alive
+19:19:52 | DEBUG    | TICK:0170 | Team 1 has 5 tanks alive
+19:19:52 | DEBUG    | TICK:0170 | Team 2 has 5 tanks alive
+19:19:52 | DEBUG    | TICK:0171 | Tick 171 started
+19:19:52 | ERROR    | TICK:0171 | Physics processing failed: TANK_TAK_MOVING
+19:19:52 | ERROR    | TICK:0171 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:52 | DEBUG    | TICK:0171 | Team 1 has 5 tanks alive
+19:19:52 | DEBUG    | TICK:0171 | Team 2 has 5 tanks alive
+19:19:52 | DEBUG    | TICK:0171 | Team 1 has 5 tanks alive
+19:19:52 | DEBUG    | TICK:0171 | Team 2 has 5 tanks alive
+19:19:52 | DEBUG    | TICK:0172 | Tick 172 started
+19:19:52 | ERROR    | TICK:0172 | Physics processing failed: TANK_TAK_MOVING
+19:19:52 | ERROR    | TICK:0172 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:52 | DEBUG    | TICK:0172 | Team 1 has 5 tanks alive
+19:19:52 | DEBUG    | TICK:0172 | Team 2 has 5 tanks alive
+19:19:52 | DEBUG    | TICK:0172 | Team 1 has 5 tanks alive
+19:19:52 | DEBUG    | TICK:0172 | Team 2 has 5 tanks alive
+19:19:52 | DEBUG    | TICK:0173 | Tick 173 started
+19:19:53 | ERROR    | TICK:0173 | Physics processing failed: TANK_TAK_MOVING
+19:19:53 | ERROR    | TICK:0173 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:53 | DEBUG    | TICK:0173 | Team 1 has 5 tanks alive
+19:19:53 | DEBUG    | TICK:0173 | Team 2 has 5 tanks alive
+19:19:53 | DEBUG    | TICK:0173 | Team 1 has 5 tanks alive
+19:19:53 | DEBUG    | TICK:0173 | Team 2 has 5 tanks alive
+19:19:53 | DEBUG    | TICK:0174 | Tick 174 started
+19:19:53 | ERROR    | TICK:0174 | Physics processing failed: TANK_TAK_MOVING
+19:19:53 | ERROR    | TICK:0174 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:53 | DEBUG    | TICK:0174 | Team 1 has 5 tanks alive
+19:19:53 | DEBUG    | TICK:0174 | Team 2 has 5 tanks alive
+19:19:53 | DEBUG    | TICK:0174 | Team 1 has 5 tanks alive
+19:19:53 | DEBUG    | TICK:0174 | Team 2 has 5 tanks alive
+19:19:53 | DEBUG    | TICK:0175 | Tick 175 started
+19:19:53 | ERROR    | TICK:0175 | Physics processing failed: TANK_TAK_MOVING
+19:19:53 | ERROR    | TICK:0175 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:53 | DEBUG    | TICK:0175 | Team 1 has 5 tanks alive
+19:19:53 | DEBUG    | TICK:0175 | Team 2 has 5 tanks alive
+19:19:53 | DEBUG    | TICK:0175 | Team 1 has 5 tanks alive
+19:19:53 | DEBUG    | TICK:0175 | Team 2 has 5 tanks alive
+19:19:53 | DEBUG    | TICK:0176 | Tick 176 started
+19:19:54 | ERROR    | TICK:0176 | Physics processing failed: TANK_TAK_MOVING
+19:19:54 | ERROR    | TICK:0176 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:54 | DEBUG    | TICK:0176 | Team 1 has 5 tanks alive
+19:19:54 | DEBUG    | TICK:0176 | Team 2 has 5 tanks alive
+19:19:54 | DEBUG    | TICK:0176 | Team 1 has 5 tanks alive
+19:19:54 | DEBUG    | TICK:0176 | Team 2 has 5 tanks alive
+19:19:54 | DEBUG    | TICK:0177 | Tick 177 started
+19:19:54 | ERROR    | TICK:0177 | Physics processing failed: TANK_TAK_MOVING
+19:19:54 | ERROR    | TICK:0177 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:54 | DEBUG    | TICK:0177 | Team 1 has 5 tanks alive
+19:19:54 | DEBUG    | TICK:0177 | Team 2 has 5 tanks alive
+19:19:54 | DEBUG    | TICK:0177 | Team 1 has 5 tanks alive
+19:19:54 | DEBUG    | TICK:0177 | Team 2 has 5 tanks alive
+19:19:54 | DEBUG    | TICK:0178 | Tick 178 started
+19:19:54 | ERROR    | TICK:0178 | Physics processing failed: TANK_TAK_MOVING
+19:19:54 | ERROR    | TICK:0178 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:54 | DEBUG    | TICK:0178 | Team 1 has 5 tanks alive
+19:19:54 | DEBUG    | TICK:0178 | Team 2 has 5 tanks alive
+19:19:54 | DEBUG    | TICK:0178 | Team 1 has 5 tanks alive
+19:19:54 | DEBUG    | TICK:0178 | Team 2 has 5 tanks alive
+19:19:54 | DEBUG    | TICK:0179 | Tick 179 started
+19:19:55 | ERROR    | TICK:0179 | Physics processing failed: TANK_TAK_MOVING
+19:19:55 | ERROR    | TICK:0179 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:55 | DEBUG    | TICK:0179 | Team 1 has 5 tanks alive
+19:19:55 | DEBUG    | TICK:0179 | Team 2 has 5 tanks alive
+19:19:55 | DEBUG    | TICK:0179 | Team 1 has 5 tanks alive
+19:19:55 | DEBUG    | TICK:0179 | Team 2 has 5 tanks alive
+19:19:55 | DEBUG    | TICK:0180 | Tick 180 started
+19:19:55 | ERROR    | TICK:0180 | Physics processing failed: TANK_TAK_MOVING
+19:19:55 | ERROR    | TICK:0180 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:55 | DEBUG    | TICK:0180 | Team 1 has 5 tanks alive
+19:19:55 | DEBUG    | TICK:0180 | Team 2 has 5 tanks alive
+19:19:55 | DEBUG    | TICK:0180 | Team 1 has 5 tanks alive
+19:19:55 | DEBUG    | TICK:0180 | Team 2 has 5 tanks alive
+19:19:55 | DEBUG    | TICK:0181 | Tick 181 started
+19:19:55 | ERROR    | TICK:0181 | Physics processing failed: TANK_TAK_MOVING
+19:19:55 | ERROR    | TICK:0181 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:55 | DEBUG    | TICK:0181 | Team 1 has 5 tanks alive
+19:19:55 | DEBUG    | TICK:0181 | Team 2 has 5 tanks alive
+19:19:55 | DEBUG    | TICK:0181 | Team 1 has 5 tanks alive
+19:19:55 | DEBUG    | TICK:0181 | Team 2 has 5 tanks alive
+19:19:55 | DEBUG    | TICK:0182 | Tick 182 started
+19:19:56 | ERROR    | TICK:0182 | Physics processing failed: TANK_TAK_MOVING
+19:19:56 | ERROR    | TICK:0182 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:56 | DEBUG    | TICK:0182 | Team 1 has 5 tanks alive
+19:19:56 | DEBUG    | TICK:0182 | Team 2 has 5 tanks alive
+19:19:56 | DEBUG    | TICK:0182 | Team 1 has 5 tanks alive
+19:19:56 | DEBUG    | TICK:0182 | Team 2 has 5 tanks alive
+19:19:56 | DEBUG    | TICK:0183 | Tick 183 started
+19:19:56 | ERROR    | TICK:0183 | Physics processing failed: TANK_TAK_MOVING
+19:19:56 | ERROR    | TICK:0183 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:56 | DEBUG    | TICK:0183 | Team 1 has 5 tanks alive
+19:19:56 | DEBUG    | TICK:0183 | Team 2 has 5 tanks alive
+19:19:56 | DEBUG    | TICK:0183 | Team 1 has 5 tanks alive
+19:19:56 | DEBUG    | TICK:0183 | Team 2 has 5 tanks alive
+19:19:56 | DEBUG    | TICK:0184 | Tick 184 started
+19:19:56 | ERROR    | TICK:0184 | Physics processing failed: TANK_TAK_MOVING
+19:19:56 | ERROR    | TICK:0184 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:56 | DEBUG    | TICK:0184 | Team 1 has 5 tanks alive
+19:19:56 | DEBUG    | TICK:0184 | Team 2 has 5 tanks alive
+19:19:56 | DEBUG    | TICK:0184 | Team 1 has 5 tanks alive
+19:19:56 | DEBUG    | TICK:0184 | Team 2 has 5 tanks alive
+19:19:56 | DEBUG    | TICK:0185 | Tick 185 started
+19:19:57 | ERROR    | TICK:0185 | Physics processing failed: TANK_TAK_MOVING
+19:19:57 | ERROR    | TICK:0185 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:57 | DEBUG    | TICK:0185 | Team 1 has 5 tanks alive
+19:19:57 | DEBUG    | TICK:0185 | Team 2 has 5 tanks alive
+19:19:57 | DEBUG    | TICK:0185 | Team 1 has 5 tanks alive
+19:19:57 | DEBUG    | TICK:0185 | Team 2 has 5 tanks alive
+19:19:57 | DEBUG    | TICK:0186 | Tick 186 started
+19:19:57 | ERROR    | TICK:0186 | Physics processing failed: TANK_TAK_MOVING
+19:19:57 | ERROR    | TICK:0186 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:57 | DEBUG    | TICK:0186 | Team 1 has 5 tanks alive
+19:19:57 | DEBUG    | TICK:0186 | Team 2 has 5 tanks alive
+19:19:57 | DEBUG    | TICK:0186 | Team 1 has 5 tanks alive
+19:19:57 | DEBUG    | TICK:0186 | Team 2 has 5 tanks alive
+19:19:57 | DEBUG    | TICK:0187 | Tick 187 started
+19:19:57 | ERROR    | TICK:0187 | Physics processing failed: TANK_TAK_MOVING
+19:19:57 | ERROR    | TICK:0187 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:57 | DEBUG    | TICK:0187 | Team 1 has 5 tanks alive
+19:19:57 | DEBUG    | TICK:0187 | Team 2 has 5 tanks alive
+19:19:57 | DEBUG    | TICK:0187 | Team 1 has 5 tanks alive
+19:19:57 | DEBUG    | TICK:0187 | Team 2 has 5 tanks alive
+19:19:57 | DEBUG    | TICK:0188 | Tick 188 started
+19:19:58 | ERROR    | TICK:0188 | Physics processing failed: TANK_TAK_MOVING
+19:19:58 | ERROR    | TICK:0188 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:58 | DEBUG    | TICK:0188 | Team 1 has 5 tanks alive
+19:19:58 | DEBUG    | TICK:0188 | Team 2 has 5 tanks alive
+19:19:58 | DEBUG    | TICK:0188 | Team 1 has 5 tanks alive
+19:19:58 | DEBUG    | TICK:0188 | Team 2 has 5 tanks alive
+19:19:58 | DEBUG    | TICK:0189 | Tick 189 started
+19:19:58 | ERROR    | TICK:0189 | Physics processing failed: TANK_TAK_MOVING
+19:19:58 | ERROR    | TICK:0189 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:58 | DEBUG    | TICK:0189 | Team 1 has 5 tanks alive
+19:19:58 | DEBUG    | TICK:0189 | Team 2 has 5 tanks alive
+19:19:58 | DEBUG    | TICK:0189 | Team 1 has 5 tanks alive
+19:19:58 | DEBUG    | TICK:0189 | Team 2 has 5 tanks alive
+19:19:58 | DEBUG    | TICK:0190 | Tick 190 started
+19:19:58 | ERROR    | TICK:0190 | Physics processing failed: TANK_TAK_MOVING
+19:19:58 | ERROR    | TICK:0190 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:58 | DEBUG    | TICK:0190 | Team 1 has 5 tanks alive
+19:19:58 | DEBUG    | TICK:0190 | Team 2 has 5 tanks alive
+19:19:58 | DEBUG    | TICK:0190 | Team 1 has 5 tanks alive
+19:19:58 | DEBUG    | TICK:0190 | Team 2 has 5 tanks alive
+19:19:58 | DEBUG    | TICK:0191 | Tick 191 started
+19:19:59 | ERROR    | TICK:0191 | Physics processing failed: TANK_TAK_MOVING
+19:19:59 | ERROR    | TICK:0191 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:59 | DEBUG    | TICK:0191 | Team 1 has 5 tanks alive
+19:19:59 | DEBUG    | TICK:0191 | Team 2 has 5 tanks alive
+19:19:59 | DEBUG    | TICK:0191 | Team 1 has 5 tanks alive
+19:19:59 | DEBUG    | TICK:0191 | Team 2 has 5 tanks alive
+19:19:59 | DEBUG    | TICK:0192 | Tick 192 started
+19:19:59 | DEBUG    | TICK:0192 | Team 1 has 5 tanks alive
+19:19:59 | DEBUG    | TICK:0192 | Team 2 has 5 tanks alive
+19:19:59 | DEBUG    | TICK:0192 | Team 1 has 5 tanks alive
+19:19:59 | DEBUG    | TICK:0192 | Team 2 has 5 tanks alive
+19:19:59 | DEBUG    | TICK:0193 | Tick 193 started
+19:19:59 | ERROR    | TICK:0193 | Physics processing failed: TANK_TAK_MOVING
+19:19:59 | ERROR    | TICK:0193 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:19:59 | DEBUG    | TICK:0193 | Team 1 has 5 tanks alive
+19:19:59 | DEBUG    | TICK:0193 | Team 2 has 5 tanks alive
+19:19:59 | DEBUG    | TICK:0193 | Team 1 has 5 tanks alive
+19:19:59 | DEBUG    | TICK:0193 | Team 2 has 5 tanks alive
+19:19:59 | DEBUG    | TICK:0194 | Tick 194 started
+19:20:00 | ERROR    | TICK:0194 | Physics processing failed: TANK_TAK_MOVING
+19:20:00 | ERROR    | TICK:0194 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:20:00 | DEBUG    | TICK:0194 | Team 1 has 5 tanks alive
+19:20:00 | DEBUG    | TICK:0194 | Team 2 has 5 tanks alive
+19:20:00 | DEBUG    | TICK:0194 | Team 1 has 5 tanks alive
+19:20:00 | DEBUG    | TICK:0194 | Team 2 has 5 tanks alive
+19:20:00 | DEBUG    | TICK:0195 | Tick 195 started
+19:20:00 | ERROR    | TICK:0195 | Physics processing failed: TANK_TAK_MOVING
+19:20:00 | ERROR    | TICK:0195 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:20:00 | DEBUG    | TICK:0195 | Team 1 has 5 tanks alive
+19:20:00 | DEBUG    | TICK:0195 | Team 2 has 5 tanks alive
+19:20:00 | DEBUG    | TICK:0195 | Team 1 has 5 tanks alive
+19:20:00 | DEBUG    | TICK:0195 | Team 2 has 5 tanks alive
+19:20:00 | DEBUG    | TICK:0196 | Tick 196 started
+19:20:01 | ERROR    | TICK:0196 | Physics processing failed: TANK_TAK_MOVING
+19:20:01 | ERROR    | TICK:0196 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:20:01 | DEBUG    | TICK:0196 | Team 1 has 5 tanks alive
+19:20:01 | DEBUG    | TICK:0196 | Team 2 has 5 tanks alive
+19:20:01 | DEBUG    | TICK:0196 | Team 1 has 5 tanks alive
+19:20:01 | DEBUG    | TICK:0196 | Team 2 has 5 tanks alive
+19:20:01 | DEBUG    | TICK:0197 | Tick 197 started
+19:20:01 | ERROR    | TICK:0197 | Physics processing failed: TANK_TAK_MOVING
+19:20:01 | ERROR    | TICK:0197 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:20:01 | DEBUG    | TICK:0197 | Team 1 has 5 tanks alive
+19:20:01 | DEBUG    | TICK:0197 | Team 2 has 5 tanks alive
+19:20:01 | DEBUG    | TICK:0197 | Team 1 has 5 tanks alive
+19:20:01 | DEBUG    | TICK:0197 | Team 2 has 5 tanks alive
+19:20:01 | DEBUG    | TICK:0198 | Tick 198 started
+19:20:02 | ERROR    | TICK:0198 | Physics processing failed: TANK_TAK_MOVING
+19:20:02 | ERROR    | TICK:0198 | Traceback (most recent call last):
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\game_loop.py", line 983, in _process_physics
+    self.last_physics_results = process_physics_tick(
+  File "c:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\backend\engine\physics.py", line 699, in process_physics_tick
+    "type": CollisionType.TANK_TAK_MOVING.value,
+  File "C:\Users\jakub\anaconda3\envs\MSI_tank\lib\enum.py", line 437, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: TANK_TAK_MOVING. Did you mean: 'TANK_TANK_MOVING'?
+
+19:20:02 | DEBUG    | TICK:0198 | Team 1 has 5 tanks alive
+19:20:02 | DEBUG    | TICK:0198 | Team 2 has 5 tanks alive
+19:20:02 | DEBUG    | TICK:0198 | Team 1 has 5 tanks alive
+19:20:02 | DEBUG    | TICK:0198 | Team 2 has 5 tanks alive
+19:20:02 | DEBUG    | TICK:0199 | Tick 199 started
