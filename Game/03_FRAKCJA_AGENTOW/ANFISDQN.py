@@ -162,6 +162,7 @@ class ANFISDQN(nn.Module):
         mf_type: Type of membership function.
         input_min: Lower bound of normalized inputs.
         input_max: Upper bound of normalized inputs.
+        head_hidden_dim: Hidden size of post-fuzzy MLP head.
     """
     def __init__(
         self,
@@ -171,6 +172,7 @@ class ANFISDQN(nn.Module):
         mf_type: Literal["gaussian", "bell", "triangular"] = "triangular",
         input_min: float = 0.0,
         input_max: float = 1.0,
+        head_hidden_dim: int = 64,
     ):
         super().__init__()
 
@@ -180,6 +182,8 @@ class ANFISDQN(nn.Module):
             raise ValueError("n_rules must be > 0")
         if n_actions <= 0:
             raise ValueError("n_actions must be > 0")
+        if head_hidden_dim <= 0:
+            raise ValueError("head_hidden_dim must be > 0")
         if mf_type not in MEMBERSHIP_MAP:
             raise ValueError(f"Unsupported mf_type: {mf_type}")
 
@@ -201,6 +205,14 @@ class ANFISDQN(nn.Module):
         nn.init.zeros_(self.value_bias)
         nn.init.uniform_(self.adv_weights, -init_scale, init_scale)
         nn.init.zeros_(self.adv_bias)
+
+        # Post-fuzzy nonlinear head to increase model capacity.
+        self.head_fc1 = nn.Linear(n_actions, head_hidden_dim)
+        self.head_fc2 = nn.Linear(head_hidden_dim, n_actions)
+        nn.init.xavier_uniform_(self.head_fc1.weight)
+        nn.init.zeros_(self.head_fc1.bias)
+        nn.init.xavier_uniform_(self.head_fc2.weight)
+        nn.init.zeros_(self.head_fc2.bias)
 
     def _rule_strengths(self, x: torch.Tensor) -> torch.Tensor:
         # log_mu: [batch, rules, inputs]
@@ -227,7 +239,9 @@ class ANFISDQN(nn.Module):
         state_value = torch.einsum("br,brv->bv", strengths, value_outputs)  # [B, 1]
         advantages = torch.einsum("br,bra->ba", strengths, adv_outputs)  # [B, A]
         q_values = state_value + (advantages - advantages.mean(dim=1, keepdim=True))
-        return q_values * self.output_scale
+        q_values = q_values * self.output_scale
+        q_values = self.head_fc2(F.relu(self.head_fc1(q_values)))
+        return q_values
 
     def firing_strengths(self, x: torch.Tensor) -> torch.Tensor:
         """Return normalized rule activations [batch, n_rules]."""

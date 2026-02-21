@@ -143,6 +143,38 @@ def fetch_agent_status(port: int) -> Optional[Dict[str, Any]]:
         return None
 
 
+def update_agent_context(port: int, map_name: str) -> bool:
+    url = f"http://127.0.0.1:{port}/agent/context"
+    payload = json.dumps({"map_name": map_name}).encode("utf-8")
+    req = urllib.request.Request(
+        url=url,
+        data=payload,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=2.0) as resp:
+            return int(getattr(resp, "status", 200)) < 500
+    except Exception:
+        return False
+
+
+def set_dqn_map_context(
+    base_port: int,
+    learner_count: int,
+    selfplay_count: int,
+    map_name: str,
+) -> List[int]:
+    failed_ports: List[int] = []
+    dqn_count = max(0, int(learner_count)) + max(0, int(selfplay_count))
+    for idx in range(dqn_count):
+        port = base_port + idx
+        ok = update_agent_context(port=port, map_name=map_name)
+        if not ok:
+            failed_ports.append(port)
+    return failed_ports
+
+
 def fetch_avg_episode_reward(base_port: int, learner_count: int) -> Optional[float]:
     if learner_count <= 0:
         raise ValueError("learner_count must be > 0")
@@ -337,7 +369,7 @@ def resolve_selfplay_model_path(args: argparse.Namespace, model_path: Path, lear
     return learner_model_path(model_path, 0, max(1, learner_count))
 
 
-def launch_agents(args: argparse.Namespace, episode: int) -> Tuple[List[subprocess.Popen], Dict[str, Any]]:
+def launch_agents(args: argparse.Namespace, episode: int, map_name: str) -> Tuple[List[subprocess.Popen], Dict[str, Any]]:
     total_agents = args.team_size * 2
     learner_count = max(0, min(args.learning_agents, total_agents))
     non_learner_count = total_agents - learner_count
@@ -377,6 +409,8 @@ def launch_agents(args: argparse.Namespace, episode: int) -> Tuple[List[subproce
                 "--name",
                 f"Learner_{idx + 1}",
                 "--train",
+                "--map-name",
+                map_name,
                 "--model-path",
                 str(model_for_agent),
                 "--best-model-path",
@@ -428,6 +462,8 @@ def launch_agents(args: argparse.Namespace, episode: int) -> Tuple[List[subproce
                     str(port),
                     "--name",
                     f"SelfPlay_{idx + 1}",
+                    "--map-name",
+                    map_name,
                     "--model-path",
                     str(selfplay_model_path),
                     "--rules",
@@ -906,7 +942,7 @@ def main() -> int:
                     launch_info = None
 
                 print(f"[Episode {episode}/{args.episodes}] starting agents...")
-                processes, launch_info = launch_agents(args, episode)
+                processes, launch_info = launch_agents(args, episode, map_seed)
                 last_launch_episode = episode
 
                 print(
@@ -941,6 +977,19 @@ def main() -> int:
                     f"[Episode {episode}/{args.episodes}] reusing agents "
                     f"(learners={launch_info['learners']} selfplay={launch_info['selfplay']} baselines={launch_info['baselines']})"
                 )
+
+            if launch_info:
+                failed_ports = set_dqn_map_context(
+                    base_port=int(args.base_port),
+                    learner_count=int(launch_info.get("learners", 0)),
+                    selfplay_count=int(launch_info.get("selfplay", 0)),
+                    map_name=map_seed,
+                )
+                if failed_ports:
+                    print(
+                        f"[Episode {episode}/{args.episodes}] warning: failed to set map context on ports: "
+                        f"{', '.join(str(p) for p in failed_ports)}"
+                    )
 
             print(f"[Episode {episode}/{args.episodes}] running engine on map={map_seed}...")
             summary_before = latest_summary_file()

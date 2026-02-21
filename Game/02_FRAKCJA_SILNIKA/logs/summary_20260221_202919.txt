@@ -1,0 +1,21 @@
+
+=== GAME SUMMARY ===
+Session ID: 20260221_202919
+Total Game Time: 51.31 seconds
+Total Ticks: 4017
+Average Tick Time: 0.0128 seconds
+
+=== STATISTICS ===
+Tanks Spawned: 10
+Tanks Killed: 4
+Projectile Deaths: 1
+Non-Projectile Deaths: 3
+Shots Fired: 4
+Hits Landed: 3
+Hit Accuracy: 75.0%
+PowerUps Spawned: 25
+PowerUps Collected: 0
+Collisions: 0
+
+=== RESULTS ===
+{'session_id': 'cdd2d2a6', 'total_ticks': 4017, 'winner_team': None, 'reason': 'interrupted', 'sudden_death_reached': False, 'final_team_counts': {1: 5, 2: 1}, 'behavior': {'action_samples': 31609, 'move_commands': 27859, 'heading_turn_commands': 4541, 'barrel_turn_commands': 24593, 'fire_commands': 28, 'idle_commands': 3599, 'movement_attempts': 3881, 'movement_successes': 3881, 'move_command_ratio': 0.8814, 'heading_turn_ratio': 0.1437, 'barrel_turn_ratio': 0.778, 'idle_ratio': 0.1139, 'fire_ratio': 0.0009, 'movement_success_ratio': 1.0, 'mobility_label': 'mostly_moving'}}
