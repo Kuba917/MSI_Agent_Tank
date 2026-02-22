@@ -353,7 +353,7 @@ class StateEncoder:
             vision_range = float(my_status.get("_vision_range", 40.0) or 40.0)
             enemy_dist = self._clamp(float(distance_raw) / max(vision_range, 1.0), 0.0, 1.0)
 
-        target_angle = self._angle_to(my_pos, enemy_pos)
+        target_angle =  self._angle_to(my_pos, enemy_pos)
         enemy_hull_error = (self.normalize_angle(target_angle - my_heading) / 180.0 + 1.0) * 0.5
         enemy_barrel_error = (self.normalize_angle(target_angle - barrel_abs) / 180.0 + 1.0) * 0.5
 
@@ -473,15 +473,15 @@ class AgentConfig:
 
     gamma: float = 0.97
     actor_lr: float = 4e-5
-    critic_lr: float = 0.004
-    tau: float = 0.04
-    action_noise_start: float = 0.0003
+    critic_lr: float = 4e-4
+    tau: float = 0.05
+    action_noise_start: float = 0.15
     action_noise_end: float = 0.05
     action_noise_decay_steps: int = 16_177
     batch_size: int = 512
     replay_capacity: int = 50_000
     warmup_steps: int = 512
-    train_every: int = 2
+    train_every: int = 1
     target_sync_every: int = 1
 
     frame_skip: int = 1
@@ -840,7 +840,7 @@ class FuzzyDQNAgent:
         hp_delta = current_obs.hp_ratio - prev_obs.hp_ratio
 
         # Reward closing distance to visible enemy.
-        parts["approaching_enemy"] = - 2. * abs(current_obs.enemy_hull_error - 0.5)
+        parts["approaching_enemy"] = - 1.5 * abs(current_obs.enemy_hull_error - 0.5)
 
         if not current_obs.enemy_visible and np.isclose(hp_delta, 0.0):
             move = action.move_speed
@@ -851,7 +851,7 @@ class FuzzyDQNAgent:
             parts["danger_ahead"] = -0.3
 
         delta = action.heading_rotation_angle / MAX_HEADING_DELTA
-        parts["rotation"] = -0.5 * (delta) ** 2
+        parts["rotation"] = -0.75 * (delta) ** 2
 
         recent = self.pos_history[-200:] or [current_pos]
         prev = self.pos_history[-400:-200] or recent
@@ -868,8 +868,8 @@ class FuzzyDQNAgent:
         var_r = sum((p[0] - rc[0]) ** 2 + (p[1] - rc[1]) ** 2 for p in recent) / len(recent)
         var_p = sum((p[0] - pc[0]) ** 2 + (p[1] - pc[1]) ** 2 for p in prev) / len(prev)
 
-        parts["variance_recent"] = var_r / 50
-        parts["variance_prev"] = var_p / 50
+        parts["variance_recent"] = var_r / 25
+        parts["variance_prev"] = var_p / 25
         parts["centroid_bonus"] = parts["variance_recent"] + parts["variance_prev"]
 
         frontier_bonus = 0.0
@@ -1205,12 +1205,12 @@ class FuzzyDQNAgent:
             current_pos = (float(pos["x"]), float(pos["y"]))
             my_team = my_tank_status.get("_team")
             if self.enemy_target_pos is None and my_team in (1, 2):
-                self.enemy_target_pos = (150.0, 25.0) if my_team == 1 else (25.0, 40.0)
+                self.enemy_target_pos = (150.0, 25.0) if my_team == 1 else (40.0, 25.0)
             if self.enemy_target_pos is None:
                 raise ValueError("enemy_target_pos is None; spawn point not initialized")
             seen_tanks = sensor_data.get("seen_tanks", [])
             nearest_enemy = self.encoder._nearest_enemy(
-                {"x": current_pos[0], "y": current_pos[1]},
+                {"y": current_pos[0], "x": current_pos[1]},
                 my_team,
                 seen_tanks,
             )
@@ -1673,16 +1673,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--name", type=str, default=None)
     parser.add_argument("--train", action="store_true", help="Enable online learning")
 
-    parser.add_argument("--model-path", type=str, default=DEFAULT_MODEL_PATH)
-    parser.add_argument("--best-model-path", type=str, default=None)
+    parser.add_argument("--model-path", type=str, default='./fuzzy_dqn_model.pt')
+    parser.add_argument("--best-model-path", type=str, default='./fuzzy_dqn_model.pt')
     parser.add_argument("--rules", type=int, default=32)
-    parser.add_argument("--mf-type", choices=["gaussian", "bell", "triangular"], default="triangular")
+    parser.add_argument("--mf-type", choices=["gaussian", "bell", "triangular"], default="gaussian")
     parser.add_argument("--frame-skip", type=int, default=1)
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--save-every-games", type=int, default=1)
     parser.add_argument("--mock-barrel-model-path", type=str, default="./anfis_barrel_model.pt")
     parser.add_argument("--mock-shoot-model-path", type=str, default="./anfis_shoot_model.pt")
-    parser.add_argument("--warmup-steps", type=int, default=2000)
+    parser.add_argument("--warmup-steps", type=int, default=100)
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--train-every", type=int, default=2)
     parser.add_argument("--target-sync-every", type=int, default=500)
