@@ -16,6 +16,7 @@ try:
 except ImportError:
     Experiment = None
 
+import matplotlib.pyplot as plt
 import argparse
 import copy
 import math
@@ -28,6 +29,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 from fastapi import Body, FastAPI
 from pydantic import BaseModel
@@ -51,7 +53,7 @@ DEFAULT_MODEL_PATH = os.path.join(current_dir, "fuzzy_dqn_model_agent1_final.pt"
 MAP_WIDTH = 200.0
 MAP_HEIGHT = 200.0
 COMET_LOG_EVERY = 20
-ACTION_DIM = 4
+ACTION_DIM = 2
 # TODO: Scale actions using per-tank limits from my_tank_status (_top_speed, _heading_spin_rate, _barrel_spin_rate)
 MAX_MOVE_SPEED = 5.0
 MAX_HEADING_DELTA = 5.0
@@ -134,6 +136,7 @@ class Observation:
     enemy_visible: bool
     enemy_dist: float
     enemy_barrel_error: float
+    shot_blocked: bool
     enemy_hull_error: float
     ally_fire_risk: bool
     obstacle_ahead: bool
@@ -216,6 +219,34 @@ class StateEncoder:
                 return True
         return False
 
+    def _friendly_blocks_shot(
+        self,
+        my_pos: Dict[str, float],
+        my_team: Optional[int],
+        barrel_abs: float,
+        seen_tanks: List[Dict[str, Any]],
+        target_distance: float,
+        max_range: float = 25.0,
+        half_angle: float = 5.0,
+    ) -> bool:
+        max_dist = min(max_range, max(target_distance, 0.0))
+        for tank in seen_tanks:
+            if tank.get("team") != my_team:
+                continue
+            ally_pos = tank.get("position")
+            if not ally_pos:
+                raise ValueError(f"Missing ally position in sensor data: {tank}")
+            ally_dist = self._distance(my_pos, ally_pos)
+            if ally_dist >= target_distance:
+                continue
+            if ally_dist > max_dist:
+                continue
+            angle = self._angle_to(my_pos, ally_pos)
+            rel = abs(self.normalize_angle(angle - barrel_abs))
+            if rel <= half_angle:
+                return True
+        return False
+
     def _has_object_ahead(
         self,
         my_pos: Dict[str, float],
@@ -240,11 +271,36 @@ class StateEncoder:
 
         return False
 
+    def _shot_blocked_by_obstacle(
+        self,
+        my_pos: Dict[str, float],
+        barrel_abs: float,
+        seen_obstacles: List[Dict[str, Any]],
+        target_distance: float,
+        # TODO: use loaded-ammo range from my_status instead of one shared default.
+        max_range: float = 25.0,
+        half_angle: float = 5.0,
+    ) -> bool:
+        max_dist = min(max_range, max(target_distance, 0.0))
+        for item in seen_obstacles:
+            pos = item.get("position")
+            if not pos:
+                raise ValueError(f"Missing position for obstacle in sensor data: {item}")
+            distance = self._distance(my_pos, pos)
+            if distance > max_dist:
+                continue
+            angle = self._angle_to(my_pos, pos)
+            rel = abs(self.normalize_angle(angle - barrel_abs))
+            if rel <= half_angle:
+                return True
+        return False
+
     def encode(
         self,
         my_status: Dict[str, Any],
         sensor_data: Dict[str, Any],
         enemies_remaining: int,
+        enemy_target_pos: Optional[Tuple[float, float]] = None,
     ) -> Observation:
         my_pos = my_status.get("position", {"x": 0.0, "y": 0.0})
         my_team = my_status.get("_team")
@@ -278,23 +334,53 @@ class StateEncoder:
         enemy_dist = 1.0
         enemy_hull_error = 0.5
         enemy_barrel_error = 0.5
+        enemy_distance_raw: Optional[float] = None
 
+        enemy_pos = None
         if nearest_enemy is not None:
             enemy_pos = nearest_enemy.get("position", {"x": 0.0, "y": 0.0})
             distance_raw = nearest_enemy.get("distance")
             if distance_raw is None:
                 raise ValueError(f"Missing enemy distance in sensor data: {nearest_enemy}")
+            enemy_distance_raw = float(distance_raw)
 
-            vision_range = float(my_status.get("_vision_range", 25.0) or 25.0)
+            vision_range = float(my_status.get("_vision_range", 40.0) or 40.0)
             enemy_dist = self._clamp(float(distance_raw) / max(vision_range, 1.0), 0.0, 1.0)
 
-            target_angle = self._angle_to(my_pos, enemy_pos)
-            enemy_hull_error = (self.normalize_angle(target_angle - my_heading) / 180.0 + 1.0) * 0.5
-            enemy_barrel_error = (self.normalize_angle(target_angle - barrel_abs) / 180.0 + 1.0) * 0.5
+        else:
+            enemy_pos = {"x": float(enemy_target_pos[0]), "y": float(enemy_target_pos[1])}
+            distance_raw = self._distance(my_pos, enemy_pos)
+            vision_range = float(my_status.get("_vision_range", 40.0) or 40.0)
+            enemy_dist = self._clamp(float(distance_raw) / max(vision_range, 1.0), 0.0, 1.0)
+
+        target_angle =  self._angle_to(my_pos, enemy_pos)
+        enemy_hull_error = (self.normalize_angle(target_angle - my_heading) / 180.0 + 1.0) * 0.5
+        enemy_barrel_error = (self.normalize_angle(target_angle - barrel_abs) / 180.0 + 1.0) * 0.5
 
         ally_fire_risk = self._ally_in_fire_line(my_pos, my_team, barrel_abs, seen_tanks)
 
         seen_obstacles = sensor_data.get("seen_obstacles", [])
+        shot_blocked = False
+        if enemy_visible and enemy_distance_raw is not None:
+            obstacle_blocks = self._shot_blocked_by_obstacle(
+                my_pos,
+                barrel_abs,
+                seen_obstacles,
+                target_distance=enemy_distance_raw,
+                # TODO: pass runtime ammo-dependent range here.
+                max_range=25.0,
+                half_angle=5.0,
+            )
+            ally_blocks = self._friendly_blocks_shot(
+                my_pos,
+                my_team,
+                barrel_abs,
+                seen_tanks,
+                target_distance=enemy_distance_raw,
+                max_range=25.0,
+                half_angle=5.0,
+            )
+            shot_blocked = obstacle_blocks or ally_blocks
         obstacle_ahead = self._has_object_ahead(
             my_pos,
             my_heading,
@@ -326,7 +412,7 @@ class StateEncoder:
                 key=lambda p: self._distance(my_pos, p.get("position", {"x": 0.0, "y": 0.0})),
             )
             dist_raw = self._distance(my_pos, nearest_powerup.get("position", {"x": 0.0, "y": 0.0}))
-            vision_range = float(my_status.get("_vision_range", 25.0) or 25.0)
+            vision_range = float(my_status.get("_vision_range", 40.0) or 40.0)
             powerup_dist = self._clamp(dist_raw / max(vision_range, 1.0), 0.0, 1.0)
 
         top_speed = float(my_status.get("_top_speed", 5.0) or 5.0)
@@ -365,6 +451,7 @@ class StateEncoder:
             enemy_visible=enemy_visible,
             enemy_dist=enemy_dist,
             enemy_barrel_error=enemy_barrel_error,
+            shot_blocked=shot_blocked,
             enemy_hull_error=enemy_hull_error,
             ally_fire_risk=ally_fire_risk,
             obstacle_ahead=obstacle_ahead,
@@ -386,15 +473,15 @@ class AgentConfig:
 
     gamma: float = 0.97
     actor_lr: float = 4e-5
-    critic_lr: float = 0.004
-    tau: float = 0.04
-    action_noise_start: float = 0.0003
+    critic_lr: float = 4e-4
+    tau: float = 0.05
+    action_noise_start: float = 0.15
     action_noise_end: float = 0.05
     action_noise_decay_steps: int = 16_177
     batch_size: int = 512
     replay_capacity: int = 50_000
     warmup_steps: int = 512
-    train_every: int = 2
+    train_every: int = 1
     target_sync_every: int = 1
 
     frame_skip: int = 1
@@ -402,7 +489,10 @@ class AgentConfig:
 
     model_path: str = DEFAULT_MODEL_PATH
     best_model_path: Optional[str] = None
+    mock_barrel_model_path: Optional[str] = None
+    mock_shoot_model_path: Optional[str] = None
     seed: int = 1
+    map_name: str = ""
 
 
 class FuzzyDQNAgent:
@@ -410,6 +500,7 @@ class FuzzyDQNAgent:
         self.name = name
         self.config = config
         self.training_enabled = training_enabled
+        self.map_name = str(config.map_name or "")
 
         random.seed(config.seed)
         np.random.seed(config.seed)
@@ -435,6 +526,19 @@ class FuzzyDQNAgent:
         ).to(self.device)
         self.critic_target = copy.deepcopy(self.critic).to(self.device)
         self.critic_target.eval()
+
+        # Optional mock shooting models.
+        self.mock_barrel_model: Optional[ANFISDQN] = None
+        self.mock_shoot_model: Optional[nn.Module] = None
+        if (config.mock_barrel_model_path is None) != (config.mock_shoot_model_path is None):
+            raise ValueError("Both mock model paths must be provided (barrel and shoot).")
+        if config.mock_barrel_model_path is not None:
+            self.mock_barrel_model = ANFISDQN(n_inputs=4, n_rules=16, n_actions=1).to(self.device)
+            self.mock_barrel_model.load_state_dict(torch.load(config.mock_barrel_model_path, map_location=self.device))
+            self.mock_barrel_model.eval()
+            self.mock_shoot_model = ANFISDQN(n_inputs=4, n_rules=16, n_actions=1).to(self.device)
+            self.mock_shoot_model.load_state_dict(torch.load(config.mock_shoot_model_path, map_location=self.device))
+            self.mock_shoot_model.eval()
 
         self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=config.actor_lr)
         self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), lr=config.critic_lr)
@@ -479,9 +583,16 @@ class FuzzyDQNAgent:
         self.trace_shots: List[Tuple[float, float, float]] = []
         self.trace_allies: List[Tuple[float, float]] = []
         self.trace_enemies: List[Tuple[float, float]] = []
+        self.trace_labels: List[str] = []
         self.pos_history: List[Tuple[float, float]] = []
         self.trace_actor_raw: List[np.ndarray] = []
         self.last_actor_raw: Optional[np.ndarray] = None
+        self.trace_mock_actions: List[np.ndarray] = []
+        self.last_mock_action: Optional[np.ndarray] = None
+        self.trace_damage_taken: List[float] = []
+        self.trace_hit_target: List[float] = []
+        self.trace_friendly_hit: List[float] = []
+        self.trace_should_fire: List[float] = []
         self.episode_reward_total = 0.0
         self.episode_reward_parts: Dict[str, float] = {}
         self.episode_reward_parts_steps = 0
@@ -490,6 +601,7 @@ class FuzzyDQNAgent:
         self.frontier_min_y: Optional[float] = None
         self.frontier_max_y: Optional[float] = None
         self.reward_parts_history: Dict[str, List[float]] = {}
+        self.enemy_target_pos: Optional[Tuple[float, float]] = None
 
     def _init_comet(self) -> None:
         try:
@@ -516,9 +628,7 @@ class FuzzyDQNAgent:
     def _scale_action_tensor(self, action: torch.Tensor) -> torch.Tensor:
         move = action[:, 0] * MAX_MOVE_SPEED
         heading = action[:, 1] * MAX_HEADING_DELTA
-        barrel = action[:, 2] * MAX_BARREL_DELTA
-        fire = (action[:, 3] + 1.0) * 0.5
-        return torch.stack([move, heading, barrel, fire], dim=1)
+        return torch.stack([move, heading], dim=1)
 
     def _current_action_noise_std(self) -> float:
         decay_steps = max(1, int(self.config.action_noise_decay_steps))
@@ -554,6 +664,31 @@ class FuzzyDQNAgent:
             counts[key] = max(0, count)
         return counts
 
+    @staticmethod
+    def _safe_nonnegative_float(value: Any, default: float = 0.0) -> float:
+        try:
+            parsed = float(value)
+        except (TypeError, ValueError):
+            return float(default)
+        if not math.isfinite(parsed):
+            return float(default)
+        return float(max(0.0, parsed))
+
+    @staticmethod
+    def _safe_bool(value: Any, default: bool = False) -> bool:
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, (int, float)):
+            return bool(value)
+        if isinstance(value, str):
+            v = value.strip().lower()
+            if v in {"1", "true", "t", "yes", "y"}:
+                return True
+            if v in {"0", "false", "f", "no", "n"}:
+                return False
+            return default
+        return default
+
     def _select_ammo_for_action(
         self,
         my_status: Dict[str, Any],
@@ -567,7 +702,7 @@ class FuzzyDQNAgent:
         current = str(my_status.get("ammo_loaded") or "").upper()
 
         if obs.enemy_visible:
-            vision_range = float(my_status.get("_vision_range", 25.0) or 25.0)
+            vision_range = float(my_status.get("_vision_range", 40.0) or 40.0)
             enemy_distance = obs.enemy_dist * max(vision_range, 1.0)
 
             if enemy_distance > 50.0:
@@ -602,9 +737,34 @@ class FuzzyDQNAgent:
     ) -> ActionCommand:
         move_speed = float(action_vec[0])
         heading_rotation = float(action_vec[1])
-        barrel_rotation = float(action_vec[2])
-        fire_prob = float(action_vec[3])
-        should_fire = fire_prob > 0.5
+        # Actor no longer controls barrel rotation or firing directly.
+        if self.mock_barrel_model is None or self.mock_shoot_model is None:
+            raise ValueError("Mock barrel/shoot models are required to control barrel and fire.")
+        barrel_rotation = 0.0
+        should_fire = False
+
+        if self.mock_barrel_model is not None or self.mock_shoot_model is not None:
+            mock_feats = np.array(
+                [
+                    1.0 if obs.enemy_visible else 0.0,
+                    float(obs.enemy_dist),
+                    float(obs.enemy_barrel_error),
+                    1.0 if obs.shot_blocked else 0.0,
+                ],
+                dtype=np.float32,
+            )
+            mock_t = torch.from_numpy(mock_feats).unsqueeze(0).to(self.device)
+            with torch.no_grad():
+                if self.mock_barrel_model is None:
+                    raise ValueError('No mock barrel model')
+                barrel_norm = float(self.mock_barrel_model(mock_t).squeeze(0).squeeze(0).cpu().item())
+                barrel_rotation = barrel_norm * MAX_BARREL_DELTA
+                if self.mock_shoot_model is None:
+                    raise ValueError('No shooting model')
+                shoot_logit = float(self.mock_shoot_model(mock_t).squeeze(0).squeeze(0).cpu().item())
+                shoot_val = 1.0 / (1.0 + math.exp(-shoot_logit))
+                should_fire = shoot_val > 0.5
+                self.last_mock_action = np.array([barrel_norm, shoot_val], dtype=np.float32)
 
         action_stub = ActionSpec(
             name="ddpg",
@@ -675,24 +835,41 @@ class FuzzyDQNAgent:
             # barrel_rotation_angle: float = 0.0
             # heading_rotation_angle: float = 0.0
             # move_speed: float = 0.0
-            # ammo_to_load: Optional[str] = None
             # should_fire: bool = False
 
+        hp_delta = current_obs.hp_ratio - prev_obs.hp_ratio
+
+        # Reward closing distance to visible enemy.
+        parts["approaching_enemy"] = - 1.5 * abs(current_obs.enemy_hull_error - 0.5)
+
+        if not current_obs.enemy_visible and np.isclose(hp_delta, 0.0):
+            move = action.move_speed
+            parts["retreating"] = move / 5 if move < 0.0 else 0.0
+        if not np.isclose(hp_delta, 0.0):
+            parts["hp_loss"] = hp_delta * 5
+        if not prev_obs.danger_ahead and current_obs.danger_ahead:
+            parts["danger_ahead"] = -0.3
+
         delta = action.heading_rotation_angle / MAX_HEADING_DELTA
-        if abs(delta) > 1:
-            raise ValueError("action.heading_rotation_angle not normalized in _compute_step_reward")
-        parts["rotation"] = -(delta) ** 2 / 10
+        parts["rotation"] = -0.75 * (delta) ** 2
 
         recent = self.pos_history[-200:] or [current_pos]
         prev = self.pos_history[-400:-200] or recent
-        rcx = sum(p[0] for p in recent) / float(len(recent))
-        rcy = sum(p[1] for p in recent) / float(len(recent))
-        pcx = sum(p[0] for p in prev) / float(len(prev))
-        pcy = sum(p[1] for p in prev) / float(len(prev))
-        var_r = sum((p[0] - rcx) ** 2 + (p[1] - rcy) ** 2 for p in recent) / float(len(recent))
-        var_p = sum((p[0] - pcx) ** 2 + (p[1] - pcy) ** 2 for p in prev) / float(len(prev))
-        parts["variance_recent"] = var_r / 50
-        parts["variance_prev"] = var_p / 50
+        spawn = self.pos_history[0] if self.pos_history else current_pos
+        
+        centroid = lambda pts: (sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts))
+        
+        if current_tick < 200:
+            rc = pc = spawn
+        else:
+            rc = centroid(recent)
+            pc = spawn if current_tick < 400 else centroid(prev)
+
+        var_r = sum((p[0] - rc[0]) ** 2 + (p[1] - rc[1]) ** 2 for p in recent) / len(recent)
+        var_p = sum((p[0] - pc[0]) ** 2 + (p[1] - pc[1]) ** 2 for p in prev) / len(prev)
+
+        parts["variance_recent"] = var_r / 25
+        parts["variance_prev"] = var_p / 25
         parts["centroid_bonus"] = parts["variance_recent"] + parts["variance_prev"]
 
         frontier_bonus = 0.0
@@ -726,15 +903,9 @@ class FuzzyDQNAgent:
 
 
     def _maybe_train(self) -> None:
-        # if not self.training_enabled:
-        #     return
-
         # min_required = max(self.config.batch_size, self.config.warmup_steps)
         if len(self.replay) < self.config.batch_size:
             return
-
-        # if self.total_steps % self.config.train_every != 0:
-        #     return
 
         states, actions, rewards, next_states, dones = self.replay.sample(
             self.config.batch_size,
@@ -867,9 +1038,16 @@ class FuzzyDQNAgent:
         self.trace_shots.clear()
         self.trace_allies.clear()
         self.trace_enemies.clear()
+        self.trace_labels.clear()
         self.pos_history.clear()
         self.trace_actor_raw.clear()
         self.last_actor_raw = None
+        self.trace_mock_actions.clear()
+        self.last_mock_action = None
+        self.trace_damage_taken.clear()
+        self.trace_hit_target.clear()
+        self.trace_friendly_hit.clear()
+        self.trace_should_fire.clear()
         self.episode_reward_total = 0.0
         self.episode_reward_parts = {}
         self.episode_reward_parts_steps = 0
@@ -877,6 +1055,7 @@ class FuzzyDQNAgent:
         self.frontier_max_x = None
         self.frontier_min_y = None
         self.frontier_max_y = None
+        self.enemy_target_pos = None
 
     def _record_trace(
         self,
@@ -884,6 +1063,9 @@ class FuzzyDQNAgent:
         sensor_data: Dict[str, Any],
         current_obs: Observation,
         action: ActionSpec,
+        damage_taken: float,
+        hit_target: bool,
+        friendly_hit: bool,
     ) -> None:
         pos = my_status.get("position")
         if not pos or "x" not in pos or "y" not in pos:
@@ -897,6 +1079,14 @@ class FuzzyDQNAgent:
             raise ValueError(f"Plotting non-finite hp={hp}")
         self.trace_positions.append((x, y))
         self.trace_hp.append(hp)
+        self.trace_labels.append(
+            f"actor: v={action.move_speed:.2f} h={action.heading_rotation_angle:.2f} "
+            f"mock: b={action.barrel_rotation_angle:.2f} f={int(action.should_fire)}"
+        )
+        self.trace_damage_taken.append(float(max(0.0, damage_taken)))
+        self.trace_hit_target.append(1.0 if hit_target else 0.0)
+        self.trace_friendly_hit.append(1.0 if friendly_hit else 0.0)
+        self.trace_should_fire.append(1.0 if action.should_fire else 0.0)
 
         seen_tanks = sensor_data.get("seen_tanks", [])
         my_team = my_status.get("_team")
@@ -938,7 +1128,7 @@ class FuzzyDQNAgent:
 
         xs = [p[0] for p in self.trace_positions]
         ys = [p[1] for p in self.trace_positions]
-        ax.scatter(xs, ys, c=hps, cmap="RdYlGn", s=10, alpha=0.7)
+        sc_self = ax.scatter(xs, ys, c=hps, cmap="RdYlGn", s=10, alpha=0.7, label="self")
 
         if self.trace_allies:
             ax.scatter(
@@ -949,6 +1139,8 @@ class FuzzyDQNAgent:
                 alpha=0.6,
                 label="allies",
             )
+            ax_x, ax_y = self.trace_allies[0]
+            ax.text(ax_x, ax_y, "A", color="blue", fontsize=7, ha="left", va="bottom")
         if self.trace_enemies:
             ax.scatter(
                 [p[0] for p in self.trace_enemies],
@@ -958,10 +1150,12 @@ class FuzzyDQNAgent:
                 alpha=0.6,
                 label="enemies",
             )
+            ex, ey = self.trace_enemies[0]
+            ax.text(ex, ey, "E", color="black", fontsize=7, ha="left", va="bottom")
         if self.trace_shots:
             for sx, sy, ang in self.trace_shots:
-                dx = math.cos(math.radians(ang)) * 10.0
-                dy = math.sin(math.radians(ang)) * 10.0
+                dx = math.cos(math.radians(ang)) * 30.0
+                dy = math.sin(math.radians(ang)) * 30.0
                 ax.arrow(
                     sx,
                     sy,
@@ -978,7 +1172,12 @@ class FuzzyDQNAgent:
         ax.set_xlim(0.0, MAP_WIDTH)
         ax.set_ylim(0.0, MAP_HEIGHT)
         ax.autoscale(False)
-        ax.set_title(f"{self.name} trajectory (game {self.games_played})")
+        ax.set_title(f"{self.name} trajectory (game {self.games_played}) | mock barrel+shoot")
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
+        ax.legend(loc="upper right", frameon=True, fontsize=8)
+        cbar = fig.colorbar(sc_self, ax=ax, fraction=0.046, pad=0.04)
+        cbar.set_label("hp (normalized)")
         ax.grid(True, alpha=0.3)
 
         out_dir = os.path.join(current_dir, "training_reports")
@@ -993,6 +1192,9 @@ class FuzzyDQNAgent:
         my_tank_status: Dict[str, Any],
         sensor_data: Dict[str, Any],
         enemies_remaining: int,
+        damage_taken: float = 0.0,
+        hit_target: bool = False,
+        friendly_hit: bool = False,
     ) -> ActionCommand:
         if not self.lock.acquire(blocking=False):
             raise RuntimeError("Concurrent get_action call detected")
@@ -1001,7 +1203,31 @@ class FuzzyDQNAgent:
             if not pos or "x" not in pos or "y" not in pos:
                 raise ValueError(f"Missing position in my_tank_status: {pos}")
             current_pos = (float(pos["x"]), float(pos["y"]))
-            current_obs = self.encoder.encode(my_tank_status, sensor_data, enemies_remaining)
+            my_team = my_tank_status.get("_team")
+            if self.enemy_target_pos is None and my_team in (1, 2):
+                self.enemy_target_pos = (150.0, 25.0) if my_team == 1 else (40.0, 25.0)
+            if self.enemy_target_pos is None:
+                raise ValueError("enemy_target_pos is None; spawn point not initialized")
+            seen_tanks = sensor_data.get("seen_tanks", [])
+            nearest_enemy = self.encoder._nearest_enemy(
+                {"y": current_pos[0], "x": current_pos[1]},
+                my_team,
+                seen_tanks,
+            )
+            if nearest_enemy is not None:
+                epos = nearest_enemy.get("position")
+                if not epos or "x" not in epos or "y" not in epos:
+                    raise ValueError(f"Missing enemy position in nearest_enemy: {nearest_enemy}")
+                self.enemy_target_pos = (float(epos["x"]), float(epos["y"]))
+            current_obs = self.encoder.encode(
+                my_tank_status,
+                sensor_data,
+                enemies_remaining,
+                enemy_target_pos=self.enemy_target_pos,
+            )
+            damage_taken_value = self._safe_nonnegative_float(damage_taken, default=0.0)
+            hit_target_value = self._safe_bool(hit_target, default=False)
+            friendly_hit_value = self._safe_bool(friendly_hit, default=False)
             x_norm = current_pos[0] / MAP_WIDTH
             y_norm = current_pos[1] / MAP_HEIGHT
 
@@ -1023,7 +1249,6 @@ class FuzzyDQNAgent:
             current_obs.vector = np.concatenate(
                 [current_obs.vector, np.array([x_norm, y_norm, dx_recent, dy_recent, dx_prev, dy_prev], dtype=np.float32)]
             )
-            # 19 - 22 
             self.pos_history.append(current_pos)
 
             if (
@@ -1036,6 +1261,9 @@ class FuzzyDQNAgent:
                     sensor_data,
                     current_obs,
                     ActionSpec("ddpg", self.last_command.move_speed, self.last_command.heading_rotation_angle, self.last_command.barrel_rotation_angle, self.last_command.should_fire),
+                    damage_taken=damage_taken_value,
+                    hit_target=hit_target_value,
+                    friendly_hit=friendly_hit_value,
                 )
                 return self.last_command
 
@@ -1080,9 +1308,19 @@ class FuzzyDQNAgent:
             self.prev_enemies_remaining = enemies_remaining
             self.total_steps += 1
             self.last_status = my_tank_status
-            self._record_trace(my_tank_status, sensor_data, current_obs, ActionSpec("ddpg", action_vec[0], action_vec[1], action_vec[2], command.should_fire))
+            self._record_trace(
+                my_tank_status,
+                sensor_data,
+                current_obs,
+                ActionSpec("ddpg", action_vec[0], action_vec[1], command.barrel_rotation_angle, command.should_fire),
+                damage_taken=damage_taken_value,
+                hit_target=hit_target_value,
+                friendly_hit=friendly_hit_value,
+            )
             if self.last_actor_raw is not None:
                 self.trace_actor_raw.append(self.last_actor_raw.copy())
+            if self.last_mock_action is not None:
+                self.trace_mock_actions.append(self.last_mock_action.copy())
 
             return command
         finally:
@@ -1172,6 +1410,7 @@ class FuzzyDQNAgent:
 
             self._save_episode_plot()
             self._save_actor_raw_plot()
+            self._save_combat_feedback_plot()
             steps = max(1, self.episode_reward_parts_steps)
             episode_parts = {k: v / steps for k, v in self.episode_reward_parts.items()}
             episode_parts["total_reward_avg"] = self.episode_reward_total / steps
@@ -1229,13 +1468,37 @@ class FuzzyDQNAgent:
         print(f"[{self.name}] reward plot saved: {out_path}{suffix}")
 
     def _save_actor_raw_plot(self) -> None:
-        if not self.trace_actor_raw:
+        if not self.trace_actor_raw and not self.trace_mock_actions:
             return
-        import matplotlib.pyplot as plt
-        data = np.stack(self.trace_actor_raw, axis=0)
         fig, ax = plt.subplots(figsize=(10, 5))
-        for idx in range(data.shape[1]):
-            ax.plot(data[:, idx], label=f"raw_{idx}")
+        window = 5
+        if self.trace_actor_raw:
+            data = np.stack(self.trace_actor_raw, axis=0)
+            labels = [
+                "actor_move_raw",
+                "actor_heading_raw",
+            ]
+            for idx in range(data.shape[1]):
+                label = labels[idx] if idx < len(labels) else f"raw_{idx}"
+                series = data[:, idx]
+                if len(series) >= window:
+                    kernel = np.ones(window, dtype=np.float32) / float(window)
+                    series = np.convolve(series, kernel, mode="same")
+                    label = f"{label}"
+                ax.plot(series, label=label)
+        if self.trace_mock_actions:
+            mock_data = np.stack(self.trace_mock_actions, axis=0)
+            mock_labels = [
+                "mock barrel norm",
+                "mock shoot val",
+            ]
+            for idx in range(mock_data.shape[1]):
+                label = mock_labels[idx] if idx < len(mock_labels) else f"mock_{idx}"
+                series = mock_data[:, idx]
+                if len(series) >= window:
+                    kernel = np.ones(window, dtype=np.float32) / float(window)
+                    series = np.convolve(series, kernel, mode="same")
+                ax.plot(series, label=f'{label}')
         ax.set_title(f"{self.name} actor raw outputs (game {self.games_played})")
         ax.set_xlabel("step")
         ax.set_ylabel("raw value")
@@ -1248,10 +1511,85 @@ class FuzzyDQNAgent:
         plt.close(fig)
         print(f"[{self.name}] actor raw plot saved: {out_path}")
 
+    def _save_combat_feedback_plot(self) -> None:
+        if (
+            not self.trace_damage_taken
+            and not self.trace_hit_target
+            and not self.trace_friendly_hit
+            and not self.trace_should_fire
+        ):
+            return
+
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
+
+        if self.trace_damage_taken:
+            damage = np.array(self.trace_damage_taken, dtype=np.float32)
+            ax1.plot(damage, label="damage_taken_step", linewidth=1.2)
+            ax1.plot(np.cumsum(damage), label="damage_taken_cum", linewidth=1.0)
+        ax1.set_ylabel("Damage")
+        ax1.grid(True, alpha=0.3)
+        ax1.legend(loc="upper right", fontsize=8)
+
+        should_fire = np.array(self.trace_should_fire, dtype=np.int32) if self.trace_should_fire else np.zeros((0,), dtype=np.int32)
+        hit = np.array(self.trace_hit_target, dtype=np.int32) if self.trace_hit_target else np.zeros((0,), dtype=np.int32)
+        friendly = np.array(self.trace_friendly_hit, dtype=np.int32) if self.trace_friendly_hit else np.zeros((0,), dtype=np.int32)
+        n = min(len(should_fire), len(hit), len(friendly))
+        if n == 0:
+            cm = np.zeros((2, 3), dtype=np.int32)
+        else:
+            sf = should_fire[:n]
+            ht = hit[:n]
+            fh = friendly[:n]
+            # Rows: shot command (no/yes), Cols: outcome (miss/no-hit, enemy hit, friendly hit).
+            cm = np.array(
+                [
+                    [
+                        int(np.sum((sf == 0) & (ht == 0) & (fh == 0))),
+                        int(np.sum((sf == 0) & (ht == 1) & (fh == 0))),
+                        int(np.sum((sf == 0) & (fh == 1))),
+                    ],
+                    [
+                        int(np.sum((sf == 1) & (ht == 0) & (fh == 0))),
+                        int(np.sum((sf == 1) & (ht == 1) & (fh == 0))),
+                        int(np.sum((sf == 1) & (fh == 1))),
+                    ],
+                ],
+                dtype=np.int32,
+            )
+
+        im = ax2.imshow(cm, cmap="Blues")
+        ax2.set_xticks([0, 1, 2])
+        ax2.set_xticklabels(["Miss/NoHit", "Enemy Hit", "Friendly Hit"])
+        ax2.set_yticks([0, 1])
+        ax2.set_yticklabels(["No Fire", "Fire"])
+        ax2.set_xlabel("Actual Outcome")
+        ax2.set_ylabel("Shot Command")
+        for i in range(2):
+            for j in range(3):
+                ax2.text(j, i, str(cm[i, j]), ha="center", va="center", color="black")
+        fired_enemy_hits = int(cm[1, 1])
+        fired_friendly_hits = int(cm[1, 2])
+        fired_misses = int(cm[1, 0])
+        ax2.set_title(
+            "Shooting Confusion Matrix | "
+            f"enemy_hit={fired_enemy_hits}, friendly_hit={fired_friendly_hits}, miss={fired_misses}"
+        )
+        fig.colorbar(im, ax=ax2, fraction=0.046, pad=0.04)
+
+        fig.suptitle(f"{self.name} combat feedback (game {self.games_played})")
+        fig.tight_layout(rect=(0.0, 0.0, 1.0, 0.96))
+        out_dir = os.path.join(current_dir, "training_reports")
+        os.makedirs(out_dir, exist_ok=True)
+        out_path = os.path.join(out_dir, f"combat_feedback_{self.games_played}_agent_{self.name}.png")
+        fig.savefig(out_path, dpi=150, bbox_inches="tight")
+        plt.close(fig)
+        print(f"[{self.name}] combat feedback plot saved: {out_path}")
+
     def status(self) -> Dict[str, Any]:
         return {
             "name": self.name,
             "training_enabled": self.training_enabled,
+            "map_name": self.map_name,
             "steps": self.total_steps,
             "train_steps": self.train_steps,
             "games_played": self.games_played,
@@ -1292,12 +1630,27 @@ async def root() -> Dict[str, Any]:
 
 @app.post("/agent/action", response_model=ActionCommand)
 async def get_action(payload: Dict[str, Any] = Body(...)) -> ActionCommand:
+    damage_taken = FuzzyDQNAgent._safe_nonnegative_float(payload.get("damage_taken", 0.0), default=0.0)
+    hit_target = FuzzyDQNAgent._safe_bool(payload.get("hit_target", False), default=False)
+    friendly_hit = FuzzyDQNAgent._safe_bool(payload.get("friendly_hit", False), default=False)
     return _get_agent().get_action(
         current_tick=int(payload.get("current_tick", 0) or 0),
         my_tank_status=payload.get("my_tank_status", {}),
         sensor_data=payload.get("sensor_data", {}),
         enemies_remaining=int(payload.get("enemies_remaining", 0) or 0),
+        damage_taken=damage_taken,
+        hit_target=hit_target,
+        friendly_hit=friendly_hit,
     )
+
+
+@app.post("/agent/context")
+async def update_context(payload: Dict[str, Any] = Body(...)) -> Dict[str, Any]:
+    map_name = str(payload.get("map_name", "") or "")
+    agent_obj = _get_agent()
+    with agent_obj.lock:
+        agent_obj.map_name = map_name
+    return {"ok": True, "map_name": map_name}
 
 
 @app.post("/agent/destroy", status_code=204, response_model=None)
@@ -1320,14 +1673,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--name", type=str, default=None)
     parser.add_argument("--train", action="store_true", help="Enable online learning")
 
-    parser.add_argument("--model-path", type=str, default=DEFAULT_MODEL_PATH)
-    parser.add_argument("--best-model-path", type=str, default=None)
+    parser.add_argument("--model-path", type=str, default='./fuzzy_dqn_model.pt')
+    parser.add_argument("--best-model-path", type=str, default='./fuzzy_dqn_model.pt')
     parser.add_argument("--rules", type=int, default=32)
-    parser.add_argument("--mf-type", choices=["gaussian", "bell", "triangular"], default="triangular")
+    parser.add_argument("--mf-type", choices=["gaussian", "bell", "triangular"], default="gaussian")
     parser.add_argument("--frame-skip", type=int, default=1)
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--save-every-games", type=int, default=1)
-    parser.add_argument("--warmup-steps", type=int, default=2000)
+    parser.add_argument("--mock-barrel-model-path", type=str, default="./anfis_barrel_model.pt")
+    parser.add_argument("--mock-shoot-model-path", type=str, default="./anfis_shoot_model.pt")
+    parser.add_argument("--warmup-steps", type=int, default=100)
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--train-every", type=int, default=2)
     parser.add_argument("--target-sync-every", type=int, default=500)
@@ -1339,6 +1694,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--action-noise-end", type=float, default=0.05)
     parser.add_argument("--action-noise-decay-steps", type=int, default=50_000)
     parser.add_argument("--no-load", action="store_true", help="Do not load checkpoints on startup.")
+    parser.add_argument("--map-name", type=str, default="", help="Current map identifier (for context/debugging).")
 
     return parser.parse_args()
 
@@ -1352,6 +1708,8 @@ if __name__ == "__main__":
         frame_skip=max(1, int(args.frame_skip)),
         model_path=args.model_path,
         best_model_path=args.best_model_path,
+        mock_barrel_model_path=args.mock_barrel_model_path,
+        mock_shoot_model_path=args.mock_shoot_model_path,
         seed=int(args.seed),
         save_every_games=max(1, int(args.save_every_games)),
         warmup_steps=max(0, int(args.warmup_steps)),
@@ -1365,6 +1723,7 @@ if __name__ == "__main__":
         action_noise_start=float(args.action_noise_start),
         action_noise_end=float(args.action_noise_end),
         action_noise_decay_steps=max(1, int(args.action_noise_decay_steps)),
+        map_name=str(args.map_name or ""),
     )
 
     agent_name = args.name or f"FuzzyDQN_{args.port}"

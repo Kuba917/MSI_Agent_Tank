@@ -777,6 +777,53 @@ class GameLoop:
 
         return sensor_data_map
 
+    def _last_tick_damage_taken(self, tank_id: str) -> float:
+        total = 0.0
+        for event in self.last_physics_results.get("damage_events", []):
+            if event.get("tank_id") != tank_id:
+                continue
+            try:
+                dmg = float(event.get("damage", 0.0) or 0.0)
+            except (TypeError, ValueError):
+                continue
+            if dmg > 0.0:
+                total += dmg
+        return total
+
+    def _last_tick_hit_target(self, tank_id: str) -> bool:
+        shooter = self.tanks.get(tank_id)
+        if shooter is None:
+            return False
+        for hit in self.last_physics_results.get("projectile_hits", []):
+            if getattr(hit, "shooter_id", None) != tank_id:
+                continue
+            target_id = getattr(hit, "hit_tank_id", None)
+            if not target_id:
+                continue
+            target = self.tanks.get(target_id)
+            if target is None:
+                continue
+            if target._team != shooter._team:
+                return True
+        return False
+
+    def _last_tick_friendly_hit(self, tank_id: str) -> bool:
+        shooter = self.tanks.get(tank_id)
+        if shooter is None:
+            return False
+        for hit in self.last_physics_results.get("projectile_hits", []):
+            if getattr(hit, "shooter_id", None) != tank_id:
+                continue
+            target_id = getattr(hit, "hit_tank_id", None)
+            if not target_id:
+                continue
+            target = self.tanks.get(target_id)
+            if target is None:
+                continue
+            if target._team == shooter._team:
+                return True
+        return False
+
     def _query_agents(
         self, sensor_data_map: Dict[str, Any], current_tick: int
     ) -> Dict[str, Any]:
@@ -814,7 +861,11 @@ class GameLoop:
                     "current_tick": current_tick,
                     "my_tank_status": self._tank_to_dict(tank),
                     "sensor_data": self._sensor_data_to_dict(sensor_data),
-                    "enemies_remaining": self._count_enemies(tank_id)
+                    "enemies_remaining": self._count_enemies(tank_id),
+                    # Feedback from previous physics tick.
+                    "damage_taken": self._last_tick_damage_taken(tank_id),
+                    "hit_target": self._last_tick_hit_target(tank_id),
+                    "friendly_hit": self._last_tick_friendly_hit(tank_id),
                 }
 
                 # POST to /agent/action
