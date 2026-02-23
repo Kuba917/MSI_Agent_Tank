@@ -1,0 +1,12 @@
+15:34:20 | WARNING  | TICK:0000 | Spawn position (75.0, 75.0) blocked, searching for clear spot
+15:34:20 | WARNING  | TICK:0000 | Spawn position (115.0, 115.0) blocked, searching for clear spot
+15:34:20 | WARNING  | TICK:0000 | Spawn position (135.0, 135.0) blocked, searching for clear spot
+15:34:20 | WARNING  | TICK:0000 | Spawn position (405.0, 55.0) blocked, searching for clear spot
+15:34:20 | WARNING  | TICK:0000 | Spawn position (445.0, 95.0) blocked, searching for clear spot
+15:38:51 | ERROR    | TICK:2857 | Unexpected error: 'success'
+15:38:51 | ERROR    | TICK:2857 | Traceback (most recent call last):
+  File "C:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\run_game.py", line 168, in main
+    if results["success"]:
+       ~~~~~~~^^^^^^^^^^^
+KeyError: 'success'
+

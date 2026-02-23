@@ -1,0 +1,41 @@
+15:30:46 | GAME_START      | TICK:0000 | Game started with session ID: 20260223_153043
+15:30:46 | MAP_LOAD        | TICK:0000 | Map loaded successfully with seed: road_trees.csv
+15:30:46 | TANK_SPAWN      | TICK:0000 | Tank tank_1_1 performed spawn
+15:30:46 | TANK_SPAWN      | TICK:0000 | Tank tank_1_2 performed spawn
+15:30:46 | TANK_SPAWN      | TICK:0000 | Tank tank_1_3 performed spawn
+15:30:46 | TANK_SPAWN      | TICK:0000 | Tank tank_1_4 performed spawn
+15:30:46 | TANK_SPAWN      | TICK:0000 | Tank tank_1_5 performed spawn
+15:30:46 | TANK_SPAWN      | TICK:0000 | Tank tank_2_1 performed spawn
+15:30:46 | TANK_SPAWN      | TICK:0000 | Tank tank_2_2 performed spawn
+15:30:46 | TANK_SPAWN      | TICK:0000 | Tank tank_2_3 performed spawn
+15:30:46 | TANK_SPAWN      | TICK:0000 | Tank tank_2_4 performed spawn
+15:30:46 | TANK_SPAWN      | TICK:0000 | Tank tank_2_5 performed spawn
+15:31:01 | AGENT_REQUEST   | TICK:0001 | Agent http://127.0.0.1:8001 request
+15:31:02 | AGENT_TIMEOUT   | TICK:0001 | Agent http://127.0.0.1:8001 timeout
+15:31:02 | AGENT_REQUEST   | TICK:0001 | Agent http://127.0.0.1:8002 request
+15:31:03 | AGENT_TIMEOUT   | TICK:0001 | Agent http://127.0.0.1:8002 timeout
+15:31:03 | AGENT_REQUEST   | TICK:0001 | Agent http://127.0.0.1:8003 request
+15:31:04 | AGENT_TIMEOUT   | TICK:0001 | Agent http://127.0.0.1:8003 timeout
+15:31:04 | AGENT_REQUEST   | TICK:0001 | Agent http://127.0.0.1:8004 request
+15:31:05 | AGENT_TIMEOUT   | TICK:0001 | Agent http://127.0.0.1:8004 timeout
+15:31:05 | AGENT_REQUEST   | TICK:0001 | Agent http://127.0.0.1:8005 request
+15:31:06 | AGENT_TIMEOUT   | TICK:0001 | Agent http://127.0.0.1:8005 timeout
+15:31:06 | AGENT_REQUEST   | TICK:0001 | Agent http://127.0.0.1:8006 request
+15:31:07 | AGENT_TIMEOUT   | TICK:0001 | Agent http://127.0.0.1:8006 timeout
+15:31:07 | AGENT_REQUEST   | TICK:0001 | Agent http://127.0.0.1:8007 request
+15:31:08 | AGENT_TIMEOUT   | TICK:0001 | Agent http://127.0.0.1:8007 timeout
+15:31:08 | AGENT_REQUEST   | TICK:0001 | Agent http://127.0.0.1:8008 request
+15:31:09 | AGENT_TIMEOUT   | TICK:0001 | Agent http://127.0.0.1:8008 timeout
+15:31:09 | AGENT_REQUEST   | TICK:0001 | Agent http://127.0.0.1:8009 request
+15:31:10 | AGENT_TIMEOUT   | TICK:0001 | Agent http://127.0.0.1:8009 timeout
+15:31:10 | AGENT_REQUEST   | TICK:0001 | Agent http://127.0.0.1:8010 request
+15:31:11 | AGENT_TIMEOUT   | TICK:0001 | Agent http://127.0.0.1:8010 timeout
+15:31:11 | AGENT_REQUEST   | TICK:0002 | Agent http://127.0.0.1:8001 request
+15:31:12 | AGENT_TIMEOUT   | TICK:0002 | Agent http://127.0.0.1:8001 timeout
+15:31:12 | AGENT_REQUEST   | TICK:0002 | Agent http://127.0.0.1:8002 request
+15:31:13 | AGENT_TIMEOUT   | TICK:0002 | Agent http://127.0.0.1:8002 timeout
+15:31:13 | AGENT_REQUEST   | TICK:0002 | Agent http://127.0.0.1:8003 request
+15:31:14 | AGENT_TIMEOUT   | TICK:0002 | Agent http://127.0.0.1:8003 timeout
+15:31:14 | AGENT_REQUEST   | TICK:0002 | Agent http://127.0.0.1:8004 request
+15:31:15 | AGENT_TIMEOUT   | TICK:0002 | Agent http://127.0.0.1:8004 timeout
+15:31:15 | AGENT_REQUEST   | TICK:0002 | Agent http://127.0.0.1:8005 request

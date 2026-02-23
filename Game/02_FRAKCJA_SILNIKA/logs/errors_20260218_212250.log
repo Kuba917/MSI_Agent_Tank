@@ -1,0 +1,7 @@
+21:24:27 | ERROR    | logger.py:172 | Unexpected error: 'success'
+21:24:27 | ERROR    | logger.py:172 | Traceback (most recent call last):
+  File "C:\Users\jakub\Desktop\Repozytoria Github\MSI_Agent_Tank\Game\02_FRAKCJA_SILNIKA\run_game.py", line 168, in main
+    if results["success"]:
+       ~~~~~~~^^^^^^^^^^^
+KeyError: 'success'
+

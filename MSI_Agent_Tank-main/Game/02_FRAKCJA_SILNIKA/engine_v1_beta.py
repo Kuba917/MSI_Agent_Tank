@@ -52,7 +52,7 @@ MAP_SEED =  "road_trees.csv" # "advanced_road_trees.csv"
 TARGET_FPS = 60
 SCALE = 5  # Współczynnik skalowania grafiki (wszystko będzie 4x większe)
 TILE_SIZE = 10  # To MUSI być zgodne z domyślną wartością w map_loader.py
-AGENT_NAME = "DQN.py" #"random_agent.py" # Nazwa pliku agenta
+AGENT_NAME = "Agent_2.py" #"random_agent.py" # Nazwa pliku agenta DQN.py
 MODEL_FILE = "fuzzy_dqn_model.pt" # Upewnij się, że ta nazwa zgadza się z plikiem w folderze 03_FRAKCJA_AGENTOW
 
 ASSETS_BASE_PATH = os.path.join(current_file_dir, 'frontend', 'assets')

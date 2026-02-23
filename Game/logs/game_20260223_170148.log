@@ -1,0 +1,94 @@
+17:01:48 | INFO     | TICK:0000 | GameCore initialized with session ID: 60b0e925
+17:01:51 | INFO     | TICK:0000 | Starting game initialization...
+17:01:51 | INFO     | TICK:0000 | Game configuration: {'session_id': '60b0e925', 'map_size': (200, 200), 'team_count': 2, 'team_size': 5, 'total_tanks': 10, 'friendly_fire': True, 'sudden_death_tick': 100000, 'map_seed': 'road_trees.csv', 'spawn_positions': [(50, 50), (65, 70), (80, 90), (95, 110), (110, 130), (100, 50), (115, 70), (130, 90), (145, 110), (160, 130)]}
+17:01:51 | INFO     | TICK:0000 | Loading map with seed: road_trees.csv
+17:01:51 | INFO     | TICK:0000 | Loaded map from file: road_trees.csv
+17:01:51 | INFO     | TICK:0000 | Spawning tanks: Team A=5, Team B=5
+17:01:51 | WARNING  | TICK:0000 | Spawn position (20.0, 15.0) blocked, searching for clear spot
+17:01:51 | INFO     | TICK:0000 | Found clear spawn at (35.0, 15.0)
+17:01:51 | WARNING  | TICK:0000 | Spawn position (26.0, 19.0) blocked, searching for clear spot
+17:01:51 | INFO     | TICK:0000 | Found clear spawn at (52.0, 34.0)
+17:01:51 | WARNING  | TICK:0000 | Spawn position (32.0, 23.0) blocked, searching for clear spot
+17:01:51 | INFO     | TICK:0000 | Found clear spawn at (45.0, 15.5)
+17:01:51 | WARNING  | TICK:0000 | Spawn position (38.0, 27.0) blocked, searching for clear spot
+17:01:51 | INFO     | TICK:0000 | Found clear spawn at (64.0, 42.0)
+17:01:51 | WARNING  | TICK:0000 | Spawn position (44.0, 31.0) blocked, searching for clear spot
+17:01:51 | INFO     | TICK:0000 | Found clear spawn at (51.5, 44.0)
+17:01:51 | WARNING  | TICK:0000 | Spawn position (125.0, 15.0) blocked, searching for clear spot
+17:01:51 | INFO     | TICK:0000 | Found clear spawn at (140.0, 15.0)
+17:01:51 | WARNING  | TICK:0000 | Spawn position (131.0, 19.0) blocked, searching for clear spot
+17:01:51 | INFO     | TICK:0000 | Found clear spawn at (131.0, 49.0)
+17:01:51 | WARNING  | TICK:0000 | Spawn position (143.0, 27.0) blocked, searching for clear spot
+17:01:51 | INFO     | TICK:0000 | Found clear spawn at (140.0, 53.0)
+17:01:51 | WARNING  | TICK:0000 | Spawn position (145.0, 31.0) blocked, searching for clear spot
+17:01:51 | INFO     | TICK:0000 | Found clear spawn at (140.0, 61.0)
+17:01:51 | INFO     | TICK:0000 | Successfully spawned 10 tanks
+17:01:51 | INFO     | TICK:0000 | Connecting to agent servers...
+17:01:51 | INFO     | TICK:0000 | Connected to agent for tank_1_1 at http://127.0.0.1:8001
+17:01:52 | WARNING  | TICK:0000 | Failed to connect to agent for tank_1_2: timed out
+17:01:52 | WARNING  | TICK:0000 | Failed to connect to agent for tank_1_3: timed out
+17:01:53 | WARNING  | TICK:0000 | Failed to connect to agent for tank_1_4: timed out
+17:01:53 | WARNING  | TICK:0000 | Failed to connect to agent for tank_1_5: timed out
+17:01:54 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_1: timed out
+17:01:54 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_2: timed out
+17:01:55 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_3: timed out
+17:01:55 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_4: timed out
+17:01:56 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_5: timed out
+17:01:56 | INFO     | TICK:0000 | Connected to 1/10 agents
+17:01:56 | INFO     | TICK:0000 | Game initialization completed successfully
+17:01:57 | INFO     | TICK:0000 | Game loop started
+17:01:57 | DEBUG    | TICK:0001 | Tick 1 started
+17:02:06 | DEBUG    | TICK:0001 | Team 1 has 5 tanks alive
+17:02:06 | DEBUG    | TICK:0001 | Team 2 has 5 tanks alive
+17:02:06 | DEBUG    | TICK:0001 | Team 1 has 5 tanks alive
+17:02:06 | DEBUG    | TICK:0001 | Team 2 has 5 tanks alive
+17:02:06 | DEBUG    | TICK:0002 | Tick 2 started
+17:02:15 | DEBUG    | TICK:0002 | Team 1 has 5 tanks alive
+17:02:15 | DEBUG    | TICK:0002 | Team 2 has 5 tanks alive
+17:02:15 | DEBUG    | TICK:0002 | Team 1 has 5 tanks alive
+17:02:15 | DEBUG    | TICK:0002 | Team 2 has 5 tanks alive
+17:02:16 | DEBUG    | TICK:0003 | Tick 3 started
+17:02:25 | DEBUG    | TICK:0003 | Team 1 has 5 tanks alive
+17:02:25 | DEBUG    | TICK:0003 | Team 2 has 5 tanks alive
+17:02:25 | DEBUG    | TICK:0003 | Team 1 has 5 tanks alive
+17:02:25 | DEBUG    | TICK:0003 | Team 2 has 5 tanks alive
+17:02:25 | DEBUG    | TICK:0004 | Tick 4 started
+17:02:34 | DEBUG    | TICK:0004 | Team 1 has 5 tanks alive
+17:02:34 | DEBUG    | TICK:0004 | Team 2 has 5 tanks alive
+17:02:34 | DEBUG    | TICK:0004 | Team 1 has 5 tanks alive
+17:02:34 | DEBUG    | TICK:0004 | Team 2 has 5 tanks alive
+17:02:34 | INFO     | TICK:0004 | 
+=== GAME SUMMARY ===
+Session ID: 20260223_170148
+Total Game Time: 42.73 seconds
+Total Ticks: 4
+Average Tick Time: 0.0000 seconds
+
+=== STATISTICS ===
+Tanks Spawned: 10
+Tanks Killed: 0
+Projectile Deaths: 0
+Non-Projectile Deaths: 0
+Shots Fired: 0
+Hits Landed: 0
+Hit Accuracy: 0.0%
+PowerUps Spawned: 0
+PowerUps Collected: 0
+Collisions: 0
+
+=== RESULTS ===
+{'session_id': '60b0e925', 'total_ticks': 4, 'winner_team': None, 'reason': 'normal', 'sudden_death_reached': False, 'final_team_counts': {1: 5, 2: 5}}
+
+17:02:39 | INFO     | TICK:0004 | Starting game cleanup...
+17:02:39 | DEBUG    | TICK:0004 | Sent end signal to agent tank_1_1
+17:02:39 | DEBUG    | TICK:0004 | Failed to send end signal to agent tank_1_2: timed out
+17:02:40 | DEBUG    | TICK:0004 | Failed to send end signal to agent tank_1_3: timed out
+17:02:40 | DEBUG    | TICK:0004 | Failed to send end signal to agent tank_1_4: timed out
+17:02:41 | DEBUG    | TICK:0004 | Failed to send end signal to agent tank_1_5: timed out
+17:02:41 | DEBUG    | TICK:0004 | Failed to send end signal to agent tank_2_1: timed out
+17:02:42 | DEBUG    | TICK:0004 | Failed to send end signal to agent tank_2_2: timed out
+17:02:42 | DEBUG    | TICK:0004 | Failed to send end signal to agent tank_2_3: timed out
+17:02:43 | DEBUG    | TICK:0004 | Failed to send end signal to agent tank_2_4: timed out
+17:02:43 | DEBUG    | TICK:0004 | Failed to send end signal to agent tank_2_5: timed out
+17:02:43 | INFO     | TICK:0004 | Performance report: {'session_id': '20260223_170148', 'total_ticks': 4, 'average_tick_time': 0, 'min_tick_time': 0, 'max_tick_time': 0, 'agent_response_times': {'http://127.0.0.1:8001': {'avg': 0.0074836015701293945, 'min': 0.002058267593383789, 'max': 0.013659477233886719, 'count': 4}}, 'game_stats': {'tanks_spawned': 10, 'tanks_killed': 0, 'projectile_deaths': 0, 'non_projectile_deaths': 0, 'shots_fired': 0, 'hits_landed': 0, 'powerups_spawned': 0, 'powerups_collected': 0, 'collisions': 0}}
+17:02:43 | INFO     | TICK:0004 | Game cleanup completed

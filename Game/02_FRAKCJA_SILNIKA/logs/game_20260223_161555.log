@@ -1,0 +1,79 @@
+16:15:55 | INFO     | TICK:0000 | Starting Tank Battle Game Engine
+16:15:55 | INFO     | TICK:0000 | Arguments: {'map_seed': 'road_trees.csv', 'headless': True, 'log_level': 'INFO', 'agent1': None, 'agent2': None, 'agents': None, 'quick_test': False, 'config': None, 'max_ticks': 2000, 'performance_test': False}
+16:15:55 | INFO     | TICK:0000 | Set max ticks to: 2000
+16:15:55 | INFO     | TICK:0000 | No agents specified, using dummy agents
+16:15:55 | INFO     | TICK:0000 | Loaded 2 agents
+16:15:55 | INFO     | TICK:0000 | GameCore initialized with session ID: 88e87903
+16:15:55 | INFO     | TICK:0000 | Starting game initialization...
+16:15:55 | INFO     | TICK:0000 | Game configuration: {'session_id': '88e87903', 'map_size': (200, 200), 'team_count': 2, 'team_size': 5, 'total_tanks': 10, 'friendly_fire': True, 'sudden_death_tick': 2000, 'map_seed': 'road_trees.csv', 'spawn_positions': [(50, 50), (65, 70), (80, 90), (95, 110), (110, 130), (100, 50), (115, 70), (130, 90), (145, 110), (160, 130)]}
+16:15:55 | INFO     | TICK:0000 | Loading map with seed: road_trees.csv
+16:15:55 | INFO     | TICK:0000 | Loaded map from file: road_trees.csv
+16:15:55 | INFO     | TICK:0000 | Spawning tanks: Team A=5, Team B=5
+16:15:55 | WARNING  | TICK:0000 | Spawn position (20.0, 15.0) blocked, searching for clear spot
+16:15:55 | INFO     | TICK:0000 | Found clear spawn at (35.0, 15.0)
+16:15:55 | WARNING  | TICK:0000 | Spawn position (26.0, 19.0) blocked, searching for clear spot
+16:15:55 | INFO     | TICK:0000 | Found clear spawn at (52.0, 34.0)
+16:15:55 | WARNING  | TICK:0000 | Spawn position (32.0, 23.0) blocked, searching for clear spot
+16:15:55 | INFO     | TICK:0000 | Found clear spawn at (45.0, 15.5)
+16:15:55 | WARNING  | TICK:0000 | Spawn position (38.0, 27.0) blocked, searching for clear spot
+16:15:55 | INFO     | TICK:0000 | Found clear spawn at (64.0, 42.0)
+16:15:55 | WARNING  | TICK:0000 | Spawn position (44.0, 31.0) blocked, searching for clear spot
+16:15:55 | INFO     | TICK:0000 | Found clear spawn at (51.5, 44.0)
+16:15:55 | WARNING  | TICK:0000 | Spawn position (125.0, 15.0) blocked, searching for clear spot
+16:15:55 | INFO     | TICK:0000 | Found clear spawn at (140.0, 15.0)
+16:15:55 | WARNING  | TICK:0000 | Spawn position (131.0, 19.0) blocked, searching for clear spot
+16:15:55 | INFO     | TICK:0000 | Found clear spawn at (131.0, 49.0)
+16:15:55 | WARNING  | TICK:0000 | Spawn position (143.0, 27.0) blocked, searching for clear spot
+16:15:55 | INFO     | TICK:0000 | Found clear spawn at (140.0, 53.0)
+16:15:55 | WARNING  | TICK:0000 | Spawn position (145.0, 31.0) blocked, searching for clear spot
+16:15:55 | INFO     | TICK:0000 | Found clear spawn at (140.0, 61.0)
+16:15:55 | INFO     | TICK:0000 | Successfully spawned 10 tanks
+16:15:55 | INFO     | TICK:0000 | Connecting to agent servers...
+16:15:55 | INFO     | TICK:0000 | Connected to agent for tank_1_1 at http://127.0.0.1:8001
+16:15:55 | INFO     | TICK:0000 | Connected to agent for tank_1_2 at http://127.0.0.1:8002
+16:15:56 | WARNING  | TICK:0000 | Failed to connect to agent for tank_1_3: timed out
+16:15:56 | WARNING  | TICK:0000 | Failed to connect to agent for tank_1_4: timed out
+16:15:57 | WARNING  | TICK:0000 | Failed to connect to agent for tank_1_5: timed out
+16:15:57 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_1: timed out
+16:15:58 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_2: timed out
+16:15:58 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_3: timed out
+16:15:59 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_4: timed out
+16:15:59 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_5: timed out
+16:15:59 | INFO     | TICK:0000 | Connected to 2/10 agents
+16:15:59 | INFO     | TICK:0000 | Game initialization completed successfully
+16:15:59 | INFO     | TICK:0000 | Starting main game loop...
+16:15:59 | INFO     | TICK:0000 | Game loop started
+16:15:59 | WARNING  | TICK:0001 | Agent tank_1_1 returned error: 500
+16:16:07 | WARNING  | TICK:0002 | Agent tank_1_1 returned error: 500
+16:16:15 | WARNING  | TICK:0003 | Agent tank_1_1 returned error: 500
+16:16:23 | WARNING  | TICK:0004 | Agent tank_1_1 returned error: 500
+16:16:31 | WARNING  | TICK:0005 | Agent tank_1_1 returned error: 500
+16:16:40 | WARNING  | TICK:0006 | Agent tank_1_1 returned error: 500
+16:16:48 | WARNING  | TICK:0007 | Agent tank_1_1 returned error: 500
+16:16:56 | WARNING  | TICK:0008 | Agent tank_1_1 returned error: 500
+16:17:04 | WARNING  | TICK:0009 | Agent tank_1_1 returned error: 500
+16:17:12 | WARNING  | TICK:0010 | Agent tank_1_1 returned error: 500
+16:17:20 | WARNING  | TICK:0011 | Agent tank_1_1 returned error: 500
+16:17:28 | WARNING  | TICK:0012 | Agent tank_1_1 returned error: 500
+16:17:36 | WARNING  | TICK:0013 | Agent tank_1_1 returned error: 500
+16:17:44 | WARNING  | TICK:0014 | Agent tank_1_1 returned error: 500
+16:17:52 | WARNING  | TICK:0015 | Agent tank_1_1 returned error: 500
+16:18:00 | WARNING  | TICK:0016 | Agent tank_1_1 returned error: 500
+16:18:08 | WARNING  | TICK:0017 | Agent tank_1_1 returned error: 500
+16:18:16 | WARNING  | TICK:0018 | Agent tank_1_1 returned error: 500
+16:18:24 | WARNING  | TICK:0019 | Agent tank_1_1 returned error: 500
+16:18:32 | WARNING  | TICK:0020 | Agent tank_1_1 returned error: 500
+16:18:40 | WARNING  | TICK:0021 | Agent tank_1_1 returned error: 500
+16:18:48 | WARNING  | TICK:0022 | Agent tank_1_1 returned error: 500
+16:18:56 | WARNING  | TICK:0023 | Agent tank_1_1 returned error: 500
+16:19:04 | WARNING  | TICK:0024 | Agent tank_1_1 returned error: 500
+16:19:12 | WARNING  | TICK:0025 | Agent tank_1_1 returned error: 500
+16:19:20 | WARNING  | TICK:0026 | Agent tank_1_1 returned error: 500
+16:19:28 | WARNING  | TICK:0027 | Agent tank_1_1 returned error: 500
+16:19:36 | WARNING  | TICK:0028 | Agent tank_1_1 returned error: 500
+16:19:44 | WARNING  | TICK:0029 | Agent tank_1_1 returned error: 500
+16:19:52 | WARNING  | TICK:0030 | Agent tank_1_1 returned error: 500
+16:20:00 | WARNING  | TICK:0031 | Agent tank_1_1 returned error: 500
+16:20:08 | WARNING  | TICK:0032 | Agent tank_1_1 returned error: 500
+16:20:16 | WARNING  | TICK:0033 | Agent tank_1_1 returned error: 500
+16:20:24 | WARNING  | TICK:0034 | Agent tank_1_1 returned error: 500

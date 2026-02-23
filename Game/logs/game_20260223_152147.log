@@ -1,0 +1,191 @@
+15:21:47 | INFO     | TICK:0000 | GameCore initialized with session ID: 7ede5658
+15:21:50 | INFO     | TICK:0000 | Starting game initialization...
+15:21:50 | INFO     | TICK:0000 | Game configuration: {'session_id': '7ede5658', 'map_size': (200, 200), 'team_count': 2, 'team_size': 5, 'total_tanks': 10, 'friendly_fire': True, 'sudden_death_tick': 100000, 'map_seed': 'road_trees.csv', 'spawn_positions': [(50, 50), (65, 70), (80, 90), (95, 110), (110, 130), (100, 50), (115, 70), (130, 90), (145, 110), (160, 130)]}
+15:21:50 | INFO     | TICK:0000 | Loading map with seed: road_trees.csv
+15:21:50 | INFO     | TICK:0000 | Loaded map from file: road_trees.csv
+15:21:50 | INFO     | TICK:0000 | Spawning tanks: Team A=5, Team B=5
+15:21:50 | WARNING  | TICK:0000 | Spawn position (20.0, 15.0) blocked, searching for clear spot
+15:21:50 | INFO     | TICK:0000 | Found clear spawn at (35.0, 15.0)
+15:21:50 | WARNING  | TICK:0000 | Spawn position (26.0, 19.0) blocked, searching for clear spot
+15:21:50 | INFO     | TICK:0000 | Found clear spawn at (52.0, 34.0)
+15:21:50 | WARNING  | TICK:0000 | Spawn position (32.0, 23.0) blocked, searching for clear spot
+15:21:50 | INFO     | TICK:0000 | Found clear spawn at (45.0, 15.5)
+15:21:50 | WARNING  | TICK:0000 | Spawn position (38.0, 27.0) blocked, searching for clear spot
+15:21:50 | INFO     | TICK:0000 | Found clear spawn at (64.0, 42.0)
+15:21:50 | WARNING  | TICK:0000 | Spawn position (44.0, 31.0) blocked, searching for clear spot
+15:21:50 | INFO     | TICK:0000 | Found clear spawn at (51.5, 44.0)
+15:21:50 | WARNING  | TICK:0000 | Spawn position (125.0, 15.0) blocked, searching for clear spot
+15:21:50 | INFO     | TICK:0000 | Found clear spawn at (140.0, 15.0)
+15:21:50 | WARNING  | TICK:0000 | Spawn position (131.0, 19.0) blocked, searching for clear spot
+15:21:50 | INFO     | TICK:0000 | Found clear spawn at (131.0, 49.0)
+15:21:50 | WARNING  | TICK:0000 | Spawn position (143.0, 27.0) blocked, searching for clear spot
+15:21:50 | INFO     | TICK:0000 | Found clear spawn at (140.0, 53.0)
+15:21:50 | WARNING  | TICK:0000 | Spawn position (145.0, 31.0) blocked, searching for clear spot
+15:21:50 | INFO     | TICK:0000 | Found clear spawn at (140.0, 61.0)
+15:21:50 | INFO     | TICK:0000 | Successfully spawned 10 tanks
+15:21:50 | INFO     | TICK:0000 | Connecting to agent servers...
+15:21:51 | WARNING  | TICK:0000 | Failed to connect to agent for tank_1_1: timed out
+15:21:51 | WARNING  | TICK:0000 | Failed to connect to agent for tank_1_2: timed out
+15:21:52 | WARNING  | TICK:0000 | Failed to connect to agent for tank_1_3: timed out
+15:21:52 | WARNING  | TICK:0000 | Failed to connect to agent for tank_1_4: timed out
+15:21:53 | WARNING  | TICK:0000 | Failed to connect to agent for tank_1_5: timed out
+15:21:53 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_1: timed out
+15:21:54 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_2: timed out
+15:21:54 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_3: timed out
+15:21:55 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_4: timed out
+15:21:55 | WARNING  | TICK:0000 | Failed to connect to agent for tank_2_5: timed out
+15:21:55 | INFO     | TICK:0000 | Connected to 0/10 agents
+15:21:55 | WARNING  | TICK:0000 | Agent loading failed - continuing without agents
+15:21:55 | INFO     | TICK:0000 | Game initialization completed successfully
+15:21:59 | INFO     | TICK:0000 | Game loop started
+15:21:59 | DEBUG    | TICK:0001 | Tick 1 started
+15:22:09 | DEBUG    | TICK:0001 | Team 1 has 5 tanks alive
+15:22:09 | DEBUG    | TICK:0001 | Team 2 has 5 tanks alive
+15:22:09 | DEBUG    | TICK:0001 | Team 1 has 5 tanks alive
+15:22:09 | DEBUG    | TICK:0001 | Team 2 has 5 tanks alive
+15:22:09 | DEBUG    | TICK:0002 | Tick 2 started
+15:22:19 | DEBUG    | TICK:0002 | Team 1 has 5 tanks alive
+15:22:19 | DEBUG    | TICK:0002 | Team 2 has 5 tanks alive
+15:22:19 | DEBUG    | TICK:0002 | Team 1 has 5 tanks alive
+15:22:19 | DEBUG    | TICK:0002 | Team 2 has 5 tanks alive
+15:22:19 | DEBUG    | TICK:0003 | Tick 3 started
+15:22:29 | DEBUG    | TICK:0003 | Team 1 has 5 tanks alive
+15:22:29 | DEBUG    | TICK:0003 | Team 2 has 5 tanks alive
+15:22:29 | DEBUG    | TICK:0003 | Team 1 has 5 tanks alive
+15:22:29 | DEBUG    | TICK:0003 | Team 2 has 5 tanks alive
+15:22:29 | DEBUG    | TICK:0004 | Tick 4 started
+15:22:39 | DEBUG    | TICK:0004 | Team 1 has 5 tanks alive
+15:22:39 | DEBUG    | TICK:0004 | Team 2 has 5 tanks alive
+15:22:39 | DEBUG    | TICK:0004 | Team 1 has 5 tanks alive
+15:22:39 | DEBUG    | TICK:0004 | Team 2 has 5 tanks alive
+15:22:39 | DEBUG    | TICK:0005 | Tick 5 started
+15:22:49 | DEBUG    | TICK:0005 | Team 1 has 5 tanks alive
+15:22:49 | DEBUG    | TICK:0005 | Team 2 has 5 tanks alive
+15:22:49 | DEBUG    | TICK:0005 | Team 1 has 5 tanks alive
+15:22:49 | DEBUG    | TICK:0005 | Team 2 has 5 tanks alive
+15:22:49 | DEBUG    | TICK:0006 | Tick 6 started
+15:22:59 | DEBUG    | TICK:0006 | Team 1 has 5 tanks alive
+15:22:59 | DEBUG    | TICK:0006 | Team 2 has 5 tanks alive
+15:22:59 | DEBUG    | TICK:0006 | Team 1 has 5 tanks alive
+15:22:59 | DEBUG    | TICK:0006 | Team 2 has 5 tanks alive
+15:22:59 | DEBUG    | TICK:0007 | Tick 7 started
+15:23:09 | DEBUG    | TICK:0007 | Team 1 has 5 tanks alive
+15:23:09 | DEBUG    | TICK:0007 | Team 2 has 5 tanks alive
+15:23:09 | DEBUG    | TICK:0007 | Team 1 has 5 tanks alive
+15:23:09 | DEBUG    | TICK:0007 | Team 2 has 5 tanks alive
+15:23:09 | DEBUG    | TICK:0008 | Tick 8 started
+15:23:19 | DEBUG    | TICK:0008 | Team 1 has 5 tanks alive
+15:23:19 | DEBUG    | TICK:0008 | Team 2 has 5 tanks alive
+15:23:19 | DEBUG    | TICK:0008 | Team 1 has 5 tanks alive
+15:23:19 | DEBUG    | TICK:0008 | Team 2 has 5 tanks alive
+15:23:19 | DEBUG    | TICK:0009 | Tick 9 started
+15:23:29 | DEBUG    | TICK:0009 | Team 1 has 5 tanks alive
+15:23:29 | DEBUG    | TICK:0009 | Team 2 has 5 tanks alive
+15:23:29 | DEBUG    | TICK:0009 | Team 1 has 5 tanks alive
+15:23:29 | DEBUG    | TICK:0009 | Team 2 has 5 tanks alive
+15:23:29 | DEBUG    | TICK:0010 | Tick 10 started
+15:23:39 | DEBUG    | TICK:0010 | Team 1 has 5 tanks alive
+15:23:39 | DEBUG    | TICK:0010 | Team 2 has 5 tanks alive
+15:23:39 | DEBUG    | TICK:0010 | Team 1 has 5 tanks alive
+15:23:39 | DEBUG    | TICK:0010 | Team 2 has 5 tanks alive
+15:23:39 | DEBUG    | TICK:0011 | Tick 11 started
+15:23:49 | DEBUG    | TICK:0011 | Team 1 has 5 tanks alive
+15:23:49 | DEBUG    | TICK:0011 | Team 2 has 5 tanks alive
+15:23:49 | DEBUG    | TICK:0011 | Team 1 has 5 tanks alive
+15:23:49 | DEBUG    | TICK:0011 | Team 2 has 5 tanks alive
+15:23:49 | DEBUG    | TICK:0012 | Tick 12 started
+15:23:59 | DEBUG    | TICK:0012 | Team 1 has 5 tanks alive
+15:23:59 | DEBUG    | TICK:0012 | Team 2 has 5 tanks alive
+15:23:59 | DEBUG    | TICK:0012 | Team 1 has 5 tanks alive
+15:23:59 | DEBUG    | TICK:0012 | Team 2 has 5 tanks alive
+15:23:59 | DEBUG    | TICK:0013 | Tick 13 started
+15:24:09 | DEBUG    | TICK:0013 | Team 1 has 5 tanks alive
+15:24:09 | DEBUG    | TICK:0013 | Team 2 has 5 tanks alive
+15:24:09 | DEBUG    | TICK:0013 | Team 1 has 5 tanks alive
+15:24:09 | DEBUG    | TICK:0013 | Team 2 has 5 tanks alive
+15:24:09 | DEBUG    | TICK:0014 | Tick 14 started
+15:24:19 | DEBUG    | TICK:0014 | Team 1 has 5 tanks alive
+15:24:19 | DEBUG    | TICK:0014 | Team 2 has 5 tanks alive
+15:24:19 | DEBUG    | TICK:0014 | Team 1 has 5 tanks alive
+15:24:19 | DEBUG    | TICK:0014 | Team 2 has 5 tanks alive
+15:24:19 | DEBUG    | TICK:0015 | Tick 15 started
+15:24:29 | DEBUG    | TICK:0015 | Team 1 has 5 tanks alive
+15:24:29 | DEBUG    | TICK:0015 | Team 2 has 5 tanks alive
+15:24:29 | DEBUG    | TICK:0015 | Team 1 has 5 tanks alive
+15:24:29 | DEBUG    | TICK:0015 | Team 2 has 5 tanks alive
+15:24:29 | DEBUG    | TICK:0016 | Tick 16 started
+15:24:40 | DEBUG    | TICK:0016 | Team 1 has 5 tanks alive
+15:24:40 | DEBUG    | TICK:0016 | Team 2 has 5 tanks alive
+15:24:40 | DEBUG    | TICK:0016 | Team 1 has 5 tanks alive
+15:24:40 | DEBUG    | TICK:0016 | Team 2 has 5 tanks alive
+15:24:40 | DEBUG    | TICK:0017 | Tick 17 started
+15:24:50 | DEBUG    | TICK:0017 | Team 1 has 5 tanks alive
+15:24:50 | DEBUG    | TICK:0017 | Team 2 has 5 tanks alive
+15:24:50 | DEBUG    | TICK:0017 | Team 1 has 5 tanks alive
+15:24:50 | DEBUG    | TICK:0017 | Team 2 has 5 tanks alive
+15:24:50 | DEBUG    | TICK:0018 | Tick 18 started
+15:25:00 | DEBUG    | TICK:0018 | Team 1 has 5 tanks alive
+15:25:00 | DEBUG    | TICK:0018 | Team 2 has 5 tanks alive
+15:25:00 | DEBUG    | TICK:0018 | Team 1 has 5 tanks alive
+15:25:00 | DEBUG    | TICK:0018 | Team 2 has 5 tanks alive
+15:25:00 | DEBUG    | TICK:0019 | Tick 19 started
+15:25:10 | DEBUG    | TICK:0019 | Team 1 has 5 tanks alive
+15:25:10 | DEBUG    | TICK:0019 | Team 2 has 5 tanks alive
+15:25:10 | DEBUG    | TICK:0019 | Team 1 has 5 tanks alive
+15:25:10 | DEBUG    | TICK:0019 | Team 2 has 5 tanks alive
+15:25:10 | DEBUG    | TICK:0020 | Tick 20 started
+15:25:20 | DEBUG    | TICK:0020 | Team 1 has 5 tanks alive
+15:25:20 | DEBUG    | TICK:0020 | Team 2 has 5 tanks alive
+15:25:20 | DEBUG    | TICK:0020 | Team 1 has 5 tanks alive
+15:25:20 | DEBUG    | TICK:0020 | Team 2 has 5 tanks alive
+15:25:20 | DEBUG    | TICK:0021 | Tick 21 started
+15:25:30 | DEBUG    | TICK:0021 | Team 1 has 5 tanks alive
+15:25:30 | DEBUG    | TICK:0021 | Team 2 has 5 tanks alive
+15:25:30 | DEBUG    | TICK:0021 | Team 1 has 5 tanks alive
+15:25:30 | DEBUG    | TICK:0021 | Team 2 has 5 tanks alive
+15:25:30 | DEBUG    | TICK:0022 | Tick 22 started
+15:25:40 | DEBUG    | TICK:0022 | Team 1 has 5 tanks alive
+15:25:40 | DEBUG    | TICK:0022 | Team 2 has 5 tanks alive
+15:25:40 | DEBUG    | TICK:0022 | Team 1 has 5 tanks alive
+15:25:40 | DEBUG    | TICK:0022 | Team 2 has 5 tanks alive
+15:25:40 | DEBUG    | TICK:0023 | Tick 23 started
+15:25:50 | DEBUG    | TICK:0023 | Team 1 has 5 tanks alive
+15:25:50 | DEBUG    | TICK:0023 | Team 2 has 5 tanks alive
+15:25:50 | DEBUG    | TICK:0023 | Team 1 has 5 tanks alive
+15:25:50 | DEBUG    | TICK:0023 | Team 2 has 5 tanks alive
+15:25:50 | DEBUG    | TICK:0024 | Tick 24 started
+15:26:00 | DEBUG    | TICK:0024 | Team 1 has 5 tanks alive
+15:26:00 | DEBUG    | TICK:0024 | Team 2 has 5 tanks alive
+15:26:00 | DEBUG    | TICK:0024 | Team 1 has 5 tanks alive
+15:26:00 | DEBUG    | TICK:0024 | Team 2 has 5 tanks alive
+15:26:00 | DEBUG    | TICK:0025 | Tick 25 started
+15:26:10 | DEBUG    | TICK:0025 | Team 1 has 5 tanks alive
+15:26:10 | DEBUG    | TICK:0025 | Team 2 has 5 tanks alive
+15:26:10 | DEBUG    | TICK:0025 | Team 1 has 5 tanks alive
+15:26:10 | DEBUG    | TICK:0025 | Team 2 has 5 tanks alive
+15:26:10 | DEBUG    | TICK:0026 | Tick 26 started
+15:26:20 | DEBUG    | TICK:0026 | Team 1 has 5 tanks alive
+15:26:20 | DEBUG    | TICK:0026 | Team 2 has 5 tanks alive
+15:26:20 | DEBUG    | TICK:0026 | Team 1 has 5 tanks alive
+15:26:20 | DEBUG    | TICK:0026 | Team 2 has 5 tanks alive
+15:26:20 | DEBUG    | TICK:0027 | Tick 27 started
+15:26:30 | DEBUG    | TICK:0027 | Team 1 has 5 tanks alive
+15:26:30 | DEBUG    | TICK:0027 | Team 2 has 5 tanks alive
+15:26:30 | DEBUG    | TICK:0027 | Team 1 has 5 tanks alive
+15:26:30 | DEBUG    | TICK:0027 | Team 2 has 5 tanks alive
+15:26:30 | DEBUG    | TICK:0028 | Tick 28 started
+15:26:40 | DEBUG    | TICK:0028 | Team 1 has 5 tanks alive
+15:26:40 | DEBUG    | TICK:0028 | Team 2 has 5 tanks alive
+15:26:40 | DEBUG    | TICK:0028 | Team 1 has 5 tanks alive
+15:26:40 | DEBUG    | TICK:0028 | Team 2 has 5 tanks alive
+15:26:40 | DEBUG    | TICK:0029 | Tick 29 started
+15:26:50 | DEBUG    | TICK:0029 | Team 1 has 5 tanks alive
+15:26:50 | DEBUG    | TICK:0029 | Team 2 has 5 tanks alive
+15:26:50 | DEBUG    | TICK:0029 | Team 1 has 5 tanks alive
+15:26:50 | DEBUG    | TICK:0029 | Team 2 has 5 tanks alive
+15:26:50 | DEBUG    | TICK:0030 | Tick 30 started
+15:27:00 | DEBUG    | TICK:0030 | Team 1 has 5 tanks alive
+15:27:00 | DEBUG    | TICK:0030 | Team 2 has 5 tanks alive
+15:27:00 | DEBUG    | TICK:0030 | Team 1 has 5 tanks alive
+15:27:00 | DEBUG    | TICK:0030 | Team 2 has 5 tanks alive
+15:27:00 | DEBUG    | TICK:0031 | Tick 31 started
