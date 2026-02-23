@@ -77,6 +77,14 @@ class ActionSpec:
     should_fire: bool
 
 
+@dataclass
+class TargetInfo:
+    distance: float
+    hull_error: float
+    barrel_error: float
+    position: Dict[str, float]
+
+
 class ReplayBuffer:
     """Simple ring buffer for off-policy learning."""
 
@@ -530,15 +538,11 @@ class FuzzyDQNAgent:
         # Optional mock shooting models.
         self.mock_barrel_model: Optional[ANFISDQN] = None
         self.mock_shoot_model: Optional[nn.Module] = None
-        if (config.mock_barrel_model_path is None) != (config.mock_shoot_model_path is None):
-            raise ValueError("Both mock model paths must be provided (barrel and shoot).")
-        if config.mock_barrel_model_path is not None:
-            self.mock_barrel_model = ANFISDQN(n_inputs=4, n_rules=16, n_actions=1).to(self.device)
-            self.mock_barrel_model.load_state_dict(torch.load(config.mock_barrel_model_path, map_location=self.device))
-            self.mock_barrel_model.eval()
-            self.mock_shoot_model = ANFISDQN(n_inputs=4, n_rules=16, n_actions=1).to(self.device)
-            self.mock_shoot_model.load_state_dict(torch.load(config.mock_shoot_model_path, map_location=self.device))
-            self.mock_shoot_model.eval()
+        
+        # Agent_2 logic state
+        self.previous_enemy_state: Dict[str, Dict[str, Any]] = {}
+        self.scan_direction = 1.0
+        self.scan_speed = 2.5
 
         self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=config.actor_lr)
         self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), lr=config.critic_lr)
@@ -688,92 +692,176 @@ class FuzzyDQNAgent:
                 return False
             return default
         return default
+    
+    @staticmethod
+    def normalize_angle(angle: float) -> float:
+        while angle > 180.0:
+            angle -= 360.0
+        while angle < -180.0:
+            angle += 360.0
+        return angle
 
-    def _select_ammo_for_action(
+    @staticmethod
+    def angle_to(source: Dict[str, float], target: Dict[str, float]) -> float:
+        dx = target["x"] - source["x"]
+        dy = target["y"] - source["y"]
+        return math.degrees(math.atan2(dy, dx))
+
+    def _find_nearest_enemy_agent2(
         self,
         my_status: Dict[str, Any],
-        obs: Observation,
-        action: ActionSpec,
+        sensor_data: Dict[str, Any],
+        current_tick: int,
+    ) -> Optional[TargetInfo]:
+        my_pos = my_status.get("position", {"x": 0.0, "y": 0.0})
+        my_team = my_status.get("_team")
+        my_heading = my_status.get("heading", 0.0)
+        my_barrel = my_status.get("barrel_angle", 0.0)
+
+        enemies = [
+            tank
+            for tank in sensor_data.get("seen_tanks", [])
+            if tank.get("team") != my_team
+        ]
+        if not enemies:
+            return None
+
+        nearest = min(enemies, key=lambda tank: float(tank.get("distance", 1e9)))
+        enemy_pos = nearest.get("position", {"x": 0.0, "y": 0.0})
+
+        # --- Predykcja pozycji (Aim Leading / Latency Compensation) ---
+        enemy_id = nearest.get("id")
+        predicted_pos = enemy_pos.copy()
+
+        if enemy_id:
+            if enemy_id in self.previous_enemy_state:
+                prev = self.previous_enemy_state[enemy_id]
+                dt = current_tick - prev["tick"]
+                if 0 < dt < 5:  # Tylko jeśli dane są świeże
+                    vx = (enemy_pos["x"] - prev["x"]) / dt
+                    vy = (enemy_pos["y"] - prev["y"]) / dt
+                    # Przewidujemy pozycję o 1.5 klatki do przodu (kompensacja czasu reakcji)
+                    predicted_pos["x"] += vx * 1.5
+                    predicted_pos["y"] += vy * 1.5
+            
+            self.previous_enemy_state[enemy_id] = {
+                "x": enemy_pos["x"], "y": enemy_pos["y"], "tick": current_tick
+            }
+
+        target_angle = self.angle_to(my_pos, predicted_pos)
+        hull_error = self.normalize_angle(target_angle - my_heading)
+        barrel_abs = my_heading + my_barrel
+        barrel_error = self.normalize_angle(target_angle - barrel_abs)
+
+        return TargetInfo(
+            distance=float(nearest.get("distance", 999.0)),
+            hull_error=hull_error,
+            barrel_error=barrel_error,
+            position=enemy_pos,
+        )
+
+    def _ally_in_fire_line_agent2(self, my_status: Dict[str, Any], sensor_data: Dict[str, Any]) -> bool:
+        my_pos = my_status.get("position", {"x": 0.0, "y": 0.0})
+        my_team = my_status.get("_team")
+        my_heading = my_status.get("heading", 0.0)
+        my_barrel = my_status.get("barrel_angle", 0.0)
+        barrel_abs = my_heading + my_barrel
+
+        for tank in sensor_data.get("seen_tanks", []):
+            if tank.get("team") != my_team:
+                continue
+            ally_pos = tank.get("position", {"x": 0.0, "y": 0.0})
+            angle = self.angle_to(my_pos, ally_pos)
+            error = abs(self.normalize_angle(angle - barrel_abs))
+            if error < 4.0:
+                return True
+        return False
+
+    def _fuzzy_shoot_decision(self, barrel_error: float, distance: float) -> bool:
+        abs_error = abs(barrel_error)
+        mu_error_small = max(0.0, 1.0 - (abs_error / 3.0))
+        if abs_error < 6.0:
+            mu_error_medium = max(0.0, (abs_error - 2.0) / 4.0)
+        else:
+            mu_error_medium = max(0.0, (10.0 - abs_error) / 4.0)
+        mu_dist_close = max(0.0, 1.0 - (distance / 20.0))
+        if distance < 30.0:
+            mu_dist_medium = max(0.0, (distance - 10.0) / 20.0)
+        else:
+            mu_dist_medium = max(0.0, (50.0 - distance) / 20.0)
+        rule1 = mu_error_small
+        rule2 = min(mu_error_medium, mu_dist_close) * 0.6
+        rule3 = min(mu_error_medium, mu_dist_medium) * 0.3
+        fire_confidence = max(rule1, rule2, rule3)
+        return fire_confidence > 0.5
+
+    def _select_ammo_agent2(
+        self,
+        my_status: Dict[str, Any],
+        target: Optional[TargetInfo],
     ) -> Optional[str]:
         counts = self._ammo_counts(my_status)
         if not counts:
             return None
-
-        current = str(my_status.get("ammo_loaded") or "").upper()
-
-        if obs.enemy_visible:
-            vision_range = float(my_status.get("_vision_range", 40.0) or 40.0)
-            enemy_distance = obs.enemy_dist * max(vision_range, 1.0)
-
-            if enemy_distance > 50.0:
-                preferred = ["LONG_DISTANCE", "LIGHT", "HEAVY"]
-            elif enemy_distance > 25.0:
-                preferred = ["LIGHT", "LONG_DISTANCE", "HEAVY"]
-            else:
-                preferred = ["HEAVY", "LIGHT", "LONG_DISTANCE"]
+        if target is None:
+            current = str(my_status.get("ammo_loaded") or "").upper()
+            if current and counts.get(current, 0) > 0:
+                return current
+            return max(counts.items(), key=lambda item: item[1])[0] if counts else None
+        if target.distance > 25.0:
+            preferred = ["LONG_DISTANCE", "LIGHT", "HEAVY"]
+        elif target.distance > 15.0:
+            preferred = ["LIGHT", "LONG_DISTANCE", "HEAVY"]
         else:
-            preferred = ["LIGHT", "HEAVY", "LONG_DISTANCE"]
-
-        if current and counts.get(current, 0) > 0:
-            if current in preferred:
-                return current
-            if not action.should_fire and not obs.enemy_visible:
-                return current
-
+            preferred = ["HEAVY", "LIGHT", "LONG_DISTANCE"]
         for ammo_name in preferred:
             if counts.get(ammo_name, 0) > 0:
                 return ammo_name
-
+        current = str(my_status.get("ammo_loaded") or "").upper()
         if current and counts.get(current, 0) > 0:
             return current
-
-        return max(counts.items(), key=lambda item: item[1])[0]
+        return max(counts.items(), key=lambda item: item[1])[0] if counts else None
 
     def _to_command(
         self,
         action_vec: np.ndarray,
         my_status: Dict[str, Any],
         obs: Observation,
+        sensor_data: Dict[str, Any],
+        current_tick: int,
     ) -> ActionCommand:
         move_speed = float(action_vec[0])
         heading_rotation = float(action_vec[1])
-        # Actor no longer controls barrel rotation or firing directly.
-        if self.mock_barrel_model is None or self.mock_shoot_model is None:
-            raise ValueError("Mock barrel/shoot models are required to control barrel and fire.")
+        
+        # --- Agent_2 Logic for Barrel & Fire ---
+        target = self._find_nearest_enemy_agent2(my_status, sensor_data, current_tick)
+        
         barrel_rotation = 0.0
         should_fire = False
+        ammo_to_load = None
 
-        if self.mock_barrel_model is not None or self.mock_shoot_model is not None:
-            mock_feats = np.array(
-                [
-                    1.0 if obs.enemy_visible else 0.0,
-                    float(obs.enemy_dist),
-                    float(obs.enemy_barrel_error),
-                    1.0 if obs.shot_blocked else 0.0,
-                ],
-                dtype=np.float32,
-            )
-            mock_t = torch.from_numpy(mock_feats).unsqueeze(0).to(self.device)
-            with torch.no_grad():
-                if self.mock_barrel_model is None:
-                    raise ValueError('No mock barrel model')
-                barrel_norm = float(self.mock_barrel_model(mock_t).squeeze(0).squeeze(0).cpu().item())
-                barrel_rotation = barrel_norm * MAX_BARREL_DELTA
-                if self.mock_shoot_model is None:
-                    raise ValueError('No shooting model')
-                shoot_logit = float(self.mock_shoot_model(mock_t).squeeze(0).squeeze(0).cpu().item())
-                shoot_val = 1.0 / (1.0 + math.exp(-shoot_logit))
-                should_fire = shoot_val > 0.5
-                self.last_mock_action = np.array([barrel_norm, shoot_val], dtype=np.float32)
+        if target is not None:
+            # Combat Action
+            max_barrel_step = 3.0
+            barrel_rotation = max(-max_barrel_step, min(max_barrel_step, target.barrel_error))
+            
+            reload_timer = float(my_status.get("_reload_timer", 0.0) or 0.0)
+            if (
+                self._fuzzy_shoot_decision(target.barrel_error, target.distance)
+                and not self._ally_in_fire_line_agent2(my_status, sensor_data)
+                and reload_timer <= 0.0
+            ):
+                should_fire = True
+            
+            ammo_to_load = self._select_ammo_agent2(my_status, target)
+        else:
+            # Exploration Action
+            barrel_rotation = self.scan_speed * self.scan_direction
+            ammo_to_load = self._select_ammo_agent2(my_status, None)
 
-        action_stub = ActionSpec(
-            name="ddpg",
-            move_speed=move_speed,
-            heading_rotation_angle=heading_rotation,
-            barrel_rotation_angle=barrel_rotation,
-            should_fire=should_fire,
-        )
-        ammo_to_load = self._select_ammo_for_action(my_status, obs, action_stub)
+        # Record fake mock action for plotting consistency
+        self.last_mock_action = np.array([barrel_rotation / 5.0, 1.0 if should_fire else 0.0], dtype=np.float32)
+
         return ActionCommand(
             barrel_rotation_angle=barrel_rotation,
             heading_rotation_angle=heading_rotation,
@@ -1297,7 +1385,7 @@ class FuzzyDQNAgent:
                     self._maybe_train()
 
             action_vec = self._select_action(current_obs.vector, training=self.training_enabled)
-            command = self._to_command(action_vec, my_tank_status, current_obs)
+            command = self._to_command(action_vec, my_tank_status, current_obs, sensor_data, current_tick)
 
             if command.should_fire:
                 self.last_fire_tick = current_tick
