@@ -45,14 +45,14 @@ def build_args() -> argparse.Namespace:
     parser.add_argument("--model-path", type=str, default=str(AGENT_DIR / "fuzzy_dqn_model.pt"))
     parser.add_argument("--rules", type=int, default=32)
     parser.add_argument("--mf-type", choices=["gaussian", "bell", "triangular"], default="gaussian")
-    parser.add_argument("--map-seed", type=str, default="road_trees.csv")
+    parser.add_argument("--map-seed", type=str, default="symmetric.csv")
     parser.add_argument(
         "--map-curriculum",
         type=str,
         default="",
         help=(
             "Comma-separated map schedule, e.g. "
-            "'road_trees.csv:300,semi-open.csv:150,advanced_road_trees.csv:150'. "
+            "symmetric.csv"
             "If omitted, --map-seed is used for all episodes."
         ),
     )
@@ -401,7 +401,7 @@ def launch_agents(args: argparse.Namespace, episode: int, map_name: str) -> Tupl
             best_for_agent = model_path_with_tag(model_for_agent, "best")
             cmd = [
                 sys.executable,
-                "DQN.py",
+                "Agent10.py",
                 "--host",
                 "127.0.0.1",
                 "--port",
@@ -455,12 +455,14 @@ def launch_agents(args: argparse.Namespace, episode: int, map_name: str) -> Tupl
                 launch_info["selfplay"] += 1
                 cmd = [
                     sys.executable,
-                    "DQN.py",
+                    "Agent10.py",
                     "--host",
                     "127.0.0.1",
                     "--port",
                     str(port),
                     "--name",
+                    "--map-seed",
+                    "symmtric.csv",
                     f"SelfPlay_{idx + 1}",
                     "--map-name",
                     map_name,
@@ -512,7 +514,7 @@ def launch_agents(args: argparse.Namespace, episode: int, map_name: str) -> Tupl
             stderr=stderr,
         )
         processes.append(proc)
-        if cmd[1] == "DQN.py":
+        if cmd[1] == "./Agent10.py":
             dqn_processes.append(proc)
 
     launch_info["dqn_processes"] = dqn_processes
@@ -531,14 +533,12 @@ def parse_winner(output: str) -> Optional[str]:
     return None
 
 
-def run_engine_episode(args: argparse.Namespace, map_seed: str) -> subprocess.CompletedProcess:
+def run_engine_episode(args: argparse.Namespace) -> subprocess.CompletedProcess:
     cmd = [
         sys.executable,
         "run_game.py",
         "--log-level",
-        args.log_level,
-        "--map-seed",
-        map_seed,
+        args.log_level
     ]
 
     if not args.render:
@@ -546,6 +546,10 @@ def run_engine_episode(args: argparse.Namespace, map_seed: str) -> subprocess.Co
 
     if args.max_ticks > 0:
         cmd.extend(["--max-ticks", str(args.max_ticks)])
+
+    cmd.extend(['--map-seed', "symmetric.csv"])
+
+    print(' '.join(cmd))
 
     if args.verbose:
         return subprocess.run(cmd, cwd=str(ENGINE_DIR), check=False)
@@ -912,7 +916,7 @@ def main() -> int:
             dqn_dead = [proc for proc in dqn_processes if proc.poll() is not None]
             if dqn_dead:
                 for proc in dqn_dead:
-                    print(f"DQN.py exited with code {proc.returncode}. Stopping training.")
+                    print(f"Agnet exited with code {proc.returncode}. Stopping training.")
                 if processes:
                     terminate_processes(processes)
                 exit_code = 1
@@ -994,7 +998,7 @@ def main() -> int:
             print(f"[Episode {episode}/{args.episodes}] running engine on map={map_seed}...")
             summary_before = latest_summary_file()
             summary_before_mtime = summary_before.stat().st_mtime if summary_before else -1.0
-            result = run_engine_episode(args, map_seed=map_seed)
+            result = run_engine_episode(args)
 
             summary_after = latest_summary_file()
             has_new_summary = bool(

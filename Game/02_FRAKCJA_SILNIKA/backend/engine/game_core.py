@@ -7,7 +7,7 @@ Refactored to use existing structures
 import random
 import uuid
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from ..utils.config import (
     GameConfig,
@@ -183,7 +183,7 @@ class GameCore:
 
         return tick_info
 
-    def end_game(self, reason: str = "normal", extra_results: Optional[Dict[str, Any]] = None) -> Dict:
+    def end_game(self, reason: str = "normal") -> Dict:
         """
         Zakończenie gry.
 
@@ -203,9 +203,6 @@ class GameCore:
             "sudden_death_reached": self.game_state.sudden_death_active,
             "final_team_counts": self.game_state.tanks_alive_per_team.copy(),
         }
-
-        if extra_results:
-            game_results.update(extra_results)
 
         self.logger.end_game(**game_results)
         return game_results

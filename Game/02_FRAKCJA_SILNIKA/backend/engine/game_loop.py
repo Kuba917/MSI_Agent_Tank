@@ -108,17 +108,19 @@ class TankScoreboard:
 class GameLoop:
     """Główna klasa pętli gry z fazami inicjalizacji, loop i końca."""
 
-    def __init__(self, config: Optional[GameConfig] = None, headless: bool = False):
+    def __init__(self, config: Optional[GameConfig] = None, headless: bool = False, spawn_points: Optional[Dict[int, List[tuple]]] = None):
         """
         Inicjalizacja GameLoop.
 
         Args:
             config: Konfiguracja gry (opcjonalna)
             headless: Czy uruchomić w trybie bez interfejsu graficznego
+            spawn_points: Opcjonalne punkty spawnów dla drużyn {team_id: [(x,y), ...]}
         """
         self.game_core = GameCore(config) if config else create_default_game()
         self.logger = get_logger()
         self.headless = headless
+        self.spawn_points = spawn_points
 
         # Engine components
         self.map_loader = MapLoader()
@@ -132,22 +134,11 @@ class GameLoop:
         self.scoreboards: Dict[str, TankScoreboard] = {}
         self.last_attacker: Dict[str, str] = {}  # Maps tank_id -> last attacker tank_id
         self.processed_deaths: set[str] = set() # Śledzi czołgi, których śmierć została już przetworzona
-        self.last_sudden_death_victims: set[str] = set()
         
         # HTTP client for agent communication
         self.http_client: Optional[httpx.Client] = None
-        self.last_physics_results: Dict[str, Any] = {}
+        self.last_physics_results: Dict[str, list] = {}
         self.last_actions: Dict[str, Any] = {}
-        self.behavior_stats: Dict[str, int] = {
-            "action_samples": 0,
-            "move_commands": 0,
-            "heading_turn_commands": 0,
-            "barrel_turn_commands": 0,
-            "fire_commands": 0,
-            "idle_commands": 0,
-            "movement_attempts": 0,
-            "movement_successes": 0,
-        }
 
         # Performance metrics
         self.tick_start_time = 0.0
@@ -246,10 +237,7 @@ class GameLoop:
                     self._limit_fps(tick_duration)
 
             # End game
-            game_results = self.game_core.end_game(
-                "normal",
-                extra_results={"behavior": self._behavior_summary()},
-            )
+            game_results = self.game_core.end_game("normal")
             game_results["scoreboards"] = self._get_final_scoreboards()
             self.logger.info(
                 f"Game completed after {game_results['total_ticks']} ticks"
@@ -257,16 +245,10 @@ class GameLoop:
 
         except KeyboardInterrupt:
             self.logger.info("Game interrupted by user")
-            game_results = self.game_core.end_game(
-                "interrupted",
-                extra_results={"behavior": self._behavior_summary()},
-            )
+            game_results = self.game_core.end_game("interrupted")
         except Exception as e:
             self.logger.error(f"Game loop failed with exception: {e}")
-            game_results = self.game_core.end_game(
-                "error",
-                extra_results={"behavior": self._behavior_summary()},
-            )
+            game_results = self.game_core.end_game("error")
             game_results["error"] = str(e)
 
         return game_results
@@ -354,26 +336,19 @@ class GameLoop:
         try:
             self.logger.info(f"Loading map with seed: {map_seed}")
 
-            # Try to load map from file
-            available_maps = self.map_loader.get_available_maps()
-            
-            if available_maps:
-                # Use first available map or specified seed
-                map_file = map_seed if map_seed and map_seed in available_maps else available_maps[0]
-                try:
-                    self.map_info = self.map_loader.load_map(map_file)
-                    self.logger.info(f"Loaded map from file: {map_file}")
-                except FileNotFoundError:
-                    self.logger.warning(f"Map file not found: {map_file}, creating empty map")
-                    self._create_empty_map()
-            else:
-                self.logger.warning("No map files found, creating empty map")
+            # Always use symmetric.csv regardless of what was passed
+            map_file = "symmetric.csv"
+            try:
+                self.map_info = self.map_loader.load_map(map_file)
+                self.logger.info(f"Loaded map from file: {map_file}")
+            except FileNotFoundError:
+                self.logger.warning(f"Map file not found: {map_file}, creating empty map")
                 self._create_empty_map()
 
             self.logger.log_game_event(
                 GameEventType.MAP_LOAD,
                 f"Map loaded successfully with seed: {map_seed}",
-                map_seed=map_seed,
+                map_seed='symmtric.csv',
             )
 
             return True
@@ -524,6 +499,13 @@ class GameLoop:
         Returns:
             Spawn position (clear of obstacles)
         """
+        # Sprawdź czy zdefiniowano własne punkty spawnu
+        if self.spawn_points and team in self.spawn_points:
+            points = self.spawn_points[team]
+            if index < len(points):
+                coords = points[index]
+                return Position(float(coords[0]), float(coords[1]))
+
         if not self.map_info or not self.map_info.size:
             self.logger.warning("MapInfo not available for spawn, using default config size.")
             map_width = self.game_core.config.map_config.width
@@ -690,12 +672,10 @@ class GameLoop:
     def _apply_sudden_death_damage(self):
         """Aplikuje obrażenia nagłej śmierci wszystkim czołgom."""
         damage = self.game_core.get_sudden_death_damage()
-        self.last_sudden_death_victims = set()
 
         for tank_id, tank in self.tanks.items():
             if tank.is_alive():
                 apply_damage(tank, abs(damage))
-                self.last_sudden_death_victims.add(tank_id)
 
         self.logger.debug(f"Applied sudden death damage: {damage} to all tanks")
 
@@ -777,53 +757,6 @@ class GameLoop:
 
         return sensor_data_map
 
-    def _last_tick_damage_taken(self, tank_id: str) -> float:
-        total = 0.0
-        for event in self.last_physics_results.get("damage_events", []):
-            if event.get("tank_id") != tank_id:
-                continue
-            try:
-                dmg = float(event.get("damage", 0.0) or 0.0)
-            except (TypeError, ValueError):
-                continue
-            if dmg > 0.0:
-                total += dmg
-        return total
-
-    def _last_tick_hit_target(self, tank_id: str) -> bool:
-        shooter = self.tanks.get(tank_id)
-        if shooter is None:
-            return False
-        for hit in self.last_physics_results.get("projectile_hits", []):
-            if getattr(hit, "shooter_id", None) != tank_id:
-                continue
-            target_id = getattr(hit, "hit_tank_id", None)
-            if not target_id:
-                continue
-            target = self.tanks.get(target_id)
-            if target is None:
-                continue
-            if target._team != shooter._team:
-                return True
-        return False
-
-    def _last_tick_friendly_hit(self, tank_id: str) -> bool:
-        shooter = self.tanks.get(tank_id)
-        if shooter is None:
-            return False
-        for hit in self.last_physics_results.get("projectile_hits", []):
-            if getattr(hit, "shooter_id", None) != tank_id:
-                continue
-            target_id = getattr(hit, "hit_tank_id", None)
-            if not target_id:
-                continue
-            target = self.tanks.get(target_id)
-            if target is None:
-                continue
-            if target._team == shooter._team:
-                return True
-        return False
-
     def _query_agents(
         self, sensor_data_map: Dict[str, Any], current_tick: int
     ) -> Dict[str, Any]:
@@ -861,11 +794,7 @@ class GameLoop:
                     "current_tick": current_tick,
                     "my_tank_status": self._tank_to_dict(tank),
                     "sensor_data": self._sensor_data_to_dict(sensor_data),
-                    "enemies_remaining": self._count_enemies(tank_id),
-                    # Feedback from previous physics tick.
-                    "damage_taken": self._last_tick_damage_taken(tank_id),
-                    "hit_target": self._last_tick_hit_target(tank_id),
-                    "friendly_hit": self._last_tick_friendly_hit(tank_id),
+                    "enemies_remaining": self._count_enemies(tank_id)
                 }
 
                 # POST to /agent/action
@@ -1006,25 +935,6 @@ class GameLoop:
             except Exception as e:
                 self.logger.warning(f"Failed to parse action for {tank_id}: {e}")
 
-        # Track command-level behavior to diagnose passive/spinning agents.
-        for action in actions_converted.values():
-            move_cmd = abs(float(action.move_speed)) > 1e-6
-            heading_cmd = abs(float(action.heading_rotation_angle)) > 1e-6
-            barrel_cmd = abs(float(action.barrel_rotation_angle)) > 1e-6
-            fire_cmd = bool(action.should_fire)
-
-            self.behavior_stats["action_samples"] += 1
-            if move_cmd:
-                self.behavior_stats["move_commands"] += 1
-            if heading_cmd:
-                self.behavior_stats["heading_turn_commands"] += 1
-            if barrel_cmd:
-                self.behavior_stats["barrel_turn_commands"] += 1
-            if fire_cmd:
-                self.behavior_stats["fire_commands"] += 1
-            if not (move_cmd or heading_cmd or barrel_cmd or fire_cmd):
-                self.behavior_stats["idle_commands"] += 1
-
         # Process physics tick
         self.last_actions = actions_converted  # Store actions for renderer
         all_tanks_list = list(self.tanks.values())
@@ -1037,31 +947,19 @@ class GameLoop:
                 map_info=self.map_info,
                 delta_time=delta_time
             )
-            self.behavior_stats["movement_attempts"] += int(
-                self.last_physics_results.get("movement_attempts", 0) or 0
-            )
-            self.behavior_stats["movement_successes"] += int(
-                self.last_physics_results.get("movement_successes", 0) or 0
-            )
 
-            # Log shots fired (also counts missed shots).
-            for shooter_id in self.last_physics_results.get("shots_fired", []):
-                self.logger.log_tank_action(shooter_id, "shoot", {})
-
-            # Update scoreboards based on projectile hits.
+            # Update scoreboards based on projectile hits
             for hit in self.last_physics_results.get("projectile_hits", []):
-                shooter_id = hit.shooter_id
-                if hit.hit_tank_id and shooter_id:
-                    # Credit damage to the real attacker from physics result.
-                    if shooter_id in self.scoreboards:
-                        self.scoreboards[shooter_id].damage_dealt += hit.damage_dealt
-                    # Track last attacker for kill credit.
-                    self.last_attacker[hit.hit_tank_id] = shooter_id
-                    self.logger.log_tank_action(
-                        shooter_id,
-                        "hit",
-                        {"target_id": hit.hit_tank_id, "damage": hit.damage_dealt},
-                    )
+                if hit.hit_tank_id:
+                    # Find who fired (the tank whose action caused this)
+                    for tank_id, action in actions_converted.items():
+                        if action.should_fire:
+                            # Credit damage to attacker
+                            if tank_id in self.scoreboards:
+                                self.scoreboards[tank_id].damage_dealt += hit.damage_dealt
+                            # Track last attacker for kill credit
+                            self.last_attacker[hit.hit_tank_id] = tank_id
+                            break
 
             # Log destroyed tanks
             for tank_id in self.last_physics_results.get("destroyed_tanks", []):
@@ -1081,14 +979,6 @@ class GameLoop:
         """
         newly_dead_tanks = []
         
-        damage_events = self.last_physics_results.get("damage_events", [])
-        damage_by_tank: Dict[str, List[Dict[str, Any]]] = {}
-        for event in damage_events:
-            tank_id = event.get("tank_id")
-            if not tank_id:
-                continue
-            damage_by_tank.setdefault(tank_id, []).append(event)
-
         # Get tanks that were destroyed by projectile hits this tick
         projectile_kills = set()
         for hit in self.last_physics_results.get("projectile_hits", []):
@@ -1103,11 +993,9 @@ class GameLoop:
             if not tank.is_alive() and tank_id not in self.processed_deaths:
                 newly_dead_tanks.append(tank_id)
                 self.processed_deaths.add(tank_id)
-                death_cause = "non_projectile"
                 
                 # Only credit kill if death was from projectile hit
                 if tank_id in projectile_kills:
-                    death_cause = "projectile"
                     attacker_id = self.last_attacker.get(tank_id)
                     if attacker_id and attacker_id in self.scoreboards:
                         self.scoreboards[attacker_id].tanks_killed += 1
@@ -1115,38 +1003,15 @@ class GameLoop:
                 else:
                     # Death from other cause (sudden death, terrain, collision)
                     self.logger.info(f"Tank {tank_id} died (non-projectile cause, no kill credit)")
-
-                # Refine non-projectile cause using damage events / sudden death.
-                if death_cause != "projectile":
-                    events = damage_by_tank.get(tank_id, [])
-                    if any(e.get("source") == "terrain" for e in events):
-                        death_cause = "terrain"
-                    elif any(e.get("source") == "collision" for e in events):
-                        death_cause = "collision"
-                    elif tank_id in self.last_sudden_death_victims:
-                        death_cause = "sudden_death"
-                    else:
-                        death_cause = "unknown"
                 
                 # Clear last_attacker to prevent incorrect future credit
                 if tank_id in self.last_attacker:
                     del self.last_attacker[tank_id]
 
                 # Powiadom agenta o zniszczeniu
-                self._notify_agent_destroyed(
-                    tank_id,
-                    {
-                        "cause": death_cause,
-                        "final_hp": tank.hp,
-                        "damage_events": damage_by_tank.get(tank_id, []),
-                    },
-                )
+                self._notify_agent_destroyed(tank_id)
 
-                self.logger.log_tank_action(
-                    tank_id,
-                    "death",
-                    {"final_hp": tank.hp, "cause": death_cause, "damage_events": damage_by_tank.get(tank_id, [])},
-                )
+                self.logger.log_tank_action(tank_id, "death", {"final_hp": tank.hp})
 
         # W trybie headless usuwamy czołgi z symulacji.
         # W trybie graficznym zostawiamy je, aby można było narysować wraki.
@@ -1159,7 +1024,7 @@ class GameLoop:
             if self.map_info:
                 self.map_info._all_tanks = [t for t in self.map_info._all_tanks if t._id not in newly_dead_tanks]
 
-    def _notify_agent_destroyed(self, tank_id: str, payload: Optional[Dict[str, Any]] = None):
+    def _notify_agent_destroyed(self, tank_id: str):
         """
         Notify agent that its tank was destroyed.
         Calls POST /agent/destroy endpoint.
@@ -1172,8 +1037,7 @@ class GameLoop:
         try:
             self.http_client.post(
                 f"{connection.base_url}/agent/destroy",
-                json=(payload or {}),
-                timeout=0.5,
+                timeout=0.5
             )
             self.logger.debug(f"Notified agent {tank_id} of destruction")
         except Exception as e:
@@ -1249,8 +1113,6 @@ class GameLoop:
         self.last_attacker.clear()
         self.processed_deaths.clear()
         self.last_actions.clear()
-        for key in self.behavior_stats:
-            self.behavior_stats[key] = 0
 
     def _update_performance_metrics(self, tick_duration: float):
         """Aktualizacja metryk wydajności."""
@@ -1279,66 +1141,6 @@ class GameLoop:
         target_tick_time = 1.0 / target_fps
         if tick_duration < target_tick_time:
             time.sleep(target_tick_time - tick_duration)
-
-    def _behavior_summary(self) -> Dict[str, Any]:
-        samples = max(1, int(self.behavior_stats["action_samples"]))
-        move_commands = int(self.behavior_stats["move_commands"])
-        heading_turn_commands = int(self.behavior_stats["heading_turn_commands"])
-        barrel_turn_commands = int(self.behavior_stats["barrel_turn_commands"])
-        fire_commands = int(self.behavior_stats["fire_commands"])
-        idle_commands = int(self.behavior_stats["idle_commands"])
-        movement_attempts = int(self.behavior_stats["movement_attempts"])
-        movement_successes = int(self.behavior_stats["movement_successes"])
-
-        move_ratio = move_commands / samples
-        heading_turn_ratio = heading_turn_commands / samples
-        barrel_turn_ratio = barrel_turn_commands / samples
-        idle_ratio = idle_commands / samples
-        fire_ratio = fire_commands / samples
-        movement_success_ratio = movement_successes / max(1, movement_attempts)
-
-        mobility_label = self._classify_mobility(
-            move_ratio=move_ratio,
-            heading_turn_ratio=heading_turn_ratio,
-            barrel_turn_ratio=barrel_turn_ratio,
-            idle_ratio=idle_ratio,
-            movement_success_ratio=movement_success_ratio,
-        )
-
-        return {
-            "action_samples": samples,
-            "move_commands": move_commands,
-            "heading_turn_commands": heading_turn_commands,
-            "barrel_turn_commands": barrel_turn_commands,
-            "fire_commands": fire_commands,
-            "idle_commands": idle_commands,
-            "movement_attempts": movement_attempts,
-            "movement_successes": movement_successes,
-            "move_command_ratio": round(move_ratio, 4),
-            "heading_turn_ratio": round(heading_turn_ratio, 4),
-            "barrel_turn_ratio": round(barrel_turn_ratio, 4),
-            "idle_ratio": round(idle_ratio, 4),
-            "fire_ratio": round(fire_ratio, 4),
-            "movement_success_ratio": round(movement_success_ratio, 4),
-            "mobility_label": mobility_label,
-        }
-
-    @staticmethod
-    def _classify_mobility(
-        move_ratio: float,
-        heading_turn_ratio: float,
-        barrel_turn_ratio: float,
-        idle_ratio: float,
-        movement_success_ratio: float,
-    ) -> str:
-        turning_ratio = heading_turn_ratio + barrel_turn_ratio
-        if idle_ratio >= 0.55:
-            return "mostly_idle"
-        if move_ratio >= 0.45 and movement_success_ratio >= 0.6:
-            return "mostly_moving"
-        if move_ratio <= 0.25 and turning_ratio >= 0.55:
-            return "mostly_spinning"
-        return "mixed_motion"
 
 
 # ============================================================================

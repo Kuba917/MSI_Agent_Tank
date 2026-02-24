@@ -43,7 +43,7 @@ GENERATE_NEW_MAP = True  # Ustaw na True, aby wygenerować nową mapę przed wy�
 GENERATED_MAP_FILENAME = "scratchpad_generated.csv"
 MAP_WIDTH = 25
 MAP_HEIGHT = 20
-FALLBACK_MAP_FILENAME = 'map1.csv'  # Używana, gdy GENERATE_NEW_MAP = False
+FALLBACK_MAP_FILENAME = 'symmetric.csv'  # Używana, gdy GENERATE_NEW_MAP = False
 
 # WAŻNE: Ścieżka do assetów. Musisz dostosować tę ścieżkę, jeśli masz inną strukturę projektu.
 ASSETS_PATH = os.path.join(current_dir, 'frontend', 'assets', 'tiles')

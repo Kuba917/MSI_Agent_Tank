@@ -75,8 +75,6 @@ class GameLogger:
         self.game_stats = {
             "tanks_spawned": 0,
             "tanks_killed": 0,
-            "projectile_deaths": 0,
-            "non_projectile_deaths": 0,
             "shots_fired": 0,
             "hits_landed": 0,
             "powerups_spawned": 0,
@@ -319,11 +317,6 @@ class GameLogger:
             self.game_stats["tanks_spawned"] += 1
         elif event_type == GameEventType.TANK_DEATH:
             self.game_stats["tanks_killed"] += 1
-            cause = str(kwargs.get("cause", "non_projectile")).lower()
-            if cause == "projectile":
-                self.game_stats["projectile_deaths"] += 1
-            else:
-                self.game_stats["non_projectile_deaths"] += 1
         elif event_type == GameEventType.TANK_SHOOT:
             self.game_stats["shots_fired"] += 1
         elif event_type == GameEventType.TANK_HIT:
@@ -367,8 +360,6 @@ Average Tick Time: {avg_tick_time:.4f} seconds
 === STATISTICS ===
 Tanks Spawned: {self.game_stats["tanks_spawned"]}
 Tanks Killed: {self.game_stats["tanks_killed"]}
-Projectile Deaths: {self.game_stats["projectile_deaths"]}
-Non-Projectile Deaths: {self.game_stats["non_projectile_deaths"]}
 Shots Fired: {self.game_stats["shots_fired"]}
 Hits Landed: {self.game_stats["hits_landed"]}
 Hit Accuracy: {(self.game_stats["hits_landed"] / self.game_stats["shots_fired"] * 100) if self.game_stats["shots_fired"] > 0 else 0:.1f}%

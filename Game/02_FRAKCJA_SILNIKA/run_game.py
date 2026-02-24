@@ -57,7 +57,7 @@ Examples:
 
     # Game configuration options
     parser.add_argument(
-        "--map-seed", type=str, help="Seed for map generation (default: random)"
+        "--map-seed", type=str, default="symmetric.csv", help="Seed for map generation (default: random)"
     )
 
     parser.add_argument(

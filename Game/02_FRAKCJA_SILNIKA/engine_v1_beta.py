@@ -48,12 +48,13 @@ except ImportError as e:
 
 # --- Stałe Konfiguracyjne Grafiki ---
 LOG_LEVEL = "DEBUG"
-MAP_SEED =  "road_trees.csv" # "advanced_road_trees.csv"
+MAP_SEED = "symmetric.csv"
+TEAM_A_SPAWN_POINTS = [(15, 15), (15, 60), (15, 95), (15, 165), (15, 195)]  # Współrzędne (x, y)
+TEAM_B_SPAWN_POINTS = [(185, 15), (185, 60), (185, 95), (185, 165), (185, 195)] # Współrzędne (x, y) na Grass dla drużyny B
 TARGET_FPS = 60
 SCALE = 5  # Współczynnik skalowania grafiki (wszystko będzie 4x większe)
 TILE_SIZE = 10  # To MUSI być zgodne z domyślną wartością w map_loader.py
-AGENT_NAME = "DQN.py" #"random_agent.py" # Nazwa pliku agenta
-MODEL_FILE = "fuzzy_dqn_model.pt" # Upewnij się, że ta nazwa zgadza się z plikiem w folderze 03_FRAKCJA_AGENTOW
+AGENT_NAME = "Agent10.py" # Nazwa pliku agenta
 
 ASSETS_BASE_PATH = os.path.join(current_file_dir, 'frontend', 'assets')
 TILE_ASSETS_PATH = os.path.join(ASSETS_BASE_PATH, 'tiles')
@@ -552,7 +553,13 @@ def main():
         return
 
     # --- Inicjalizacja Gry ---
-    game_loop = GameLoop(headless=False)
+    game_loop = GameLoop(
+        headless=False,
+        spawn_points={
+            1: TEAM_A_SPAWN_POINTS,
+            2: TEAM_B_SPAWN_POINTS
+        }
+    )
 
     try:
         # 1. Uruchomienie serwerów agentów (teraz używamy random_agent.py)
@@ -561,12 +568,6 @@ def main():
             port = AGENT_BASE_PORT + i
             name = f"Bot_{i+1}"
             command = [sys.executable, agent_script_path, "--port", str(port), "--name", name]
-            
-            # Przekazanie ścieżki do modelu, jeśli uruchamiamy DQN
-            if AGENT_NAME == "DQN.py":
-                model_full_path = os.path.join(os.path.dirname(agent_script_path), MODEL_FILE)
-                command.extend(["--model-path", model_full_path])
-
             proc = subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             agent_processes.append(proc)
             print(f"  -> Agent '{name}' uruchomiony na porcie {port} (PID: {proc.pid})")
